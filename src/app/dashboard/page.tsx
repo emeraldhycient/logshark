@@ -27,6 +27,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Metric } from '@/components/common/dashboard/metrics'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 ChartJS.register(
     CategoryScale,
@@ -211,8 +212,45 @@ export default function Dashboard() {
                     </div>
                 </div>
 
+                {/* Recent logs table */}
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Recent Logs</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="rounded-md border">
+                            <table className="w-full text-sm">
+                                <thead>
+                                    <tr className="border-b bg-muted/50 text-muted-foreground">
+                                        <th className="p-2 text-left font-medium">Timestamp</th>
+                                        <th className="p-2 text-left font-medium">Level</th>
+                                        <th className="p-2 text-left font-medium">Message</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr className="border-b">
+                                        <td className="p-2">2023-05-28 14:32:15</td>
+                                        <td className="p-2"><span className="px-2 py-1 rounded-full text-xs bg-red-100 text-red-800">Error</span></td>
+                                        <td className="p-2">Failed to connect to database</td>
+                                    </tr>
+                                    <tr className="border-b">
+                                        <td className="p-2">2023-05-28 14:30:05</td>
+                                        <td className="p-2"><span className="px-2 py-1 rounded-full text-xs bg-yellow-100 text-yellow-800">Warning</span></td>
+                                        <td className="p-2">High memory usage detected</td>
+                                    </tr>
+                                    <tr>
+                                        <td className="p-2">2023-05-28 14:28:30</td>
+                                        <td className="p-2"><span className="px-2 py-1 rounded-full text-xs bg-green-100 text-green-800">Info</span></td>
+                                        <td className="p-2">User authentication successful</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </CardContent>
+                </Card>
+
                 {/* User Engagement */}
-                <div className="bg-white overflow-hidden shadow rounded-lg mb-8 p-5">
+                <div className="bg-white overflow-hidden shadow rounded-lg my-8 p-5">
                     <h3 className="text-lg leading-6 font-medium text-gray-900 mb-2">User Engagement</h3>
                     <div style={{ height: '300px' }}>
                         <Bar

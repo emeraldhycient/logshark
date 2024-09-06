@@ -68,7 +68,7 @@ export default function LandingPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6, duration: 0.8 }}
         >
-          <Image height={100} width={100} src="https://i.im.ge/2024/09/06/f84448.logShark-dashboard.png" alt="LogShark Dashboard" className="rounded-lg shadow-xl w-full h-full" />
+          <Image height={100} width={100} src="https://i.im.ge/2024/09/06/fRFdj1.logShark-dashboard.png" alt="LogShark Dashboard" className="rounded-lg shadow-xl w-full h-full" />
         </motion.div>
       </section>
 
