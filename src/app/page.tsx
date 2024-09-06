@@ -3,9 +3,10 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import { BarChart, LineChart, PieChart, Activity, Zap, Lock, Smartphone, Target, Layers, ChevronRight } from 'lucide-react'
+import { BarChart, LineChart, PieChart, Activity, Zap, Smartphone, Target, Layers, ChevronRight } from 'lucide-react'
 
 export default function LandingPage() {
   const [videoModalOpen, setVideoModalOpen] = useState(false)
@@ -67,7 +68,7 @@ export default function LandingPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6, duration: 0.8 }}
         >
-          <img src="https://i.im.ge/2024/09/06/f84448.logShark-dashboard.png" alt="LogShark Dashboard" className="rounded-lg shadow-xl" />
+          <Image height={100} width={100} src="https://i.im.ge/2024/09/06/f84448.logShark-dashboard.png" alt="LogShark Dashboard" className="rounded-lg shadow-xl" />
         </motion.div>
       </section>
 
@@ -172,9 +173,9 @@ export default function LandingPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.2 }}
               >
-                <p className="text-gray-600 mb-4">"{testimonial.content}"</p>
+                <p className="text-gray-600 mb-4">&quot;{testimonial.content}&quot;</p>
                 <div className="flex items-center">
-                  <img src={`https://picsum.photos/40/40`} alt={testimonial.name} className="w-10 h-10 rounded-full mr-4" />
+                  <Image height={100} width={100} src={`https://picsum.photos/40/40`} alt={testimonial.name} className="w-10 h-10 rounded-full mr-4" />
                   <div>
                     <p className="font-semibold">{testimonial.name}</p>
                     <p className="text-sm text-gray-500">{testimonial.role}</p>

@@ -1,7 +1,4 @@
 'use client'
-
-import { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
 import { useQuery } from '@tanstack/react-query'
 import {
     BarChart,
@@ -10,16 +7,8 @@ import {
     PhoneCall,
     TrendingUp,
     Zap,
-    Menu,
-    X,
     Bell,
     User,
-    Home,
-    Activity,
-    Layers,
-    Settings,
-    HelpCircle,
-    LogOut
 } from 'lucide-react'
 import { Line, Pie, Bar } from 'react-chartjs-2'
 import {
@@ -37,7 +26,6 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import Link from 'next/link'
 import { Metric } from '@/components/common/dashboard/metrics'
 
 ChartJS.register(
@@ -151,7 +139,6 @@ const fetchDashboardData = async (): Promise<DashboardData> => {
 }
 
 export default function Dashboard() {
-    const [sidebarOpen, setSidebarOpen] = useState(false)
     const { data, isLoading, error } = useQuery<DashboardData>({
         queryKey: ['dashboardData'],
         queryFn: fetchDashboardData,
@@ -160,12 +147,12 @@ export default function Dashboard() {
     if (isLoading) return <div className="flex items-center justify-center h-screen">Loading...</div>
     if (error) return <div className="flex items-center justify-center h-screen">An error occurred</div>
 
-    const sidebarItems = [
-        { icon: <Home className="h-5 w-5" />, label: 'Dashboard', href: '#' },
-        { icon: <Activity className="h-5 w-5" />, label: 'Analytics', href: '#' },
-        { icon: <Layers className="h-5 w-5" />, label: 'Projects', href: '#' },
-        { icon: <Settings className="h-5 w-5" />, label: 'Settings', href: '#' },
-    ]
+    // const sidebarItems = [
+    //     { icon: <Home className="h-5 w-5" />, label: 'Dashboard', href: '#' },
+    //     { icon: <Activity className="h-5 w-5" />, label: 'Analytics', href: '#' },
+    //     { icon: <Layers className="h-5 w-5" />, label: 'Projects', href: '#' },
+    //     { icon: <Settings className="h-5 w-5" />, label: 'Settings', href: '#' },
+    // ]
 
     return (
         <section>
