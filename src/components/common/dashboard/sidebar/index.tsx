@@ -4,12 +4,14 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '@/components/ui/button'
-import { Menu, X, Home, Activity, Layers, Settings, HelpCircle, LogOut, ChartNetwork, ServerCrash, Boxes, MailWarningIcon, KeyIcon } from 'lucide-react'
+import { Menu, X, Home, Activity, Layers, Settings, HelpCircle, LogOut, ChartNetwork, ServerCrash, Boxes, MailWarningIcon, KeyIcon, LayoutPanelTop } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
 const sidebarItems = [
-    { icon: <Home className="h-5 w-5" />, label: 'Dashboard', href: '/dashboard' },
+    {
+        icon: <LayoutPanelTop className="h-5 w-5" />, label: 'Dashboard', href: '/dashboard'
+    },
     { icon: <ChartNetwork className="h-5 w-5" />, label: 'Logs', href: '/dashboard/logs' },
     { icon: <ServerCrash className="h-5 w-5" />, label: 'Crashlytics', href: '/dashboard/crashes' },
     { icon: <Activity className="h-5 w-5" />, label: 'Activities', href: '/dashboard/activities' },
@@ -22,7 +24,7 @@ const sidebarItems = [
 
 export default function Sidebar() {
     const pathname = usePathname()
-    console.log({pathname})
+    console.log({ pathname })
     const [sidebarOpen, setSidebarOpen] = useState(false)
 
     return (
@@ -66,7 +68,7 @@ export default function Sidebar() {
                                 <Link
                                     key={index}
                                     href={item.href}
-                                    className={`flex items-center px-4 mb-4 rounded  py-2 text-gray-700 hover:bg-gray-200 ${pathname === item.href ? "bg-primary text-primary-foreground hover:bg-primary/90":""}`}
+                                    className={`flex items-center px-4 mb-4 rounded  py-2 text-gray-700 hover:bg-gray-200 ${pathname === item.href ? "bg-primary text-primary-foreground hover:bg-primary/90" : ""}`}
                                 >
                                     {item.icon}
                                     <span className="ml-2">{item.label}</span>
