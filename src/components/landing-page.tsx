@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { BarChart, LineChart, PieChart, Activity, Zap, Lock, Smartphone, Target, Layers, ChevronRight } from 'lucide-react'
 
-export default function LandingPage() {
+export function LandingPage() {
   const [videoModalOpen, setVideoModalOpen] = useState(false)
 
   const fadeIn = {
@@ -33,20 +33,20 @@ export default function LandingPage() {
 
       {/* Hero Section */}
       <section className="container mx-auto px-4 py-20 text-center">
-        <motion.h1
+        <motion.h1 
           className="text-4xl md:text-6xl font-bold mb-6"
           {...fadeIn}
         >
           Unlock the Power of Real-Time Analytics
         </motion.h1>
-        <motion.p
+        <motion.p 
           className="text-xl md:text-2xl text-gray-600 mb-8 max-w-3xl mx-auto"
           {...fadeIn}
           transition={{ delay: 0.2 }}
         >
           LogShark gives you deep insights into user behavior, performance metrics, and system health with privacy-first, real-time analytics.
         </motion.p>
-        <motion.div
+        <motion.div 
           className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4"
           {...fadeIn}
           transition={{ delay: 0.4 }}
@@ -56,13 +56,13 @@ export default function LandingPage() {
             Watch Demo
           </Button>
         </motion.div>
-        <motion.div
+        <motion.div 
           className="mt-12"
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6, duration: 0.8 }}
         >
-          <img src="https://g-qj0-uszjakb.vusercontent.net/placeholder.svg" alt="LogShark Dashboard" className="rounded-lg shadow-2xl" />
+          <img src="/placeholder.svg?height=400&width=800" alt="LogShark Dashboard" className="rounded-lg shadow-2xl" />
         </motion.div>
       </section>
 
@@ -80,7 +80,7 @@ export default function LandingPage() {
               { icon: <Target className="h-8 w-8 text-blue-600" />, title: "Custom Events & Goals", description: "Set up tracking for video plays, file downloads, and other custom-defined goals." },
               { icon: <Lock className="h-8 w-8 text-blue-600" />, title: "Privacy-Focused Analytics", description: "Fully compliant with GDPR, CCPA, and other regulations." }
             ].map((feature, index) => (
-              <motion.div
+              <motion.div 
                 key={index}
                 className="bg-white p-6 rounded-lg shadow-md"
                 initial={{ opacity: 0, y: 20 }}
@@ -106,7 +106,7 @@ export default function LandingPage() {
               { number: "2", title: "Track & Visualize", description: "Start capturing data with customizable dashboards." },
               { number: "3", title: "Optimize", description: "Use insights to improve performance, engagement, and revenue." }
             ].map((step, index) => (
-              <motion.div
+              <motion.div 
                 key={index}
                 className="flex flex-col items-center text-center max-w-xs"
                 initial={{ opacity: 0, y: 20 }}
@@ -134,7 +134,7 @@ export default function LandingPage() {
               { icon: <Layers className="h-12 w-12" />, title: "Cross-Platform Analytics", description: "Unified data for websites, APIs, and mobile apps." },
               { icon: <Target className="h-12 w-12" />, title: "Actionable Recommendations", description: "Suggestions for optimizing performance and user experience." }
             ].map((item, index) => (
-              <motion.div
+              <motion.div 
                 key={index}
                 className="flex flex-col items-center text-center"
                 initial={{ opacity: 0, y: 20 }}
@@ -160,7 +160,7 @@ export default function LandingPage() {
               { name: "Jane Smith", role: "Lead Developer, StartupX", content: "The real-time analytics provided by LogShark have been a game-changer for our API performance monitoring. We can now identify and fix issues before they impact our users." },
               { name: "Alex Johnson", role: "Data Analyst, BigCo", content: "LogShark's privacy-first approach gives us peace of mind when dealing with sensitive user data. It's the perfect balance of powerful analytics and data protection." }
             ].map((testimonial, index) => (
-              <motion.div
+              <motion.div 
                 key={index}
                 className="bg-white p-6 rounded-lg shadow-md"
                 initial={{ opacity: 0, y: 20 }}
@@ -191,7 +191,7 @@ export default function LandingPage() {
               { name: "Pro", price: "$99", description: "Advanced analytics for growing businesses", features: ["Up to 1,000,000 monthly events", "30-day data retention", "Advanced dashboards", "API access", "Priority email support"] },
               { name: "Enterprise", price: "Custom", description: "Full analytics suite with custom solutions", features: ["Unlimited events", "12-month data retention", "Custom dashboards", "Dedicated account manager", "24/7 phone & email support"] }
             ].map((plan, index) => (
-              <motion.div
+              <motion.div 
                 key={index}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
