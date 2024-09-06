@@ -83,7 +83,7 @@ export default function LandingPage() {
               { icon: <PieChart className="h-8 w-8 text-blue-600" />, title: "API Usage Analytics", description: "Track API call volume, latency, and success vs. failure rates." },
               { icon: <Smartphone className="h-8 w-8 text-blue-600" />, title: "Mobile App-Specific Metrics", description: "Monitor in-app purchases, app version usage, and device-specific performance." },
               { icon: <Target className="h-8 w-8 text-blue-600" />, title: "Custom Events & Goals", description: "Set up tracking for video plays, file downloads, and other custom-defined goals." },
-              { icon: <Lock className="h-8 w-8 text-blue-600" />, title: "Privacy-Focused Analytics", description: "Fully compliant with GDPR, CCPA, and other regulations." }
+              // { icon: <Lock className="h-8 w-8 text-blue-600" />, title: "Privacy-Focused Analytics", description: "Fully compliant with GDPR, CCPA, and other regulations." }
             ].map((feature, index) => (
               <motion.div
                 key={index}
@@ -280,7 +280,7 @@ export default function LandingPage() {
           </div>
           <div className="mt-8 pt-8 border-t border-gray-800 text-center text-gray-400">
             <p>&copy; {new Date().getFullYear()} LogShark. All rights reserved.</p>
-            <p className="mt-2">LogShark is fully compliant with GDPR, CCPA, and other data protection regulations.</p>
+            {/* <p className="mt-2">LogShark is fully compliant with GDPR, CCPA, and other data protection regulations.</p> */}
           </div>
         </div>
       </footer>
