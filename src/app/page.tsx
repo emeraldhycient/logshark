@@ -67,7 +67,7 @@ export default function LandingPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6, duration: 0.8 }}
         >
-          <img src="https://i.im.ge/2024/09/06/f84448.logShark-dashboard.png" alt="LogShark Dashboard" className="rounded-lg shadow-2xl" />
+          <img src="https://i.im.ge/2024/09/06/f84448.logShark-dashboard.png" alt="LogShark Dashboard" className="rounded-lg shadow-xl" />
         </motion.div>
       </section>
 
@@ -296,7 +296,7 @@ export default function LandingPage() {
                 </svg>
               </button>
             </div>
-            <div className="aspect-w-16 aspect-h-9">
+            <div className="aspect-w-16 aspect-h-9 h-[70vh]">
               <iframe
                 src="https://www.youtube.com/embed/dQw4w9WgXcQ"
                 frameBorder="0"
