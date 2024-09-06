@@ -54,7 +54,9 @@ export default function LandingPage() {
           {...fadeIn}
           transition={{ delay: 0.4 }}
         >
+          <Link href="/register">
           <Button size="lg" className="w-full sm:w-auto">Get Started Now</Button>
+          </Link>
           <Button size="lg" variant="outline" className="w-full sm:w-auto" onClick={() => setVideoModalOpen(true)}>
             Watch Demo
           </Button>

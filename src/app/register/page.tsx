@@ -5,21 +5,25 @@ import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { BarChart, Mail, Lock, Eye, EyeOff, Github } from 'lucide-react'
+import { BarChart, User, Mail, Lock, Eye, EyeOff, Github } from 'lucide-react'
 import Link from 'next/link'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 
-export default function LoginPage() {
+export default function SignUpPage() {
+    const [firstName, setFirstName] = useState('')
+    const [lastName, setLastName] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
-    const [rememberMe, setRememberMe] = useState(false)
+    const [confirmPassword, setConfirmPassword] = useState('')
     const [showPassword, setShowPassword] = useState(false)
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+    const [agreeTerms, setAgreeTerms] = useState(false)
     const [error, setError] = useState('')
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
         setError('')
-        if (!email || !password) {
+        if (!firstName || !lastName || !email || !password || !confirmPassword) {
             setError('Please fill in all fields.')
             return
         }
@@ -27,18 +31,26 @@ export default function LoginPage() {
             setError('Please enter a valid email address.')
             return
         }
-        // Handle login logic here
-        console.log('Login submitted', { email, password, rememberMe })
+        if (password !== confirmPassword) {
+            setError('Passwords do not match.')
+            return
+        }
+        if (!agreeTerms) {
+            setError('Please agree to the Terms of Service and Privacy Policy.')
+            return
+        }
+        // Handle sign-up logic here
+        console.log('Sign-up submitted', { firstName, lastName, email, password })
     }
 
-    const handleGoogleLogin = () => {
-        // Handle Google login logic here
-        console.log('Google login initiated')
+    const handleGoogleSignUp = () => {
+        // Handle Google sign-up logic here
+        console.log('Google sign-up initiated')
     }
 
-    const handleGitHubLogin = () => {
-        // Handle GitHub login logic here
-        console.log('GitHub login initiated')
+    const handleGitHubSignUp = () => {
+        // Handle GitHub sign-up logic here
+        console.log('GitHub sign-up initiated')
     }
 
     const isValidEmail = (email: string) => {
@@ -68,10 +80,10 @@ export default function LoginPage() {
                 >
                     <div>
                         <h2 className="mt-6 text-2xl font-extrabold text-gray-900">
-                            Welcome Back to LogShark
+                            Create Your LogShark Account
                         </h2>
                         <p className="mt-2 text-sm text-gray-600">
-                            Log in to access real-time analytics and insights for your websites, APIs, and mobile apps.
+                            Get started with real-time analytics for your websites, APIs, and mobile apps.
                         </p>
                     </div>
                     {error && (
@@ -81,6 +93,48 @@ export default function LoginPage() {
                     )}
                     <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
                         <div className="rounded-md shadow-sm -space-y-px">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                                <div>
+                                    <Label htmlFor="first-name" className="sr-only">
+                                        First Name
+                                    </Label>
+                                    <div className="relative">
+                                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <User className="h-5 w-5 text-gray-400" />
+                                        </div>
+                                        <Input
+                                            id="first-name"
+                                            name="first-name"
+                                            type="text"
+                                            required
+                                            className="pl-10"
+                                            placeholder="Enter your first name"
+                                            value={firstName}
+                                            onChange={(e) => setFirstName(e.target.value)}
+                                        />
+                                    </div>
+                                </div>
+                                <div>
+                                    <Label htmlFor="last-name" className="sr-only">
+                                        Last Name
+                                    </Label>
+                                    <div className="relative">
+                                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <User className="h-5 w-5 text-gray-400" />
+                                        </div>
+                                        <Input
+                                            id="last-name"
+                                            name="last-name"
+                                            type="text"
+                                            required
+                                            className="pl-10"
+                                            placeholder="Enter your last name"
+                                            value={lastName}
+                                            onChange={(e) => setLastName(e.target.value)}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
                             <div>
                                 <Label htmlFor="email-address" className="sr-only">
                                     Email address
@@ -102,7 +156,7 @@ export default function LoginPage() {
                                     />
                                 </div>
                             </div>
-                            <div className="mt-4 pt-4">
+                            <div className="mt-4 py-4">
                                 <Label htmlFor="password" className="sr-only">
                                     Password
                                 </Label>
@@ -114,10 +168,9 @@ export default function LoginPage() {
                                         id="password"
                                         name="password"
                                         type={showPassword ? "text" : "password"}
-                                        autoComplete="current-password"
                                         required
                                         className="pl-10 pr-10"
-                                        placeholder="Enter your password"
+                                        placeholder="Create a password"
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
                                     />
@@ -132,31 +185,56 @@ export default function LoginPage() {
                                     </div>
                                 </div>
                             </div>
+                            <div className="mt-4">
+                                <Label htmlFor="confirm-password" className="sr-only">
+                                    Confirm Password
+                                </Label>
+                                <div className="relative">
+                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <Lock className="h-5 w-5 text-gray-400" />
+                                    </div>
+                                    <Input
+                                        id="confirm-password"
+                                        name="confirm-password"
+                                        type={showConfirmPassword ? "text" : "password"}
+                                        required
+                                        className="pl-10 pr-10"
+                                        placeholder="Confirm your password"
+                                        value={confirmPassword}
+                                        onChange={(e) => setConfirmPassword(e.target.value)}
+                                    />
+                                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                            className="text-gray-400 hover:text-gray-500 focus:outline-none focus:text-gray-500"
+                                        >
+                                            {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center">
-                                <Checkbox
-                                    id="remember-me"
-                                    checked={rememberMe}
-                                    onCheckedChange={(checked) => setRememberMe(checked as boolean)}
-                                />
-                                <Label
-                                    htmlFor="remember-me"
-                                    className="ml-2 block text-sm text-gray-900"
-                                >
-                                    Remember me
-                                </Label>
-                            </div>
-
-                            <div className="text-sm">
-                                <Link
-                                    href="/forgot-password"
-                                    className="font-medium text-blue-600 hover:text-blue-500"
-                                >
-                                    Forgot password?
+                        <div className="flex items-center">
+                            <Checkbox
+                                id="agree-terms"
+                                checked={agreeTerms}
+                                onCheckedChange={(checked) => setAgreeTerms(checked as boolean)}
+                            />
+                            <Label
+                                htmlFor="agree-terms"
+                                className="ml-2 block text-sm text-gray-900"
+                            >
+                                I agree to the{' '}
+                                <Link href="/terms" className="font-medium text-blue-600 hover:text-blue-500">
+                                    Terms of Service
+                                </Link>{' '}
+                                and{' '}
+                                <Link href="/privacy" className="font-medium text-blue-600 hover:text-blue-500">
+                                    Privacy Policy
                                 </Link>
-                            </div>
+                            </Label>
                         </div>
 
                         <div>
@@ -164,7 +242,7 @@ export default function LoginPage() {
                                 type="submit"
                                 className="w-full flex justify-center py-2 px-4"
                             >
-                                Log In
+                                Sign Up
                             </Button>
                         </div>
                     </form>
@@ -174,12 +252,12 @@ export default function LoginPage() {
                                 <div className="w-full border-t border-gray-300"></div>
                             </div>
                             <div className="relative flex justify-center text-sm">
-                                <span className="px-2 bg-white text-gray-500">Or continue with</span>
+                                <span className="px-2 bg-white text-gray-500">Or sign up with</span>
                             </div>
                         </div>
                         <div className="mt-6 grid grid-cols-2 gap-3">
                             <Button
-                                onClick={handleGoogleLogin}
+                                onClick={handleGoogleSignUp}
                                 variant="outline"
                                 className="w-full"
                             >
@@ -204,7 +282,7 @@ export default function LoginPage() {
                                 Google
                             </Button>
                             <Button
-                                onClick={handleGitHubLogin}
+                                onClick={handleGitHubSignUp}
                                 variant="outline"
                                 className="w-full"
                             >
@@ -215,12 +293,12 @@ export default function LoginPage() {
                     </div>
                     <div className="mt-6 text-center">
                         <p className="text-sm text-gray-600">
-                            Don't have an account?{' '}
+                            Already have an account?{' '}
                             <Link
-                                href="/signup"
+                                href="/login"
                                 className="font-medium text-blue-600 hover:text-blue-500"
                             >
-                                Sign Up Here
+                                Log In Here
                             </Link>
                         </p>
                     </div>
