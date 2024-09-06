@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
+import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { BarChart, LineChart, PieChart, Activity, Zap, Lock, Smartphone, Target, Layers, ChevronRight } from 'lucide-react'
@@ -28,7 +29,9 @@ export default function LandingPage() {
           <a href="#how-it-works" className="hover:text-blue-600 transition-colors">How It Works</a>
           <a href="#pricing" className="hover:text-blue-600 transition-colors">Pricing</a>
         </nav>
-        <Button>Sign In</Button>
+        <Link href="/login">
+          <Button>Sign In</Button>
+        </Link>
       </header>
 
       {/* Hero Section */}
