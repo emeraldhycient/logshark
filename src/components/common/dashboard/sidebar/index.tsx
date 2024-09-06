@@ -4,17 +4,24 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '@/components/ui/button'
-import { Menu, X, Home, Activity, Layers, Settings, HelpCircle, LogOut } from 'lucide-react'
+import { Menu, X, Home, Activity, Layers, Settings, HelpCircle, LogOut, ChartNetwork, ServerCrash, Boxes, MailWarningIcon } from 'lucide-react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 
 const sidebarItems = [
-    { icon: <Home className="h-5 w-5" />, label: 'Dashboard', href: '/' },
-    { icon: <Activity className="h-5 w-5" />, label: 'Analytics', href: '#' },
-    { icon: <Layers className="h-5 w-5" />, label: 'Projects', href: '#' },
+    { icon: <Home className="h-5 w-5" />, label: 'Dashboard', href: '/dashboard' },
+    { icon: <ChartNetwork className="h-5 w-5" />, label: 'Logs', href: '/dashboard/logs' },
+    { icon: <ServerCrash className="h-5 w-5" />, label: 'Crashlytics', href: '/dashboard/crashes' },
+    { icon: <Activity className="h-5 w-5" />, label: 'Activities', href: '/dashboard/activities' },
+    { icon: <MailWarningIcon className="h-5 w-5" />, label: 'Alerts', href: '/dashboard/Alerts' },
+    { icon: <Layers className="h-5 w-5" />, label: 'Projects', href: '/dashboard/projects' },
+    { icon: <Boxes className="h-5 w-5" />, label: 'Teams', href: '/dashboard/teams' },
     { icon: <Settings className="h-5 w-5" />, label: 'Settings', href: '#' },
 ]
 
 export default function Sidebar() {
+    const pathname = usePathname()
+    console.log({pathname})
     const [sidebarOpen, setSidebarOpen] = useState(false)
 
     return (
@@ -53,12 +60,12 @@ export default function Sidebar() {
                                 <X className="h-6 w-6 text-gray-500" />
                             </Button>
                         </div>
-                        <nav className="mt-5">
+                        <nav className="mt-5 px-4">
                             {sidebarItems.map((item, index) => (
                                 <Link
                                     key={index}
                                     href={item.href}
-                                    className="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-200"
+                                    className={`flex items-center px-4 mb-4 rounded  py-2 text-gray-700 hover:bg-gray-200 ${pathname === item.href ? "bg-primary text-primary-foreground hover:bg-primary/90":""}`}
                                 >
                                     {item.icon}
                                     <span className="ml-2">{item.label}</span>

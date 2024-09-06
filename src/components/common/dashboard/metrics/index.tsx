@@ -13,7 +13,7 @@ export function Metric({ name, value, icon }: MetricProps) {
         <div className="bg-white overflow-hidden shadow rounded-lg">
             <div className="p-5">
                 <div className="flex items-center">
-                    <div className="flex-shrink-0 bg-blue-500 rounded-md p-3">
+                    <div className="flex-shrink-0 bg-black rounded-md p-3">
                         {icon}
                     </div>
                     <div className="ml-5 w-0 flex-1">
