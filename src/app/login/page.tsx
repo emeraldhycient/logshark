@@ -208,7 +208,7 @@ export default function LoginPage() {
                                 variant="outline"
                                 className="w-full"
                             >
-                                <Github className="w-5 h-5 mr-2" />
+                                <Github className="w-5 h-5 mr-2 text-gray-900" />
                                 GitHub
                             </Button>
                         </div>
@@ -217,7 +217,7 @@ export default function LoginPage() {
                         <p className="text-sm text-gray-600">
                             Don&apos;t have an account?
                             <Link
-                                href="/signup"
+                                href="/register"
                                 className="font-medium text-blue-600 hover:text-blue-500 ml-1"
                             >
                                 Sign Up Here

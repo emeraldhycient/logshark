@@ -286,7 +286,7 @@ export default function SignUpPage() {
                                 variant="outline"
                                 className="w-full"
                             >
-                                <Github className="w-5 h-5 mr-2" />
+                                <Github className="w-5 h-5 mr-2 text-gray-900" />
                                 GitHub
                             </Button>
                         </div>
