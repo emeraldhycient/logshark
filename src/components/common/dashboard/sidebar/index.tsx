@@ -4,7 +4,7 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '@/components/ui/button'
-import { Menu, X, Home, Activity, Layers, Settings, HelpCircle, LogOut, ChartNetwork, ServerCrash, Boxes, MailWarningIcon } from 'lucide-react'
+import { Menu, X, Home, Activity, Layers, Settings, HelpCircle, LogOut, ChartNetwork, ServerCrash, Boxes, MailWarningIcon, KeyIcon } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
@@ -16,7 +16,8 @@ const sidebarItems = [
     { icon: <MailWarningIcon className="h-5 w-5" />, label: 'Alerts', href: '/dashboard/Alerts' },
     { icon: <Layers className="h-5 w-5" />, label: 'Projects', href: '/dashboard/projects' },
     { icon: <Boxes className="h-5 w-5" />, label: 'Teams', href: '/dashboard/teams' },
-    { icon: <Settings className="h-5 w-5" />, label: 'Settings', href: '#' },
+    { icon: <KeyIcon className="h-5 w-5" />, label: 'Usage', href: '/dashboard/usage' },
+    { icon: <Settings className="h-5 w-5" />, label: 'Settings', href: '/dashboard/setting' },
 ]
 
 export default function Sidebar() {
