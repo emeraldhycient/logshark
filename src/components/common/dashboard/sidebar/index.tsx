@@ -61,7 +61,7 @@ export default function Sidebar() {
                                 <X className="h-6 w-6 text-gray-500" />
                             </Button>
                         </div>
-                        <nav className="mt-5 px-4">
+                        <nav className="mt-5 px-4 overflow-y-auto h-fit">
                             {sidebarItems.map((item, index) => (
                                 <Link
                                     key={index}

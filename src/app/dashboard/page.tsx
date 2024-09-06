@@ -269,24 +269,32 @@ export default function Dashboard() {
                                 <thead>
                                     <tr className="border-b bg-muted/50 text-muted-foreground">
                                         <th className="p-2 text-left font-medium">Timestamp</th>
+                                        <th className="p-2 text-left font-medium">Method</th>
                                         <th className="p-2 text-left font-medium">Level</th>
+                                        <th className="p-2 text-left font-medium">Endpoint</th>
                                         <th className="p-2 text-left font-medium">Message</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr className="border-b">
                                         <td className="p-2">2023-05-28 14:32:15</td>
+                                        <td className="p-2">Get</td>
                                         <td className="p-2"><span className="px-2 py-1 rounded-full text-xs bg-red-100 text-red-800">Error</span></td>
+                                        <td className="p-2">/api/user/me</td>
                                         <td className="p-2">Failed to connect to database</td>
                                     </tr>
                                     <tr className="border-b">
                                         <td className="p-2">2023-05-28 14:30:05</td>
+                                        <td className="p-2">Get</td>
                                         <td className="p-2"><span className="px-2 py-1 rounded-full text-xs bg-yellow-100 text-yellow-800">Warning</span></td>
+                                        <td className="p-2">/api/user/me</td>
                                         <td className="p-2">High memory usage detected</td>
                                     </tr>
                                     <tr>
                                         <td className="p-2">2023-05-28 14:28:30</td>
+                                        <td className="p-2">Get</td>
                                         <td className="p-2"><span className="px-2 py-1 rounded-full text-xs bg-green-100 text-green-800">Info</span></td>
+                                        <td className="p-2">/api/user/me</td>
                                         <td className="p-2">User authentication successful</td>
                                     </tr>
                                 </tbody>
