@@ -1,0 +1,496 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Schema Models
+
+model User {
+  id             String        @id @default(uuid()) // Unique identifier for each user
+  email          String        @unique // User's email address, must be unique
+  password       String // User's password
+  firstName      String // User's first name
+  lastName       String // User's last name
+  createdAt      DateTime      @default(now()) // Timestamp for user creation
+  updatedAt      DateTime      @updatedAt // Timestamp for last user update
+  organization   Organization? @relation(fields: [organizationId], references: [id]) // Relationship with Organization
+  organizationId String? // Foreign key to Organization
+  sessions       Session[] // Relationship with Session
+  profiles       UserProfile[] // Relationship with UserProfile
+  userTags       UserTag[] // Relationship with UserTag
+  auditLogs      AuditLog[] // Relationship with AuditLog for tracking changes
+  segments       UserSegment[] // Relationship with UserSegment
+  cohorts        Cohort[] // Relationship with Cohorts
+}
+
+model Organization {
+  id        String    @id @default(uuid()) // Unique identifier for each organization
+  name      String // Organization's name
+  createdAt DateTime  @default(now()) // Timestamp for organization creation
+  updatedAt DateTime  @updatedAt // Timestamp for last organization update
+  users     User[] // List of users in the organization
+  projects  Project[] // List of projects in the organization
+}
+
+model Project {
+  id             String         @id @default(uuid()) // Unique identifier for each project
+  name           String // Project's name
+  organization   Organization   @relation(fields: [organizationId], references: [id]) // Relationship with Organization
+  organizationId String // Foreign key to Organization
+  createdAt      DateTime       @default(now()) // Timestamp for project creation
+  updatedAt      DateTime       @updatedAt // Timestamp for last project update
+  dataSources    DataSource[] // List of data sources associated with the project
+  events         Event[] // List of events tracked in the project
+  featureFlags   FeatureFlag[] // List of feature flags for A/B testing
+  customMetrics  CustomMetric[] // List of custom metrics associated with the project
+}
+
+model DataSource {
+  id              String              @id @default(uuid()) // Unique identifier for each data source
+  type            DataSourceType // Type of data source (web, mobile, api)
+  project         Project             @relation(fields: [projectId], references: [id]) // Relationship with Project
+  projectId       String // Foreign key to Project
+  createdAt       DateTime            @default(now()) // Timestamp for data source creation
+  updatedAt       DateTime            @updatedAt // Timestamp for last data source update
+  events          Event[] // List of events related to this data source
+  metrics         PerformanceMetric[] // Performance metrics associated with this data source
+  deviceInfo      DeviceInfo[] // Device information associated with the data source
+  MobileAppMetric MobileAppMetric[]
+}
+
+model Event {
+  id               String             @id @default(uuid()) // Unique identifier for each event
+  eventType        EventType // Type of event (e.g., page_view, click, form_submission)
+  dataSource       DataSource         @relation(fields: [dataSourceId], references: [id]) // Relationship with DataSource
+  dataSourceId     String // Foreign key to DataSource
+  userId           String? // Optional user ID if the event is associated with a logged-in user
+  sessionId        String // Unique identifier for the user session
+  timestamp        DateTime           @default(now()) // Timestamp when the event occurred
+  details          Json // Additional details about the event
+  pageViews        PageView[] // Related PageView events
+  clicks           Click[] // Related Click events
+  formInteractions FormInteraction[] // Related FormInteraction events
+  apiCalls         ApiCall[] // Related ApiCall events
+  customEvents     CustomEvent[] // Related CustomEvent events
+  scrollDepths     ScrollDepth[] // Related ScrollDepth events
+  heatmaps         Heatmap[] // Related Heatmap events
+  eventTags        EventTag[] // Relationship with EventTag for tagging
+  Project          Project?           @relation(fields: [projectId], references: [id])
+  projectId        String?
+  ConversionMetric ConversionMetric[]
+  CartInteraction  CartInteraction[]
+}
+
+model Session {
+  id        String   @id @default(uuid()) // Unique identifier for each session
+  user      User     @relation(fields: [userId], references: [id]) // Relationship with User
+  userId    String // Foreign key to User
+  sessionId String   @unique // Unique session identifier
+  ipAddress String // IP address of the user
+  userAgent String // User agent string from the browser
+  createdAt DateTime @default(now()) // Timestamp for session start
+  updatedAt DateTime @default(now()) // Timestamp for session update
+}
+
+model PageView {
+  id        String   @id @default(uuid()) // Unique identifier for each page view
+  event     Event    @relation(fields: [eventId], references: [id]) // Relationship with Event
+  eventId   String // Foreign key to Event
+  pageUrl   String // URL of the page viewed
+  duration  Int // Duration of time spent on the page in seconds
+  referrer  String? // Referring URL
+  createdAt DateTime @default(now()) // Timestamp for page view creation
+}
+
+model Click {
+  id        String   @id @default(uuid()) // Unique identifier for each click event
+  event     Event    @relation(fields: [eventId], references: [id]) // Relationship with Event
+  eventId   String // Foreign key to Event
+  element   String // Identifier for the clicked element (ID or class)
+  pageUrl   String // URL of the page where the click occurred
+  createdAt DateTime @default(now()) // Timestamp for click event creation
+}
+
+model FormInteraction {
+  id         String   @id @default(uuid()) // Unique identifier for each form interaction
+  event      Event    @relation(fields: [eventId], references: [id]) // Relationship with Event
+  eventId    String // Foreign key to Event
+  formId     String // Identifier for the form being interacted with
+  fieldName  String // Name of the form field
+  action     String // Action taken (e.g., focus, input, submit)
+  inputValue String? // Captured value of the field (if applicable)
+  createdAt  DateTime @default(now()) // Timestamp for form interaction creation
+}
+
+model ScrollDepth {
+  id         String   @id @default(uuid()) // Unique identifier for each scroll depth event
+  event      Event    @relation(fields: [eventId], references: [id]) // Relationship with Event
+  eventId    String // Foreign key to Event
+  pageUrl    String // URL of the page where scroll depth was measured
+  percentage Float // Scroll depth as a percentage of the total page length
+  createdAt  DateTime @default(now()) // Timestamp for scroll depth event creation
+}
+
+model Heatmap {
+  id          String   @id @default(uuid()) // Unique identifier for each heatmap event
+  event       Event    @relation(fields: [eventId], references: [id]) // Relationship with Event
+  eventId     String // Foreign key to Event
+  pageUrl     String // URL of the page where the heatmap was recorded
+  coordinates Json // X and Y coordinates for clicks, hovers, etc.
+  createdAt   DateTime @default(now()) // Timestamp for heatmap event creation
+}
+
+model PerformanceMetric {
+  id           String     @id @default(uuid()) // Unique identifier for each performance metric
+  metricType   MetricType // Type of performance metric
+  value        Float // Value of the metric
+  timestamp    DateTime   @default(now()) // Timestamp when the metric was recorded
+  details      Json // Additional details or context
+  dataSource   DataSource @relation(fields: [dataSourceId], references: [id]) // Relationship with DataSource
+  dataSourceId String // Foreign key to DataSource
+}
+
+model ApiCall {
+  id           String   @id @default(uuid()) // Unique identifier for each API call
+  event        Event    @relation(fields: [eventId], references: [id]) // Relationship with Event
+  eventId      String // Foreign key to Event
+  endpoint     String // API endpoint being called
+  responseTime Int // Response time in milliseconds
+  status       Int // HTTP status code of the response
+  requestBody  Json? // Optional captured request body
+  responseBody Json? // Optional captured response body
+  createdAt    DateTime @default(now()) // Timestamp for API call creation
+}
+
+model DeviceInfo {
+  id              String     @id @default(uuid()) // Unique identifier for each device information record
+  dataSource      DataSource @relation(fields: [dataSourceId], references: [id]) // Relationship with DataSource
+  dataSourceId    String // Foreign key to DataSource
+  deviceType      DeviceType // Type of device (desktop, mobile, tablet, smart TV)
+  model           String? // Model of the device (e.g., iPhone X, Galaxy S10)
+  operatingSystem String // Operating system of the device (e.g., iOS, Android, Windows)
+  osVersion       String // Version of the operating system
+  browser         String? // Browser name if applicable (e.g., Chrome, Firefox)
+  browserVersion  String? // Browser version
+  screenWidth     Int? // Screen width in pixels
+  screenHeight    Int? // Screen height in pixels
+  createdAt       DateTime   @default(now()) // Timestamp for device info creation
+}
+
+model MobileAppMetric {
+  id           String           @id @default(uuid()) // Unique identifier for each mobile app metric
+  metricType   MobileMetricType // Type of mobile app metric
+  value        String // Value of the metric (e.g., version number, crash details)
+  timestamp    DateTime         @default(now()) // Timestamp when the metric was recorded
+  dataSource   DataSource       @relation(fields: [dataSourceId], references: [id]) // Relationship with DataSource
+  dataSourceId String // Foreign key to DataSource
+  createdAt    DateTime         @default(now()) // Timestamp for mobile app metric creation
+}
+
+model ConversionMetric {
+  id         String               @id @default(uuid()) // Unique identifier for each conversion metric
+  metricType ConversionMetricType // Type of conversion metric
+  value      Float // Value of the conversion metric
+  event      Event                @relation(fields: [eventId], references: [id]) // Relationship with Event
+  eventId    String // Foreign key to Event
+  timestamp  DateTime             @default(now()) // Timestamp for conversion metric recording
+  createdAt  DateTime             @default(now()) // Timestamp for conversion metric creation
+}
+
+model CartInteraction {
+  id        String   @id @default(uuid()) // Unique identifier for each cart interaction
+  event     Event    @relation(fields: [eventId], references: [id]) // Relationship with Event
+  eventId   String // Foreign key to Event
+  action    String // Type of action (e.g., add_to_cart, remove_from_cart, checkout)
+  itemId    String // Identifier of the item involved
+  quantity  Int // Quantity of the item involved
+  price     Float // Price of the item at the time of interaction
+  createdAt DateTime @default(now()) // Timestamp for cart interaction creation
+}
+
+model CustomEvent {
+  id          String   @id @default(uuid()) // Unique identifier for each custom event
+  name        String // Name of the custom event
+  description String? // Optional description of the custom event
+  event       Event    @relation(fields: [eventId], references: [id]) // Relationship with Event
+  eventId     String // Foreign key to Event
+  timestamp   DateTime @default(now()) // Timestamp for custom event creation
+  createdAt   DateTime @default(now()) // Timestamp for custom event creation
+}
+
+model UserProfile {
+  id        String   @id @default(uuid()) // Unique identifier for each user profile
+  userId    String // Foreign key to User
+  location  String? // Optional geolocation data for the user (e.g., city, country)
+  latitude  Float? // Optional latitude for geolocation
+  longitude Float? // Optional longitude for geolocation
+  device    String? // Device information (e.g., type, model)
+  language  String? // Preferred language of the user
+  timezone  String? // User's timezone
+  createdAt DateTime @default(now()) // Timestamp for user profile creation
+  updatedAt DateTime @updatedAt // Timestamp for last user profile update
+  User      User     @relation(fields: [userId], references: [id])
+}
+
+// New Models
+
+model FeatureFlag {
+  id          String       @id @default(uuid()) // Unique identifier for each feature flag
+  name        String // Name of the feature flag
+  description String? // Description of the feature
+  isEnabled   Boolean      @default(false) // Flag indicating if the feature is enabled
+  createdAt   DateTime     @default(now()) // Timestamp for feature flag creation
+  updatedAt   DateTime     @updatedAt // Timestamp for last feature flag update
+  experiments Experiment[] // List of experiments related to this feature flag
+  Project     Project?     @relation(fields: [projectId], references: [id])
+  projectId   String?
+}
+
+model Experiment {
+  id            String      @id @default(uuid()) // Unique identifier for each experiment
+  name          String // Name of the experiment
+  featureFlag   FeatureFlag @relation(fields: [featureFlagId], references: [id]) // Relationship with FeatureFlag
+  featureFlagId String // Foreign key to FeatureFlag
+  variation     String // Variation of the experiment (e.g., A, B)
+  startDate     DateTime // Experiment start date
+  endDate       DateTime? // Experiment end date (optional)
+  createdAt     DateTime    @default(now()) // Timestamp for experiment creation
+  updatedAt     DateTime    @updatedAt // Timestamp for last experiment update
+}
+
+model AuditLog {
+  id         String     @id @default(uuid()) // Unique identifier for each audit log
+  entityType EntityType // Type of entity being changed (e.g., User, Project)
+  entityId   String // ID of the entity being changed
+  action     String // Action performed (e.g., create, update, delete)
+  changedBy  String // User ID of the person who made the change
+  changes    Json // JSON object detailing the changes made
+  timestamp  DateTime   @default(now()) // Timestamp when the change was made
+  User       User?      @relation(fields: [userId], references: [id])
+  userId     String?
+}
+
+model CustomMetric {
+  id          String      @id @default(uuid()) // Unique identifier for each custom metric
+  name        String // Name of the custom metric
+  description String? // Description of what the metric represents
+  formula     String // Formula used to calculate the metric (e.g., "pageViews / activeUsers")
+  createdAt   DateTime    @default(now()) // Timestamp for custom metric creation
+  updatedAt   DateTime    @updatedAt // Timestamp for last custom metric update
+  dataPoints  DataPoint[] // List of data points related to this custom metric
+  Project     Project?    @relation(fields: [projectId], references: [id])
+  projectId   String?
+}
+
+model DataPoint {
+  id             String       @id @default(uuid()) // Unique identifier for each data point
+  customMetric   CustomMetric @relation(fields: [customMetricId], references: [id]) // Relationship with CustomMetric
+  customMetricId String // Foreign key to CustomMetric
+  value          Float // Value of the data point
+  timestamp      DateTime     @default(now()) // Timestamp when the data point was recorded
+}
+
+model Tag {
+  id        String     @id @default(uuid()) // Unique identifier for each tag
+  name      String // Name of the tag
+  createdAt DateTime   @default(now()) // Timestamp for tag creation
+  updatedAt DateTime   @updatedAt // Timestamp for last tag update
+  EventTag  EventTag[]
+  UserTag   UserTag[]
+}
+
+model EventTag {
+  id      String @id @default(uuid()) // Unique identifier for each event tag
+  event   Event  @relation(fields: [eventId], references: [id]) // Relationship with Event
+  eventId String // Foreign key to Event
+  tag     Tag    @relation(fields: [tagId], references: [id]) // Relationship with Tag
+  tagId   String // Foreign key to Tag
+}
+
+model UserTag {
+  id     String @id @default(uuid()) // Unique identifier for each user tag
+  user   User   @relation(fields: [userId], references: [id]) // Relationship with User
+  userId String // Foreign key to User
+  tag    Tag    @relation(fields: [tagId], references: [id]) // Relationship with Tag
+  tagId  String // Foreign key to Tag
+}
+
+model UserSegment {
+  id          String          @id @default(uuid()) // Unique identifier for each user segment
+  name        String // Name of the segment (e.g., "High Spend Users")
+  description String? // Description of the segment
+  criteria    Json // Criteria used to define the segment (e.g., "spend > 100")
+  segmentType UserSegmentType // Type of user segment (e.g., high spend, frequent visitors)
+  createdAt   DateTime        @default(now()) // Timestamp for segment creation
+  updatedAt   DateTime        @updatedAt // Timestamp for last segment update
+  users       User[] // List of users in this segment
+}
+
+model Cohort {
+  id          String    @id @default(uuid()) // Unique identifier for each cohort
+  name        String // Name of the cohort (e.g., "July 2024 Sign-ups")
+  description String? // Description of the cohort
+  startDate   DateTime // Start date of the cohort
+  endDate     DateTime? // End date of the cohort (optional)
+  createdAt   DateTime  @default(now()) // Timestamp for cohort creation
+  updatedAt   DateTime  @updatedAt // Timestamp for last cohort update
+  users       User[] // List of users in this cohort
+}
+
+model AlertRule {
+  id            String         @id @default(uuid()) // Unique identifier for each alert rule
+  name          String // Name of the alert rule
+  description   String? // Description of what the alert monitors
+  condition     String // Condition to trigger the alert (e.g., "responseTime > 500")
+  severity      AlertSeverity // Severity level of the alert
+  createdAt     DateTime       @default(now()) // Timestamp for alert rule creation
+  updatedAt     DateTime       @updatedAt // Timestamp for last alert rule update
+  notifications Notification[] // List of notifications related to this alert rule
+}
+
+model Notification {
+  id          String             @id @default(uuid()) // Unique identifier for each notification
+  alertRule   AlertRule          @relation(fields: [alertRuleId], references: [id]) // Relationship with AlertRule
+  alertRuleId String // Foreign key to AlertRule
+  method      NotificationMethod // Method of notification (e.g., email, SMS, Slack)
+  recipient   String // Recipient of the notification
+  message     String // Message content of the notification
+  sentAt      DateTime? // Timestamp when the notification was sent
+}
+
+model RetentionPolicy {
+  id              String     @id @default(uuid()) // Unique identifier for each retention policy
+  name            String // Name of the retention policy
+  description     String? // Description of the retention policy
+  entityType      EntityType // Type of entity the policy applies to (e.g., Event, Session)
+  retentionPeriod Int // Number of days to retain data
+  createdAt       DateTime   @default(now()) // Timestamp for retention policy creation
+  updatedAt       DateTime   @updatedAt // Timestamp for last retention policy update
+}
+
+model DataExport {
+  id           String              @id @default(uuid()) // Unique identifier for each data export configuration
+  name         String // Name of the export configuration
+  description  String? // Description of the export
+  format       DataExportFormat // Data format (e.g., CSV, JSON, XML)
+  destination  String // Destination for the data (e.g., S3 bucket, FTP server)
+  frequency    DataExportFrequency // Export frequency (e.g., daily, weekly, monthly)
+  lastExported DateTime? // Timestamp of the last export
+  createdAt    DateTime            @default(now()) // Timestamp for export configuration creation
+  updatedAt    DateTime            @updatedAt // Timestamp for last export configuration update
+}
+
+model Integration {
+  id          String          @id @default(uuid()) // Unique identifier for each integration
+  name        String // Name of the integration (e.g., Salesforce, Google Analytics)
+  type        IntegrationType // Type of integration (e.g., CRM, Analytics, Marketing)
+  apiEndpoint String // API endpoint for the integration
+  apiKey      String // API key for authentication
+  status      String // Status of the integration (e.g., active, inactive)
+  createdAt   DateTime        @default(now()) // Timestamp for integration creation
+  updatedAt   DateTime        @updatedAt // Timestamp for last integration update
+}
+
+// Enums Definitions for categorical data
+enum DataSourceType {
+  WEB // For websites
+  MOBILE // For mobile apps
+  API // For APIs
+}
+
+enum UserSegmentType {
+  HIGH_SPEND_USERS // Users who spend above a certain threshold
+  FREQUENT_VISITORS // Users who visit the platform frequently
+  NEW_USERS // Recently signed-up users
+  INACTIVE_USERS // Users who haven't interacted for a while
+  PREMIUM_SUBSCRIBERS // Users with a premium subscription
+}
+
+enum NotificationMethod {
+  EMAIL // Notification via email
+  SMS // Notification via SMS
+  SLACK // Notification via Slack
+  PUSH_NOTIFICATION // Notification via push notification
+}
+
+enum EventType {
+  PAGE_VIEW // When a page is viewed
+  CLICK // When an element is clicked
+  FORM_SUBMISSION // When a form is submitted
+  API_CALL // When an API call is made
+  SCROLL_DEPTH // To track how far down a user scrolls on a page
+  HEATMAP // For capturing user interaction heatmaps
+  CUSTOM // For custom-defined events
+}
+
+enum MetricType {
+  PAGE_LOAD_TIME // Time taken for a page to load
+  API_RESPONSE_TIME // Time taken for an API to respond
+  ERROR // Error events
+  RESOURCE_USAGE // Metrics for CPU, memory, bandwidth usage
+  UPTIME // Uptime monitoring
+  CRASH_REPORT // Crash report for mobile or web apps
+}
+
+enum MobileMetricType {
+  APP_INSTALL // When a mobile app is installed
+  CRASH_REPORT // Reports of app crashes
+  IN_APP_PURCHASE // In-app purchases data
+  APP_VERSION // Tracking app version distribution
+  DEVICE_SPECIFIC // Device-specific performance metrics (e.g., battery, memory usage)
+}
+
+enum ConversionMetricType {
+  CONVERSION // Conversion rates tracking
+  REVENUE // Revenue generated tracking
+  CART_ABANDONMENT // Cart abandonment rates
+  CUSTOMER_LIFETIME_VALUE // Estimation of customer lifetime value
+}
+
+enum DeviceType {
+  DESKTOP // For desktop devices
+  MOBILE // For mobile devices
+  TABLET // For tablet devices
+  SMART_TV // For smart TV devices
+}
+
+enum AlertSeverity {
+  CRITICAL // Critical severity alert
+  WARNING // Warning severity alert
+  INFO // Informational alert
+}
+
+enum EntityType {
+  USER // Entity type for users
+  PROJECT // Entity type for projects
+  ORGANIZATION // Entity type for organizations
+  EVENT // Entity type for events
+}
+
+enum IntegrationType {
+  CRM // Customer Relationship Management integration
+  ANALYTICS // Analytics platform integration
+  MARKETING // Marketing tool integration
+}
+
+enum DataExportFormat {
+  CSV // Export data in CSV format
+  JSON // Export data in JSON format
+  XML // Export data in XML format
+}
+
+enum DataExportFrequency {
+  DAILY // Export data daily
+  WEEKLY // Export data weekly
+  MONTHLY // Export data monthly
+}
