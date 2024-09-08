@@ -82,7 +82,7 @@ export default function LogViews() {
 
   return (
     <div className="container mx-auto  pb-8">
-      <Header title='Log Views' />
+      <Header title='Logs' />
       <div className="px-4">
         <div className="flex justify-end items-center pr-4 mb-6 mt-2">
           <Button variant="outline">
