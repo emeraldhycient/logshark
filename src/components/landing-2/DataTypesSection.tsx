@@ -28,8 +28,8 @@ const dataCategories = [
     },
 ];
 
-const MeteorCard = ({ title, description, items }: { title: string; description: string; items: string[] }) => (
-    <div className="relative h-full w-full max-w-xs p-8 bg-gray-900 border border-gray-800 rounded-2xl shadow-lg overflow-hidden">
+const MeteorCard = ({  items }: { items: string[] }) => (
+    <div className="relative h-full w-full max-w-xs p-8 bg-gray-900 border border-gray-800 shadow-lg overflow-hidden">
         <div className="absolute inset-0 transform scale-[0.80] bg-gradient-to-r from-blue-500 to-teal-500 rounded-full blur-3xl" />
         <div className="relative z-10">
             {/* <h1 className="text-xl font-bold text-white mb-4">{title}</h1>
@@ -55,8 +55,8 @@ export default function DataTypesSection() {
         description: category.description,
         content: (
             <MeteorCard
-                title={category.title}
-                description={category.description}
+                // title={category.title}
+                // description={category.description}
                 items={category.items} // Pass the items for the list
             />
         ),
