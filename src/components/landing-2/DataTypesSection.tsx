@@ -21,6 +21,11 @@ const dataCategories = [
         description: 'Track and analyze your API usage to ensure reliability and optimize performance.',
         items: ['API Call Volume', 'Success vs Failure Rates', 'Latency Metrics'],
     },
+    {
+        title: '',
+        description: '',
+        items: [],
+    },
 ];
 
 const MeteorCard = ({ title, description, items }: { title: string; description: string; items: string[] }) => (
