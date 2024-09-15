@@ -9,19 +9,19 @@ import Navbar from "@/components/landing-2/navbar";
 import PricingSection from "@/components/landing-2/PricingSection";
 
 const HomePage = () => {
-  return (
-    <>
-      <Navbar />
-      <HeroSection />
-      <FeaturesSection />
-      <DataTypesSection />
-      {/* <GapsSection /> */}
-      <PricingSection />
-      <GoogleGeminiEffectDemo />
-      <Footer />
+    return (
+        <>
+            <Navbar/>
+            <HeroSection />
+            <FeaturesSection />
+            <DataTypesSection />
+            {/* <GapsSection /> */}
+            <PricingSection />
+            <GoogleGeminiEffectDemo />
+            <Footer />
 
-    </>
-  );
+        </>
+    );
 };
 
 export default HomePage;
