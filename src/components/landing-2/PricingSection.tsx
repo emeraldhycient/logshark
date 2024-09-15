@@ -7,12 +7,18 @@ import { Badge } from '@/components/ui/badge'
 import { Switch } from '@/components/ui/switch'
 import { CheckCircle } from 'lucide-react'
 import Link from 'next/link'
+import { Slider } from '@/components/ui/slider'  // Assuming you're using a slider component
+
+// Constants for Growth plan pricing
+const GROWTH_PLAN_PRICE = 19 // Base price for Growth plan
+const BASE_EVENTS = 1000000 // Events for Growth plan
+const EVENT_COST_INCREMENT = 19 // Price increment for each additional 1,000,000 events
 
 const plans = [
     {
-        name: 'Starter',
+        name: 'Free',
         price: { monthly: '$0', annually: '$0' },
-        description: 'For individuals and small projects',
+        description: 'For individuals and small projects starting out.',
         features: [
             'Basic User Behavior Analytics',
             'Up to 10,000 events/month',
@@ -25,10 +31,10 @@ const plans = [
     },
     {
         name: 'Growth',
-        price: { monthly: '$99', annually: '$89' },
-        description: 'For growing teams and businesses',
+        price: { monthly: '$19', annually: '$180' },
+        description: 'For growing teams and businesses needing more insights.',
         features: [
-            'All Starter features',
+            'All Free plan features',
             'Real-Time Engagement Metrics',
             'Up to 1,000,000 events/month',
             'Priority Support',
@@ -37,27 +43,26 @@ const plans = [
         ],
         cta: 'Start Free Trial',
         popular: true,
-    },
-    {
-        name: 'Enterprise',
-        price: { monthly: 'Custom', annually: 'Custom' },
-        description: 'For large-scale applications',
-        features: [
-            'All Growth features',
-            'Unlimited Events',
-            'Dedicated Account Manager',
-            'Custom Integrations',
-            'On-Premise Deployment Option',
-            'Unlimited Team Members',
-            'Custom data retention',
-        ],
-        cta: 'Contact Sales',
-        popular: false,
-    },
+    }
 ]
 
 export default function PricingSection() {
     const [isAnnual, setIsAnnual] = useState(false)
+    const [enterpriseEvents, setEnterpriseEvents] = useState([BASE_EVENTS]) // Array for Slider value
+
+    // Function to calculate the enterprise price
+    const calculateEnterprisePrice = () => {
+        const events = enterpriseEvents[0] // Slider value is an array
+        const pricePerMillion = GROWTH_PLAN_PRICE
+        const extraMillions = (events - BASE_EVENTS) / 1000000
+        const totalPrice = pricePerMillion + extraMillions * EVENT_COST_INCREMENT
+
+        if (isAnnual) {
+            return `$${(totalPrice * 12 * 0.8).toFixed(0)}` // Annual price with 20% discount
+        }
+
+        return `$${totalPrice.toFixed(0)}` // Monthly price
+    }
 
     return (
         <section className="py-20 bg-gradient-to-b from-gray-50 to-white">
@@ -89,8 +94,8 @@ export default function PricingSection() {
                         <Card
                             key={plan.name}
                             className={`flex flex-col justify-between ${plan.popular
-                                    ? 'border-blue-500 shadow-xl scale-105 z-10'
-                                    : 'border-gray-200'
+                                ? 'border-blue-500 shadow-xl scale-105 z-10'
+                                : 'border-gray-200'
                                 }`}
                         >
                             <CardHeader>
@@ -134,6 +139,65 @@ export default function PricingSection() {
                             </CardFooter>
                         </Card>
                     ))}
+
+                    {/* Enterprise Plan */}
+                    <Card className="flex flex-col justify-between border-gray-200">
+                        <CardHeader>
+                            <CardTitle className="text-2xl font-bold">Enterprise</CardTitle>
+                            <CardDescription>
+                                For large-scale applications with advanced needs. Customize your plan by selecting events.
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent className="flex-grow">
+                            <div className="text-center">
+                                <span className="text-5xl font-extrabold">
+                                    {calculateEnterprisePrice()}
+                                </span>
+                                <span className="text-xl font-medium text-gray-500">
+                                    /{isAnnual ? 'year' : 'month'}
+                                </span>
+                            </div>
+
+                            <div className="mt-6">
+                                <label htmlFor="events-slider" className="block text-lg font-medium text-gray-700">
+                                    Events per Month: {enterpriseEvents[0].toLocaleString()}
+                                </label>
+                                <Slider
+                                    id="events-slider"
+                                    min={BASE_EVENTS}
+                                    max={100_000_000} 
+                                    step={100000} // Increment by 100,000
+                                    value={enterpriseEvents} // Array value
+                                    onValueChange={(value) => setEnterpriseEvents(value)} // Update array
+                                    className="mt-4"
+                                />
+                            </div>
+
+                            <ul className="mt-8 space-y-4">
+                                <li className="flex items-start">
+                                    <CheckCircle className="h-6 w-6 text-green-500 flex-shrink-0" />
+                                    <span className="ml-3 text-base text-gray-700">All Growth plan features</span>
+                                </li>
+                                <li className="flex items-start">
+                                    <CheckCircle className="h-6 w-6 text-green-500 flex-shrink-0" />
+                                    <span className="ml-3 text-base text-gray-700">Unlimited Team Members</span>
+                                </li>
+                                <li className="flex items-start">
+                                    <CheckCircle className="h-6 w-6 text-green-500 flex-shrink-0" />
+                                    <span className="ml-3 text-base text-gray-700">Dedicated Account Manager</span>
+                                </li>
+                                <li className="flex items-start">
+                                    <CheckCircle className="h-6 w-6 text-green-500 flex-shrink-0" />
+                                    <span className="ml-3 text-base text-gray-700">Custom Integrations</span>
+                                </li>
+                            </ul>
+                        </CardContent>
+                        <CardFooter>
+                            <Button className="w-full bg-blue-600 hover:bg-blue-700" variant="default" size="lg">
+                                Get Started
+                            </Button>
+                        </CardFooter>
+                    </Card>
                 </div>
 
                 <div className="mt-20 text-center">
@@ -171,9 +235,6 @@ export default function PricingSection() {
                             <span className="absolute -bottom-0 left-[1.125rem] h-px w-[calc(100%-2.25rem)] bg-gradient-to-r from-emerald-400/0 via-emerald-400/90 to-emerald-400/0 transition-opacity duration-500 group-hover:opacity-40" />
                         </button>
                     </Link>
-                    {/* <Button className="mt-8" size="lg" variant="outline">
-                        <h6 className='text-gray-500'>Schedule Consultation</h6>
-                    </Button> */}
                 </div>
             </div>
         </section>
