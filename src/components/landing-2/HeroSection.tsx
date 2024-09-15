@@ -105,20 +105,20 @@ export default function HeroSection() {
     return (
         <section className=" text-white py-24 md:py-32 lg:py-44 relative overflow-hidden ">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                <div className="flex items-center justify-center">
-                    <motion.div
+                <div className="flex flex-col items-center justify-center">
+                    {/* <motion.div
                         initial={{ opacity: 0, y: -50 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8 }}
                         className="mb-8"
-                    >
+                    > */}
                         <div className="flex items-center max-w-5xl justify-center">
                             <TypewriterEffectSmooth words={words} />
                         </div>
-                        <p className="text-lg md:text-xl lg:text-2xl mb-6  mx-auto">
+                        <p className="text-lg md:text-xl lg:text-2xl mb-6 max-w-3xl mx-auto">
                             Unlock deep insights into user behavior, performance, and system metrics.
                         </p>
-                    </motion.div>
+                    {/* </motion.div> */}
                 </div>
 
                 {/* Buttons */}
