@@ -109,9 +109,6 @@ export default function HeroSection() {
         setOS(detectedOS);
     }, []);
 
-    console.log({os})
-
-
     return (
         <section className=" text-white py-24 md:py-32 lg:py-44 relative overflow-hidden ">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -176,7 +173,7 @@ export default function HeroSection() {
                                 className="bg-gray-900 rounded-lg shadow-lg overflow-hidden"
                             >
                                 <div className="flex items-center justify-between px-4 py-2 bg-gray-800">
-                                    <span className="text-sm font-medium">{example.label} Example</span>
+                                    <span className="text-sm font-medium hidden md:block">{example.label} Example</span>
                                     <TabsList className="flex flex-row gap-2 bg-transparent">
                                         {/* Render tab icons instead of labels */}
                                         {codeExamples.map((example) => (
