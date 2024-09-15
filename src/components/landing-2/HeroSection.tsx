@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
@@ -9,9 +9,9 @@ import { BackgroundBeams } from '@/components/ui/background-beams'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { dark } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import Link from 'next/link'
-
 // Importing Icons (you can replace these with your custom SVGs)
 import { SiNextdotjs, SiExpress, SiSvelte, SiQwik } from 'react-icons/si'
+import { getOS } from '@/utils/getOs'
 
 // Data for Tabs with icons
 const codeExamples = [
@@ -102,6 +102,16 @@ export default function HeroSection() {
     // UseState to handle activeTab
     const [activeTab, setActiveTab] = useState('nextjs')
 
+    const [os, setOS] = useState<string | null>(null);
+
+    useEffect(() => {
+        const detectedOS = getOS();
+        setOS(detectedOS);
+    }, []);
+
+    console.log({os})
+
+
     return (
         <section className=" text-white py-24 md:py-32 lg:py-44 relative overflow-hidden ">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -111,15 +121,26 @@ export default function HeroSection() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8, ease: 'easeOut', type: 'spring', stiffness: 70 }}
                         style={{ transform: 'translate3d(0, 0, 0)', overflow: 'visible' }}
-                        className="mb-8"
+                        className={`mb-8 ${os == 'iOS' ? 'hidden' : "block"} `}
+                        id='motion'
                     >
-                        <div className="flex items-center max-w-5xl justify-center">
+                        <div id='motion-2' className="flex items-center max-w-5xl justify-center">
                             <TypewriterEffectSmooth words={words} />
                         </div>
                         <p className="text-lg md:text-xl lg:text-2xl mb-6 max-w-3xl mx-auto">
                             Unlock deep insights into user behavior, performance, and system metrics.
                         </p>
                     </motion.div>
+                    <div className={`mb-8 ${os == 'iOS' ? "block" : "hidden"}`}>
+                        <div className="flex items-center max-w-5xl justify-center text-white">
+                            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 text-center">
+                                Real-Time Analytics for Web, APIs, and Mobile Apps
+                            </h1>
+                        </div>
+                        <p className="text-lg md:text-xl lg:text-2xl mb-6 max-w-3xl mx-auto">
+                            Unlock deep insights into user behavior, performance, and system metrics.
+                        </p>
+                    </div>
 
                 </div>
 
@@ -143,7 +164,7 @@ export default function HeroSection() {
                     onValueChange={(value) => setActiveTab(value)} // Changing active tab based on selection
                     className="max-w-4xl mx-auto"
                 >
-                   
+
 
                     {/* Render code content for each tab */}
                     {codeExamples.map((example) => (

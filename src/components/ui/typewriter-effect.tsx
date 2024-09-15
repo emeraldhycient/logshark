@@ -147,7 +147,7 @@ export const TypewriterEffectSmooth = ({
                     width: "0%",
                 }}
                 whileInView={{
-                    width: "fit-content",
+                    width: "100%"
                 }}
                 transition={{
                     duration: 2,
@@ -156,10 +156,12 @@ export const TypewriterEffectSmooth = ({
                 }}
             >
                 <div
-                    className="text-2xl md:text-5xl font-bold text-wrap"
+                    className="text-2xl md:text-5xl font-bold"
                     style={{
                         whiteSpace: "nowrap",
-                        textWrap:"pretty"
+                        textWrap: "pretty",
+                        WebkitTextFillColor: 'white',  // Ensure text is visible on iOS
+
                     }}
                 >
                     {renderWords()}{" "}
