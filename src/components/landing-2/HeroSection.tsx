@@ -141,21 +141,7 @@ export default function HeroSection() {
                     onValueChange={(value) => setActiveTab(value)} // Changing active tab based on selection
                     className="max-w-4xl mx-auto"
                 >
-                    <TabsList className="flex flex-row gap-2 -mb-10 bg-transparent">
-                        {/* Render tab icons instead of labels */}
-                        {codeExamples.map((example) => (
-                            <TabsTrigger
-                                key={example.value}
-                                value={example.value}
-                                className={`flex justify-center items-center px-4 py-2 rounded-full text-sm ${activeTab === example.value
-                                    ? 'bg-red-600 text-white'
-                                    : 'bg-gray-800 text-white hover:bg-blue-600'
-                                    } transition`}
-                            >
-                                {example.icon} {/* Display the icon */}
-                            </TabsTrigger>
-                        ))}
-                    </TabsList>
+                   
 
                     {/* Render code content for each tab */}
                     {codeExamples.map((example) => (
@@ -168,6 +154,21 @@ export default function HeroSection() {
                             >
                                 <div className="flex items-center justify-between px-4 py-2 bg-gray-800">
                                     <span className="text-sm font-medium">{example.label} Example</span>
+                                    <TabsList className="flex flex-row gap-2 bg-transparent">
+                                        {/* Render tab icons instead of labels */}
+                                        {codeExamples.map((example) => (
+                                            <TabsTrigger
+                                                key={example.value}
+                                                value={example.value}
+                                                className={`flex justify-center items-center px-4 py-2 rounded-full text-sm ${activeTab === example.value
+                                                    ? 'bg-purple-600 text-white hover:bg-purple-600'
+                                                    : 'bg-gray-800 text-white hover:bg-blue-600'
+                                                    } transition`}
+                                            >
+                                                {example.icon} {/* Display the icon */}
+                                            </TabsTrigger>
+                                        ))}
+                                    </TabsList>
                                     <div className="flex space-x-2">
                                         <div className="w-3 h-3 rounded-full bg-red-500" />
                                         <div className="w-3 h-3 rounded-full bg-yellow-500" />
