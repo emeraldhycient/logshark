@@ -1,7 +1,7 @@
 // components/Navbar.tsx
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { SearchIcon } from 'lucide-react';
+import { BarChart, SearchIcon } from 'lucide-react';
 import Link from 'next/link';
 
 const Navbar = () => {
@@ -11,8 +11,9 @@ const Navbar = () => {
         <nav className="fixed top-0 left-0 right-0 bg-gradient-to-r from-black to-gray-900 text-white shadow-md z-50">
             <div className="container mx-auto px-6 py-4 flex justify-between items-center">
                 {/* Logo */}
-                <div className="text-2xl font-bold tracking-wider hover:text-blue-400 transition-colors duration-300">
-                    Logshark
+                <div className="flex items-center space-x-2 mb-4">
+                    <BarChart className="h-8 w-8 text-blue-400" />
+                    <span className="text-2xl font-bold">LogShark</span>
                 </div>
 
                 {/* Desktop Links */}

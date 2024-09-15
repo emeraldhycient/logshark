@@ -64,7 +64,7 @@ export default function DataTypesSection() {
 
     return (
         <section className="py-24 bg-gradient-to-b from-gray-50 to-white">
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="mx-auto px-4 sm:px-6 ">
                 <div className="text-center mb-16">
                     <Badge variant="secondary" className="mb-4 text-blue-500 uppercase tracking-widest">
                         Data Types
