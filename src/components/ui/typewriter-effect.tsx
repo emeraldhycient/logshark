@@ -33,7 +33,7 @@ export const TypewriterEffect = ({
                 {
                     display: "inline-block",
                     opacity: 1,
-                    width: "fit-content",
+                    width: "auto",  // Ensure width is correctly set
                 },
                 {
                     duration: 0.3,
