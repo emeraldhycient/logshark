@@ -10,11 +10,15 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { dark } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import Link from 'next/link'
 
-// Data for Tabs
+// Importing Icons (you can replace these with your custom SVGs)
+import { SiNextdotjs, SiExpress, SiSvelte, SiQwik } from 'react-icons/si'
+
+// Data for Tabs with icons
 const codeExamples = [
     {
         label: 'Next.js',
         value: 'nextjs',
+        icon: <SiNextdotjs size={24} />,
         code: `// Next.js API usage
 import { logEvent } from 'logshark';
 
@@ -30,6 +34,7 @@ export default function HomePage() {
     {
         label: 'Express',
         value: 'express',
+        icon: <SiExpress size={24} />,
         code: `// Express.js API usage
 const express = require('express');
 const { logEvent } = require('logshark');
@@ -47,6 +52,7 @@ app.listen(3000, () => console.log('Server running on port 3000'));`,
     {
         label: 'SvelteKit',
         value: 'sveltekit',
+        icon: <SiSvelte size={24} />,
         code: `<!-- SvelteKit API usage -->
 <script>
   import { logEvent } from 'logshark';
@@ -65,6 +71,7 @@ app.listen(3000, () => console.log('Server running on port 3000'));`,
     {
         label: 'Qwik',
         value: 'qwik',
+        icon: <SiQwik size={24} />,
         code: `// Qwik API usage
 import { component$, useVisibleTask$ } from '@builder.io/qwik';
 import { logEvent } from 'logshark';
@@ -108,8 +115,6 @@ export default function HeroSection() {
                         <div className="flex items-center max-w-5xl justify-center">
                             <TypewriterEffectSmooth words={words} />
                         </div>
-                        {/* <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 text-center"> */}
-                        {/* </h1> */}
                         <p className="text-lg md:text-xl lg:text-2xl mb-6 max-w-3xl mx-auto">
                             Unlock deep insights into user behavior, performance, and system metrics.
                         </p>
@@ -136,18 +141,18 @@ export default function HeroSection() {
                     onValueChange={(value) => setActiveTab(value)} // Changing active tab based on selection
                     className="max-w-4xl mx-auto"
                 >
-                    <TabsList className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-6 bg-transparent">
-                        {/* Render tab labels */}
+                    <TabsList className="flex flex-row gap-2 -mb-10 bg-transparent">
+                        {/* Render tab icons instead of labels */}
                         {codeExamples.map((example) => (
                             <TabsTrigger
                                 key={example.value}
                                 value={example.value}
-                                className={`px-4 py-2 rounded-full text-sm ${activeTab === example.value
-                                    ? 'bg-blue-600 text-white'
+                                className={`flex justify-center items-center px-4 py-2 rounded-full text-sm ${activeTab === example.value
+                                    ? 'bg-red-600 text-white'
                                     : 'bg-gray-800 text-white hover:bg-blue-600'
                                     } transition`}
                             >
-                                {example.label}
+                                {example.icon} {/* Display the icon */}
                             </TabsTrigger>
                         ))}
                     </TabsList>
