@@ -1,73 +1,73 @@
 'use client'
-import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { BarChart, User, Mail, Lock, Eye, EyeOff } from 'lucide-react'
 import Link from 'next/link'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import SocialLogins from '@/components/common/social-logins'
-import { useMutation } from '@tanstack/react-query'
-import { registerParams } from '@/types'
+import { useMutation, UseMutationResult } from '@tanstack/react-query'
+import { MutationError, registerParams, SignUpFormValues } from '@/types'
 import authservice from '@/services/auth/auth.service'
 import { useRouter } from 'next/navigation'
+import { useFormik, FormikHelpers } from 'formik'
+import * as Yup from 'yup'
+import { useState } from 'react'
+import { AxiosResponse } from 'axios'
+
 
 export default function SignUpPage() {
-    const [fullName, setFullName] = useState('')
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const [confirmPassword, setConfirmPassword] = useState('')
     const [showPassword, setShowPassword] = useState(false)
     const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-    const [agreeTerms, setAgreeTerms] = useState(false)
-    const [error, setError] = useState('')
-    const [loading, setLoading] = useState(false) // Add loading state
+    const [loading, setLoading] = useState(false)
+    const [globalError, setGlobalError] = useState<string | null>(null)
     const router = useRouter()
 
-    const mutation = useMutation({
+    // Validation schema using Yup
+    const validationSchema = Yup.object({
+        fullName: Yup.string().required('Full Name is required'),
+        email: Yup.string().email('Invalid email address').required('Email is required'),
+        password: Yup.string().min(6, 'Password must be at least 6 characters').required('Password is required'),
+        confirmPassword: Yup.string()
+            .oneOf([Yup.ref('password')], 'Passwords must match')
+            .required('Please confirm your password'),
+        agreeTerms: Yup.boolean().oneOf([true], 'You must accept the Terms and Conditions'),
+    })
+
+    // Mutation to handle signup
+    const mutation: UseMutationResult<AxiosResponse, MutationError, registerParams> = useMutation({
         mutationFn: (data: registerParams) => authservice.register(data),
         onSuccess: () => {
             setLoading(false)
             router.push('/login')
         },
-        onError: (error: any) => {
+        onError: (error: MutationError) => {
             setLoading(false)
-            setError(error?.response?.data?.message || "An Error Occurred!")
+            setGlobalError(error.response?.data?.message || 'An Error Occurred!')
         }
     })
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault()
-        setError('')
-
-        if (!fullName || !email || !password || !confirmPassword) {
-            setError('Please fill in all fields.')
-            return
-        }
-        if (!isValidEmail(email)) {
-            setError('Please enter a valid email address.')
-            return
-        }
-        if (password !== confirmPassword) {
-            setError('Passwords do not match.')
-            return
-        }
-        if (!agreeTerms) {
-            setError('Please agree to the Terms of Service and Privacy Policy.')
-            return
-        }
-
-        // Set loading to true when submitting
-        setLoading(true)
-        mutation.mutate({ name: fullName, email, password })
-    }
-
-    const isValidEmail = (email: string) => {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-        return emailRegex.test(email)
-    }
+    // Formik setup
+    const formik = useFormik<SignUpFormValues>({
+        initialValues: {
+            fullName: '',
+            email: '',
+            password: '',
+            confirmPassword: '',
+            agreeTerms: false,
+        },
+        validationSchema,
+        onSubmit: (values: SignUpFormValues, {  }: FormikHelpers<SignUpFormValues>) => {
+            setLoading(true)
+            setGlobalError(null) // Reset global error on submit
+            mutation.mutate({
+                name: values.fullName,
+                email: values.email,
+                password: values.password,
+            })
+        },
+    })
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white flex flex-col justify-between">
@@ -97,12 +97,12 @@ export default function SignUpPage() {
                             Get started with real-time analytics for your websites, APIs, and mobile apps.
                         </p>
                     </div>
-                    {error && (
+                    {globalError && (
                         <Alert variant="destructive">
-                            <AlertDescription>{error}</AlertDescription>
+                            <AlertDescription>{globalError}</AlertDescription>
                         </Alert>
                     )}
-                    <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+                    <form className="mt-8 space-y-6" onSubmit={formik.handleSubmit}>
                         <div className="rounded-md shadow-sm -space-y-px">
                             <div>
                                 <Label htmlFor="full-name" className="sr-only">
@@ -114,14 +114,17 @@ export default function SignUpPage() {
                                     </div>
                                     <Input
                                         id="full-name"
-                                        name="full-name"
+                                        name="fullName"
                                         type="text"
-                                        required
-                                        className="pl-10"
+                                        className={`pl-10 text-gray-600 ${formik.touched.fullName && formik.errors.fullName ? 'border-red-500' : ''}`}
                                         placeholder="Enter your full name"
-                                        value={fullName}
-                                        onChange={(e) => setFullName(e.target.value)}
+                                        value={formik.values.fullName}
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
                                     />
+                                    {formik.touched.fullName && formik.errors.fullName ? (
+                                        <div className="text-red-500 text-sm">{formik.errors.fullName}</div>
+                                    ) : null}
                                 </div>
                             </div>
 
@@ -138,12 +141,15 @@ export default function SignUpPage() {
                                         name="email"
                                         type="email"
                                         autoComplete="email"
-                                        required
-                                        className="pl-10"
+                                        className={`pl-10 text-gray-600 ${formik.touched.email && formik.errors.email ? 'border-red-500' : ''}`}
                                         placeholder="Enter your email"
-                                        value={email}
-                                        onChange={(e) => setEmail(e.target.value)}
+                                        value={formik.values.email}
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
                                     />
+                                    {formik.touched.email && formik.errors.email ? (
+                                        <div className="text-red-500 text-sm">{formik.errors.email}</div>
+                                    ) : null}
                                 </div>
                             </div>
                             <div className="mt-4 py-4">
@@ -157,12 +163,12 @@ export default function SignUpPage() {
                                     <Input
                                         id="password"
                                         name="password"
-                                        type={showPassword ? "text" : "password"}
-                                        required
-                                        className="pl-10 pr-10 text-gray-600"
+                                        type={showPassword ? 'text' : 'password'}
+                                        className={`pl-10 pr-10 text-gray-600 ${formik.touched.password && formik.errors.password ? 'border-red-500' : ''}`}
                                         placeholder="Create a password"
-                                        value={password}
-                                        onChange={(e) => setPassword(e.target.value)}
+                                        value={formik.values.password}
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
                                     />
                                     <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
                                         <button
@@ -173,8 +179,12 @@ export default function SignUpPage() {
                                             {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                                         </button>
                                     </div>
+                                    {formik.touched.password && formik.errors.password ? (
+                                        <div className="text-red-500 text-sm">{formik.errors.password}</div>
+                                    ) : null}
                                 </div>
                             </div>
+
                             <div className="mt-4">
                                 <Label htmlFor="confirm-password" className="sr-only">
                                     Confirm Password
@@ -185,13 +195,13 @@ export default function SignUpPage() {
                                     </div>
                                     <Input
                                         id="confirm-password"
-                                        name="confirm-password"
-                                        type={showConfirmPassword ? "text" : "password"}
-                                        required
-                                        className="pl-10 pr-10 text-gray-600"
+                                        name="confirmPassword"
+                                        type={showConfirmPassword ? 'text' : 'password'}
+                                        className={`pl-10 pr-10 text-gray-600 ${formik.touched.confirmPassword && formik.errors.confirmPassword ? 'border-red-500' : ''}`}
                                         placeholder="Confirm your password"
-                                        value={confirmPassword}
-                                        onChange={(e) => setConfirmPassword(e.target.value)}
+                                        value={formik.values.confirmPassword}
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
                                     />
                                     <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
                                         <button
@@ -202,15 +212,21 @@ export default function SignUpPage() {
                                             {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                                         </button>
                                     </div>
+                                    {formik.touched.confirmPassword && formik.errors.confirmPassword ? (
+                                        <div className="text-red-500 text-sm">{formik.errors.confirmPassword}</div>
+                                    ) : null}
                                 </div>
                             </div>
                         </div>
 
                         <div className="flex items-center">
-                            <Checkbox
+                            <input
                                 id="agree-terms"
-                                checked={agreeTerms}
-                                onCheckedChange={(checked) => setAgreeTerms(checked as boolean)}
+                                name="agreeTerms"
+                                type="checkbox"
+                                checked={formik.values.agreeTerms}
+                                onChange={formik.handleChange} // Directly use formik's handleChange for the checkbox
+                                className="h-4 w-4 text-blue-600 border-gray-300 rounded"
                             />
                             <Label
                                 htmlFor="agree-terms"
@@ -225,13 +241,18 @@ export default function SignUpPage() {
                                     Privacy Policy
                                 </Link>
                             </Label>
+                            {formik.touched.agreeTerms && formik.errors.agreeTerms ? (
+                                <div className="text-red-500 text-sm ml-2">{formik.errors.agreeTerms}</div>
+                            ) : null}
                         </div>
+
+
 
                         <div>
                             <Button
                                 type="submit"
                                 className="w-full flex justify-center py-2 px-4"
-                                disabled={loading} // Disable button during loading
+                                disabled={loading || !formik.isValid || !formik.dirty} // Disable button during loading or invalid form
                             >
                                 {loading ? 'Signing Up...' : 'Sign Up'}
                             </Button>

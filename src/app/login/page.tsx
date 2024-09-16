@@ -1,6 +1,4 @@
 'use client'
-import { useState } from 'react'
-import { signIn } from 'next-auth/react'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -11,52 +9,50 @@ import Link from 'next/link'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import SocialLogins from '@/components/common/social-logins'
 import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+import { useFormik } from 'formik'
+import * as Yup from 'yup'
+import { signIn } from 'next-auth/react'
 
 export default function LoginPage() {
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const [rememberMe, setRememberMe] = useState(false)
     const [showPassword, setShowPassword] = useState(false)
     const [error, setError] = useState('')
-    const [loading, setLoading] = useState(false) // Add loading state
+    const [loading, setLoading] = useState(false)
     const router = useRouter()
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault()
-        setError('')
-        setLoading(true) // Set loading to true when submitting
+    // Validation schema using Yup
+    const validationSchema = Yup.object({
+        email: Yup.string().email('Invalid email address').required('Email is required'),
+        password: Yup.string().required('Password is required'),
+        rememberMe: Yup.boolean()
+    })
 
-        if (!email || !password) {
-            setError('Please fill in all fields.')
-            setLoading(false) // Stop loading if validation fails
-            return
-        }
-        if (!isValidEmail(email)) {
-            setError('Please enter a valid email address.')
-            setLoading(false) // Stop loading if validation fails
-            return
-        }
+    // Formik setup
+    const formik = useFormik({
+        initialValues: {
+            email: '',
+            password: '',
+            rememberMe: false,
+        },
+        validationSchema,
+        onSubmit: async (values) => {
+            setLoading(true)
+            setError('')
 
-        // Use next-auth signIn function for credential login
-        const res = await signIn('credentials', {
-            redirect: false, // Set to false to handle the error or success manually
-            email,
-            password,
-        })
+            const res = await signIn('credentials', {
+                redirect: false,
+                email: values.email,
+                password: values.password,
+            })
 
-        if (res?.error) {
-            setError(res.error)
-            setLoading(false) // Stop loading if there's an error
-        } else if (res?.ok) {
-            // Redirect to dashboard or home page after successful login
-            router.push('/dashboard')
-        }
-    }
-
-    const isValidEmail = (email: string) => {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-        return emailRegex.test(email)
-    }
+            if (res?.error) {
+                setError(res.error)
+                setLoading(false)
+            } else if (res?.ok) {
+                router.push('/dashboard')
+            }
+        },
+    })
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white flex flex-col justify-between">
@@ -91,7 +87,7 @@ export default function LoginPage() {
                             <AlertDescription>{error}</AlertDescription>
                         </Alert>
                     )}
-                    <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+                    <form className="mt-8 space-y-6" onSubmit={formik.handleSubmit}>
                         <div className="rounded-md shadow-sm -space-y-px">
                             <div>
                                 <Label htmlFor="email-address" className="sr-only">
@@ -106,14 +102,18 @@ export default function LoginPage() {
                                         name="email"
                                         type="email"
                                         autoComplete="email"
-                                        required
-                                        className="pl-10"
+                                        className={`pl-10 text-gray-600 ${formik.touched.email && formik.errors.email ? 'border-red-500' : ''}`}
                                         placeholder="Enter your email"
-                                        value={email}
-                                        onChange={(e) => setEmail(e.target.value)}
+                                        value={formik.values.email}
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
                                     />
+                                    {formik.touched.email && formik.errors.email && (
+                                        <div className="text-red-500 text-sm">{formik.errors.email}</div>
+                                    )}
                                 </div>
                             </div>
+
                             <div className="mt-4 pt-4">
                                 <Label htmlFor="password" className="sr-only">
                                     Password
@@ -126,12 +126,11 @@ export default function LoginPage() {
                                         id="password"
                                         name="password"
                                         type={showPassword ? "text" : "password"}
-                                        autoComplete="current-password"
-                                        required
-                                        className="pl-10 pr-10"
+                                        className={`pl-10 pr-10 text-gray-600 ${formik.touched.password && formik.errors.password ? 'border-red-500' : ''}`}
                                         placeholder="Enter your password"
-                                        value={password}
-                                        onChange={(e) => setPassword(e.target.value)}
+                                        value={formik.values.password}
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
                                     />
                                     <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
                                         <button
@@ -142,6 +141,9 @@ export default function LoginPage() {
                                             {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                                         </button>
                                     </div>
+                                    {formik.touched.password && formik.errors.password && (
+                                        <div className="text-red-500 text-sm">{formik.errors.password}</div>
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -150,22 +152,17 @@ export default function LoginPage() {
                             <div className="flex items-center">
                                 <Checkbox
                                     id="remember-me"
-                                    checked={rememberMe}
-                                    onCheckedChange={(checked) => setRememberMe(checked as boolean)}
+                                    name="rememberMe"
+                                    checked={formik.values.rememberMe}
+                                    onChange={formik.handleChange}
                                 />
-                                <Label
-                                    htmlFor="remember-me"
-                                    className="ml-2 block text-sm text-gray-900"
-                                >
+                                <Label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
                                     Remember me
                                 </Label>
                             </div>
 
                             <div className="text-sm">
-                                <Link
-                                    href="/forgot-password"
-                                    className="font-medium text-blue-600 hover:text-blue-500"
-                                >
+                                <Link href="/forgot-password" className="font-medium text-blue-600 hover:text-blue-500">
                                     Forgot password?
                                 </Link>
                             </div>
@@ -175,7 +172,7 @@ export default function LoginPage() {
                             <Button
                                 type="submit"
                                 className="w-full flex justify-center py-2 px-4"
-                                disabled={loading} // Disable the button when loading
+                                disabled={loading || !formik.isValid || !formik.dirty} // Disable button if form is invalid or loading
                             >
                                 {loading ? 'Logging in...' : 'Log In'}
                             </Button>
@@ -195,10 +192,7 @@ export default function LoginPage() {
                     <div className="mt-6 text-center">
                         <p className="text-sm text-gray-600">
                             Don&apos;t have an account?
-                            <Link
-                                href="/register"
-                                className="font-medium text-blue-600 hover:text-blue-500 ml-1"
-                            >
+                            <Link href="/register" className="font-medium text-blue-600 hover:text-blue-500 ml-1">
                                 Sign Up Here
                             </Link>
                         </p>
