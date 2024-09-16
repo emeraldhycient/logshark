@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState} from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useQuery } from '@tanstack/react-query'
 import {
@@ -38,6 +38,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import Link from 'next/link'
+// import { useSession } from 'next-auth/react';
 
 ChartJS.register(
     CategoryScale,
@@ -165,6 +166,10 @@ export default function Dashboard() {
         { icon: <Layers className="h-5 w-5" />, label: 'Projects', href: '#' },
         { icon: <Settings className="h-5 w-5" />, label: 'Settings', href: '#' },
     ]
+
+    // const { data: session, status } = useSession();
+
+    // console.log({session,status})
 
     return (
         <div className="flex h-screen bg-gray-100">
@@ -337,3 +342,4 @@ export default function Dashboard() {
         </div>
     )
 }
+

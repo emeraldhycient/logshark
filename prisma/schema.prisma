@@ -18,20 +18,23 @@ datasource db {
 model User {
   id             String          @id @default(uuid()) // Unique identifier for each user
   email          String          @unique // User's email address, must be unique
-  password       String // User's password
-  firstName      String // User's first name
-  lastName       String // User's last name
+  password       String? // User's password
+  name      String? // User's full name
   createdAt      DateTime        @default(now()) // Timestamp for user creation
   updatedAt      DateTime        @updatedAt // Timestamp for last user update
   organization   Organization?   @relation(fields: [organizationId], references: [id]) // Relationship with Organization
   organizationId String? // Foreign key to Organization
   EventSession   EventSession[] // Relationship with EventSession
+
+
   emailVerified  DateTime?
   image          String?
   accounts       Account[]
   sessions       Session[]
   // Optional for WebAuthn support
   Authenticator  Authenticator[]
+
+
   profiles       UserProfile[] // Relationship with UserProfile
   userTags       UserTag[] // Relationship with UserTag
   auditLogs      AuditLog[] // Relationship with AuditLog for tracking changes

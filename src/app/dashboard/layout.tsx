@@ -7,6 +7,7 @@ interface LayoutProps {
 }
 
 export default function Layout({ children }: LayoutProps) {
+
   return (
     <div className="flex h-screen bg-gray-100">
       {/* Sidebar */}

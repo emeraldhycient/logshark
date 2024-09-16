@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { BarChart, Mail, Lock, Eye, EyeOff, Github } from 'lucide-react'
+import { BarChart, Mail, Lock, Eye, EyeOff } from 'lucide-react'
 import Link from 'next/link'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import SocialLogins from '@/components/common/social-logins'
@@ -31,17 +31,7 @@ export default function LoginPage() {
         // Handle login logic here
         console.log('Login submitted', { email, password, rememberMe })
     }
-
-    const handleGoogleLogin = () => {
-        // Handle Google login logic here
-        console.log('Google login initiated')
-    }
-
-    const handleGitHubLogin = () => {
-        // Handle GitHub login logic here
-        console.log('GitHub login initiated')
-    }
-
+    
     const isValidEmail = (email: string) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
         return emailRegex.test(email)

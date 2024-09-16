@@ -551,6 +551,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@next-auth/prisma-adapter@npm:latest":
+  version: 1.0.7
+  resolution: "@next-auth/prisma-adapter@npm:1.0.7"
+  peerDependencies:
+    "@prisma/client": ">=2.26.0 || >=3"
+    next-auth: ^4
+  checksum: dea44185c0de109b4b2f0a9fd84c0cab40b248c70bc9f44af516d895d22442a69fd7d85f7894e47fa506f122a5c6631b7002b0371520970289eb9d7618709e06
+  languageName: node
+  linkType: hard
+
 "@next/env@npm:14.2.8":
   version: 14.2.8
   resolution: "@next/env@npm:14.2.8"
@@ -1557,6 +1567,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/bcryptjs@npm:^2.4.6":
+  version: 2.4.6
+  resolution: "@types/bcryptjs@npm:2.4.6"
+  checksum: 25ae1fd1e8a9bd688e22a8de905581d6d7bf26e823b797f895d2c488100b1f15d3c12a7d1a94f553087b010d316bf3978106df860e8e58fd13f52b4c708df5fd
+  languageName: node
+  linkType: hard
+
 "@types/cookie@npm:0.6.0":
   version: 0.6.0
   resolution: "@types/cookie@npm:0.6.0"
@@ -2140,6 +2157,13 @@ __metadata:
   version: 1.5.1
   resolution: "base64-js@npm:1.5.1"
   checksum: 669632eb3745404c2f822a18fc3a0122d2f9a7a13f7fb8b5823ee19d1d2ff9ee5b52c53367176ea4ad093c332fd5ab4bd0ebae5a8e27917a4105a4cfc86b1005
+  languageName: node
+  linkType: hard
+
+"bcryptjs@npm:^2.4.3":
+  version: 2.4.3
+  resolution: "bcryptjs@npm:2.4.3"
+  checksum: 0e80ed852a41f5dfb1853f53ee14a7390b0ef263ce05dba6e2ef3cd919dfad025a7c21ebcfe5bc7fa04b100990edf90c7a877ff7fe623d3e479753253131b629
   languageName: node
   linkType: hard
 
@@ -4456,7 +4480,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jose@npm:^5.1.3":
+"jose@npm:^5.1.3, jose@npm:^5.9.2":
   version: 5.9.2
   resolution: "jose@npm:5.9.2"
   checksum: 06a7db4f985b5ca87a18d91494a0ac7236dcc631c3f586e861da0a316159f118ba5fc1fefc6197fa2b1034febe57b4da23a0bf63ae098b04a6efb2d213c1f434
@@ -4698,6 +4722,7 @@ __metadata:
   dependencies:
     "@auth/prisma-adapter": ^2.4.2
     "@hookform/resolvers": ^3.9.0
+    "@next-auth/prisma-adapter": latest
     "@prisma/client": ^5.19.1
     "@radix-ui/react-alert-dialog": ^1.1.1
     "@radix-ui/react-avatar": ^1.1.0
@@ -4714,17 +4739,20 @@ __metadata:
     "@radix-ui/react-toast": ^1.2.1
     "@tabler/icons-react": ^3.16.0
     "@tanstack/react-query": ^5.55.0
+    "@types/bcryptjs": ^2.4.6
     "@types/node": ^20
     "@types/react": ^18.3.5
     "@types/react-dom": ^18
     "@types/react-syntax-highlighter": ^15.5.13
     aceternity-ui: ^0.2.2
+    bcryptjs: ^2.4.3
     chart.js: ^4.4.4
     class-variance-authority: ^0.7.0
     clsx: ^2.1.1
     eslint: ^8
     eslint-config-next: 14.2.8
     framer-motion: ^11.5.4
+    jose: ^5.9.2
     lucide-react: ^0.438.0
     next: 14.2.8
     next-auth: beta
