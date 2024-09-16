@@ -16,51 +16,47 @@ datasource db {
 // Schema Models
 
 model User {
-  id             String          @id @default(uuid()) // Unique identifier for each user
-  email          String          @unique // User's email address, must be unique
-  password       String? // User's password
-  name      String? // User's full name
-  createdAt      DateTime        @default(now()) // Timestamp for user creation
-  updatedAt      DateTime        @updatedAt // Timestamp for last user update
-  organization   Organization?   @relation(fields: [organizationId], references: [id]) // Relationship with Organization
+  id             String         @id @default(uuid()) // Unique identifier for each user
+  email          String         @unique // User's email address, must be unique
+  password       String? // User's password, optional for OAuth providers
+  name           String? // User's full name
+  createdAt      DateTime       @default(now()) // Timestamp for user creation
+  updatedAt      DateTime       @updatedAt // Timestamp for last user update
+  organization   Organization?  @relation(fields: [organizationId], references: [id]) // Relationship with Organization
   organizationId String? // Foreign key to Organization
   EventSession   EventSession[] // Relationship with EventSession
 
-
-  emailVerified  DateTime?
-  image          String?
-  accounts       Account[]
-  sessions       Session[]
+  emailVerified DateTime? // Email verification timestamp
+  image         String? // User's profile image
+  accounts      Account[] // Relation to accounts
+  sessions      Session[]
   // Optional for WebAuthn support
-  Authenticator  Authenticator[]
+  Authenticator Authenticator[]
 
-
-  profiles       UserProfile[] // Relationship with UserProfile
-  userTags       UserTag[] // Relationship with UserTag
-  auditLogs      AuditLog[] // Relationship with AuditLog for tracking changes
-  segments       UserSegment[] // Relationship with UserSegment
-  cohorts        Cohort[] // Relationship with Cohorts
+  profiles  UserProfile[] // Relationship with UserProfile
+  userTags  UserTag[] // Relationship with UserTag
+  auditLogs AuditLog[] // Relationship with AuditLog for tracking changes
+  segments  UserSegment[] // Relationship with UserSegment
+  cohorts   Cohort[] // Relationship with Cohorts
 }
 
 model Account {
-  userId            String
-  type              String
-  provider          String
-  providerAccountId String
-  refresh_token     String?
-  access_token      String?
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String?
-  session_state     String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                String  @id @default(cuid()) // Unique identifier for the account
+  userId            String // Relation to the User
+  provider          String // OAuth provider (e.g., google, github)
+  providerAccountId String // Unique account ID for the provider
+  refresh_token     String? // Optional refresh token
+  access_token      String? // Access token from the provider
+  expires_at        Int? // Expiration time for the access token
+  token_type        String? // Token type (e.g., Bearer)
+  type              String // Add this line to store the type of account
+  scope             String? // OAuth scopes
+  id_token          String? // ID token (if applicable)
+  session_state     String? // Session state for some providers
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@id([provider, providerAccountId])
+  @@unique([provider, providerAccountId]) // Unique constraint for provider and account ID
 }
 
 model Session {
