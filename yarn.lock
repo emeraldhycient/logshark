@@ -63,6 +63,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@auth/prisma-adapter@npm:^2.4.2":
+  version: 2.4.2
+  resolution: "@auth/prisma-adapter@npm:2.4.2"
+  dependencies:
+    "@auth/core": 0.34.2
+  peerDependencies:
+    "@prisma/client": ">=2.26.0 || >=3 || >=4 || >=5"
+  checksum: d2904eb9f2d6b5c58c7798bc69def173e070415b83a53773cba8c5fb2317c147b94d24bb1f71706785ab199c7ed2c4e3fbb1a8c7e7a409b4dde4e91fb512b64b
+  languageName: node
+  linkType: hard
+
 "@babel/code-frame@npm:^7.0.0, @babel/code-frame@npm:^7.24.7":
   version: 7.24.7
   resolution: "@babel/code-frame@npm:7.24.7"
@@ -686,6 +697,18 @@ __metadata:
   version: 0.11.0
   resolution: "@pkgjs/parseargs@npm:0.11.0"
   checksum: 6ad6a00fc4f2f2cfc6bff76fb1d88b8ee20bc0601e18ebb01b6d4be583733a860239a521a7fbca73b612e66705078809483549d2b18f370eb346c5155c8e4a0f
+  languageName: node
+  linkType: hard
+
+"@prisma/client@npm:^5.19.1":
+  version: 5.19.1
+  resolution: "@prisma/client@npm:5.19.1"
+  peerDependencies:
+    prisma: "*"
+  peerDependenciesMeta:
+    prisma:
+      optional: true
+  checksum: 23468c154d3e42fbaa88b904b72a893cf3211a87992988af48d2d93fb353b05a8c843f18b2fa0b50f7e78cf84461d7c6ef4e6f524398c30a62c81f5762d2f1c0
   languageName: node
   linkType: hard
 
@@ -4673,7 +4696,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "logshark@workspace:."
   dependencies:
+    "@auth/prisma-adapter": ^2.4.2
     "@hookform/resolvers": ^3.9.0
+    "@prisma/client": ^5.19.1
     "@radix-ui/react-alert-dialog": ^1.1.1
     "@radix-ui/react-avatar": ^1.1.0
     "@radix-ui/react-checkbox": ^1.1.1
