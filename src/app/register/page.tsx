@@ -9,11 +9,13 @@ import { BarChart, User, Mail, Lock, Eye, EyeOff } from 'lucide-react'
 import Link from 'next/link'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import SocialLogins from '@/components/common/social-logins'
-
+import { useMutation } from '@tanstack/react-query'
+import { registerParams } from '@/types'
+import authservice from '@/services/auth/auth.service'
+import { useRouter } from 'next/navigation'
 
 export default function SignUpPage() {
-    const [firstName, setFirstName] = useState('')
-    const [lastName, setLastName] = useState('')
+    const [fullName, setFullName] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
@@ -21,11 +23,26 @@ export default function SignUpPage() {
     const [showConfirmPassword, setShowConfirmPassword] = useState(false)
     const [agreeTerms, setAgreeTerms] = useState(false)
     const [error, setError] = useState('')
+    const [loading, setLoading] = useState(false) // Add loading state
+    const router = useRouter()
+
+    const mutation = useMutation({
+        mutationFn: (data: registerParams) => authservice.register(data),
+        onSuccess: () => {
+            setLoading(false)
+            router.push('/login')
+        },
+        onError: (error: any) => {
+            setLoading(false)
+            setError(error?.response?.data?.message || "An Error Occurred!")
+        }
+    })
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
         setError('')
-        if (!firstName || !lastName || !email || !password || !confirmPassword) {
+
+        if (!fullName || !email || !password || !confirmPassword) {
             setError('Please fill in all fields.')
             return
         }
@@ -41,10 +58,11 @@ export default function SignUpPage() {
             setError('Please agree to the Terms of Service and Privacy Policy.')
             return
         }
-        // Handle sign-up logic here
-        console.log('Sign-up submitted', { firstName, lastName, email, password })
-    }
 
+        // Set loading to true when submitting
+        setLoading(true)
+        mutation.mutate({ name: fullName, email, password })
+    }
 
     const isValidEmail = (email: string) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -86,49 +104,28 @@ export default function SignUpPage() {
                     )}
                     <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
                         <div className="rounded-md shadow-sm -space-y-px">
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-                                <div>
-                                    <Label htmlFor="first-name" className="sr-only">
-                                        First Name
-                                    </Label>
-                                    <div className="relative">
-                                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                            <User className="h-5 w-5 text-gray-400" />
-                                        </div>
-                                        <Input
-                                            id="first-name"
-                                            name="first-name"
-                                            type="text"
-                                            required
-                                            className="pl-10"
-                                            placeholder="Enter your first name"
-                                            value={firstName}
-                                            onChange={(e) => setFirstName(e.target.value)}
-                                        />
+                            <div>
+                                <Label htmlFor="full-name" className="sr-only">
+                                    Full Name
+                                </Label>
+                                <div className="relative">
+                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <User className="h-5 w-5 text-gray-400" />
                                     </div>
-                                </div>
-                                <div>
-                                    <Label htmlFor="last-name" className="sr-only">
-                                        Last Name
-                                    </Label>
-                                    <div className="relative">
-                                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                            <User className="h-5 w-5 text-gray-400" />
-                                        </div>
-                                        <Input
-                                            id="last-name"
-                                            name="last-name"
-                                            type="text"
-                                            required
-                                            className="pl-10"
-                                            placeholder="Enter your last name"
-                                            value={lastName}
-                                            onChange={(e) => setLastName(e.target.value)}
-                                        />
-                                    </div>
+                                    <Input
+                                        id="full-name"
+                                        name="full-name"
+                                        type="text"
+                                        required
+                                        className="pl-10"
+                                        placeholder="Enter your full name"
+                                        value={fullName}
+                                        onChange={(e) => setFullName(e.target.value)}
+                                    />
                                 </div>
                             </div>
-                            <div>
+
+                            <div className="mt-4 py-4">
                                 <Label htmlFor="email-address" className="sr-only">
                                     Email address
                                 </Label>
@@ -162,7 +159,7 @@ export default function SignUpPage() {
                                         name="password"
                                         type={showPassword ? "text" : "password"}
                                         required
-                                        className="pl-10 pr-10"
+                                        className="pl-10 pr-10 text-gray-600"
                                         placeholder="Create a password"
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
@@ -191,7 +188,7 @@ export default function SignUpPage() {
                                         name="confirm-password"
                                         type={showConfirmPassword ? "text" : "password"}
                                         required
-                                        className="pl-10 pr-10"
+                                        className="pl-10 pr-10 text-gray-600"
                                         placeholder="Confirm your password"
                                         value={confirmPassword}
                                         onChange={(e) => setConfirmPassword(e.target.value)}
@@ -234,8 +231,9 @@ export default function SignUpPage() {
                             <Button
                                 type="submit"
                                 className="w-full flex justify-center py-2 px-4"
+                                disabled={loading} // Disable button during loading
                             >
-                                Sign Up
+                                {loading ? 'Signing Up...' : 'Sign Up'}
                             </Button>
                         </div>
                     </form>
@@ -249,8 +247,8 @@ export default function SignUpPage() {
                             </div>
                         </div>
 
-                        <SocialLogins/>
-                       
+                        <SocialLogins />
+
                     </div>
                     <div className="mt-6 text-center">
                         <p className="text-sm text-gray-600">
@@ -278,8 +276,8 @@ export default function SignUpPage() {
                         </Link>
                     </div>
                     <div>
-                        <a href="mailto:support@logshark.com" className="hover:text-gray-900">
-                            support@logshark.com
+                        <a href="mailto:support@logshark.cloud" className="hover:text-gray-900">
+                            support@logshark.cloud
                         </a>
                     </div>
                 </div>

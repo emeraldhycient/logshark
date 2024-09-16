@@ -8,7 +8,7 @@ export async function handleSocialAuth(formData: FormData) {
 
     const result = await signIn(action, { redirectTo: "/dashboard" });
     
-    console.log({result});
+    // console.log({result});
 } 
 
 export async function logOut() {
@@ -16,7 +16,7 @@ export async function logOut() {
 }
 
 
-export async function getUser() {
-    return await auth()
-}
+// export async function getUser() {
+//     return await auth()
+// }
 

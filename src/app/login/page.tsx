@@ -1,5 +1,6 @@
 'use client'
 import { useState } from 'react'
+import { signIn } from 'next-auth/react'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -9,6 +10,7 @@ import { BarChart, Mail, Lock, Eye, EyeOff } from 'lucide-react'
 import Link from 'next/link'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import SocialLogins from '@/components/common/social-logins'
+import { useRouter } from 'next/navigation'
 
 export default function LoginPage() {
     const [email, setEmail] = useState('')
@@ -16,22 +18,41 @@ export default function LoginPage() {
     const [rememberMe, setRememberMe] = useState(false)
     const [showPassword, setShowPassword] = useState(false)
     const [error, setError] = useState('')
+    const [loading, setLoading] = useState(false) // Add loading state
+    const router = useRouter()
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         setError('')
+        setLoading(true) // Set loading to true when submitting
+
         if (!email || !password) {
             setError('Please fill in all fields.')
+            setLoading(false) // Stop loading if validation fails
             return
         }
         if (!isValidEmail(email)) {
             setError('Please enter a valid email address.')
+            setLoading(false) // Stop loading if validation fails
             return
         }
-        // Handle login logic here
-        console.log('Login submitted', { email, password, rememberMe })
+
+        // Use next-auth signIn function for credential login
+        const res = await signIn('credentials', {
+            redirect: false, // Set to false to handle the error or success manually
+            email,
+            password,
+        })
+
+        if (res?.error) {
+            setError(res.error)
+            setLoading(false) // Stop loading if there's an error
+        } else if (res?.ok) {
+            // Redirect to dashboard or home page after successful login
+            router.push('/dashboard')
+        }
     }
-    
+
     const isValidEmail = (email: string) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
         return emailRegex.test(email)
@@ -154,8 +175,9 @@ export default function LoginPage() {
                             <Button
                                 type="submit"
                                 className="w-full flex justify-center py-2 px-4"
+                                disabled={loading} // Disable the button when loading
                             >
-                                Log In
+                                {loading ? 'Logging in...' : 'Log In'}
                             </Button>
                         </div>
                     </form>
@@ -168,7 +190,7 @@ export default function LoginPage() {
                                 <span className="px-2 bg-white text-gray-500">Or continue with</span>
                             </div>
                         </div>
-                        <SocialLogins/>
+                        <SocialLogins />
                     </div>
                     <div className="mt-6 text-center">
                         <p className="text-sm text-gray-600">
@@ -196,8 +218,8 @@ export default function LoginPage() {
                         </Link>
                     </div>
                     <div>
-                        <a href="mailto:support@logshark.com" className="hover:text-gray-900">
-                            support@logshark.com
+                        <a href="mailto:support@logshark.cloud" className="hover:text-gray-900">
+                            support@logshark.cloud
                         </a>
                     </div>
                 </div>
