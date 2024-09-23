@@ -16,8 +16,8 @@ const EVENT_COST_INCREMENT = 19 // Price increment for each additional 1,000,000
 
 const plans = [
     {
-        name: 'Free',
-        price: { monthly: '$0', annually: '$0' },
+        name: 'Starter',
+        price: { monthly: '$5', annually: '$50' },
         description: 'For individuals and small projects starting out.',
         features: [
             'Basic User Behavior Analytics',
@@ -25,6 +25,7 @@ const plans = [
             'Email Support',
             '1 Team Member',
             '7-day data retention',
+            'Limited to 1 website/app/API integration'
         ],
         cta: 'Get Started',
         popular: false,
@@ -40,6 +41,7 @@ const plans = [
             'Priority Support',
             'Up to 5 Team Members',
             '30-day data retention',
+            'Limited to 5 website/app/API integration'
         ],
         cta: 'Start Free Trial',
         popular: true,

@@ -24,6 +24,7 @@ model User {
   updatedAt      DateTime       @updatedAt // Timestamp for last user update
   organization   Organization?  @relation(fields: [organizationId], references: [id]) // Relationship with Organization
   organizationId String? // Foreign key to Organization
+  projects       Project[]
   EventSession   EventSession[] // Relationship with EventSession
 
   emailVerified DateTime? // Email verification timestamp
@@ -38,6 +39,14 @@ model User {
   auditLogs AuditLog[] // Relationship with AuditLog for tracking changes
   segments  UserSegment[] // Relationship with UserSegment
   cohorts   Cohort[] // Relationship with Cohorts
+
+  Subscription Subscription[]
+
+  ApiKey ApiKey[]
+
+  AlertRule AlertRule[]
+
+  Integration Integration[]
 }
 
 model Account {
@@ -93,6 +102,55 @@ model Authenticator {
   @@id([userId, credentialID])
 }
 
+model PricingPlan {
+  id                String         @id @default(uuid()) // Unique identifier for the pricing plan
+  name              String // Name of the plan (e.g., 'Starter', 'Growth', 'Enterprise')
+  monthlyPrice      Float // Monthly subscription price
+  annualPrice       Float // Annual subscription price (discounted)
+  eventLimit        Int // Monthly event limit for this plan
+  teamMembersLimit  Int // Maximum number of team members allowed
+  dataRetentionDays Int // Number of days to retain data
+  integrationsLimit Int // Number of website/app/API integrations allowed
+  isPopular         Boolean        @default(false) // Flag to highlight the most popular plan
+  features          String[] // List of features included in this plan
+  createdAt         DateTime       @default(now()) // Plan creation timestamp
+  updatedAt         DateTime       @updatedAt // Last updated timestamp
+  subscriptions     Subscription[] // Relationship with subscriptions
+}
+
+// Add this model to manage subscriptions for users
+model Subscription {
+  id             String           @id @default(uuid()) // Unique identifier for each subscription
+  userId         String // Reference to the User who owns this subscription
+  user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  pricingPlanId  String // Reference to the associated pricing plan
+  pricingPlan    PricingPlan      @relation(fields: [pricingPlanId], references: [id])
+  startDate      DateTime         @default(now()) // Subscription start date
+  endDate        DateTime? // Subscription end date (if applicable)
+  eventCount     Int              @default(0) // Count of events used in the current billing cycle
+  active         Boolean          @default(true) // Flag to check if the subscription is active
+  billingHistory BillingHistory[] // Relationship to billing history
+  createdAt      DateTime         @default(now()) // Subscription creation timestamp
+  updatedAt      DateTime         @updatedAt // Last updated timestamp
+}
+
+// Add this model to track billing history for users
+model BillingHistory {
+  id             String        @id @default(uuid()) // Unique identifier for each billing record
+  subscriptionId String // Reference to the associated subscription
+  subscription   Subscription  @relation(fields: [subscriptionId], references: [id])
+  amount         Float // Billing amount for the cycle
+  billingDate    DateTime      @default(now()) // Date when the billing was made
+  paymentStatus  PaymentStatus // Status of the payment (e.g., 'Paid', 'Failed')
+}
+
+// Payment status enumeration
+enum PaymentStatus {
+  PAID
+  FAILED
+  PENDING
+}
+
 model Organization {
   id        String    @id @default(uuid()) // Unique identifier for each organization
   name      String // Organization's name
@@ -107,12 +165,17 @@ model Project {
   name           String // Project's name
   organization   Organization   @relation(fields: [organizationId], references: [id]) // Relationship with Organization
   organizationId String // Foreign key to Organization
+  user           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId         String
   createdAt      DateTime       @default(now()) // Timestamp for project creation
   updatedAt      DateTime       @updatedAt // Timestamp for last project update
   dataSources    DataSource[] // List of data sources associated with the project
   events         Event[] // List of events tracked in the project
   featureFlags   FeatureFlag[] // List of feature flags for A/B testing
   customMetrics  CustomMetric[] // List of custom metrics associated with the project
+  eventCount     Int            @default(0)
+
+  ApiKey ApiKey[]
 }
 
 model DataSource {
@@ -134,7 +197,7 @@ model Event {
   dataSource       DataSource         @relation(fields: [dataSourceId], references: [id]) // Relationship with DataSource
   dataSourceId     String // Foreign key to DataSource
   userId           String? // Optional user ID if the event is associated with a logged-in user
-  sessionId        String // Unique identifier for the user session
+  sessionId        String? // Unique identifier for the user session
   timestamp        DateTime           @default(now()) // Timestamp when the event occurred
   details          Json // Additional details about the event
   pageViews        PageView[] // Related PageView events
@@ -302,6 +365,25 @@ model UserProfile {
   User      User     @relation(fields: [userId], references: [id])
 }
 
+model ApiKey {
+  id             String    @id @default(uuid()) // Unique identifier for each API key
+  key            String    @unique // The actual API key, typically a hashed value
+  name           String // A descriptive name for the API key (e.g., "Main API Key", "Integration Key")
+  projectId      String // Foreign key to the Project
+  project        Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  userId         String // Foreign key to the User who created the API key
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt      DateTime  @default(now()) // Timestamp for when the API key was created
+  expiresAt      DateTime? // Optional expiration date for the API key
+  isActive       Boolean   @default(true) // Status of the API key (active or revoked)
+  permissions    String[] // List of permissions (e.g., read, write, admin) granted by this API key
+  lastUsedAt     DateTime? // Timestamp for the last time the API key was used
+  usageCount     Int       @default(0) // Number of times the API key has been used
+  revokedAt      DateTime? // Timestamp for when the API key was revoked, if applicable
+  ipRestrictions String[] // List of allowed IP addresses for using this key
+  createdBy      String // The User ID or System that created this API key
+}
+
 // New Models
 
 model FeatureFlag {
@@ -416,6 +498,8 @@ model AlertRule {
   createdAt     DateTime       @default(now()) // Timestamp for alert rule creation
   updatedAt     DateTime       @updatedAt // Timestamp for last alert rule update
   notifications Notification[] // List of notifications related to this alert rule
+  user          User           @relation(fields: [createdBy], references: [id])
+  createdBy     String
 }
 
 model Notification {
@@ -459,6 +543,8 @@ model Integration {
   status      String // Status of the integration (e.g., active, inactive)
   createdAt   DateTime        @default(now()) // Timestamp for integration creation
   updatedAt   DateTime        @updatedAt // Timestamp for last integration update
+  user        User            @relation(fields: [createdBy], references: [id])
+  createdBy   String
 }
 
 // Enums Definitions for categorical data
