@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import {prisma} from '@/lib/prisma';
-import { validateApiKey } from '@/lib/apiKeyUtils';
 import { z } from 'zod';
+import { validateApiKey } from '@/utils/apiKeyUtils';
 
 export async function POST(request: Request) {
     const apiKey = request.headers.get('X-API-Key');
@@ -31,7 +31,7 @@ export async function POST(request: Request) {
 
         if (!apiKeyValidation.isValid) {
             return NextResponse.json(
-                { error: { code: apiKeyValidation.code, message: apiKeyValidation.error } },
+                { error: { code: apiKeyValidation.status, message: apiKeyValidation.error } },
                 { status: apiKeyValidation.status }
             );
         }
@@ -63,7 +63,7 @@ export async function POST(request: Request) {
                 eventType,
                 details,
                 timestamp: timestamp ? new Date(timestamp) : new Date(),
-                dataSourceId: apiKeyValidation.dataSourceId, // Added missing property
+                dataSourceId: apiKeyValidation.dataSourceId,
             },
         });
 

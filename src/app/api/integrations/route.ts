@@ -1,14 +1,13 @@
 // src/app/api/integrations/route.ts
 
 import { NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
 import {prisma} from '@/lib/prisma';
-import { authOptions } from '@/lib/auth';
 import { z } from 'zod';
+import { auth } from '@/utils/auth';
 
 
 export async function GET() {
-    const session = await getServerSession(authOptions);
+    const session = await auth()
 
     if (!session?.user) {
         return NextResponse.json(
@@ -36,7 +35,7 @@ export async function GET() {
 
 
 export async function POST(request: Request) {
-    const session = await getServerSession(authOptions);
+    const session = await auth()
 
     if (!session?.user) {
         return NextResponse.json(
@@ -58,7 +57,13 @@ export async function POST(request: Request) {
 
         const { name, type, apiEndpoint, apiKey, status } = IntegrationSchema.parse(body);
 
-        // Create integration
+        if (!session.user.id) {
+            return NextResponse.json(
+                { error: { code: 'UNAUTHORIZED', message: 'User ID is missing' } },
+                { status: 401 }
+            );
+        }
+
         const integration = await prisma.integration.create({
             data: {
                 name,

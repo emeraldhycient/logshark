@@ -381,6 +381,7 @@ model ApiKey {
   usageCount     Int       @default(0) // Number of times the API key has been used
   revokedAt      DateTime? // Timestamp for when the API key was revoked, if applicable
   ipRestrictions String[] // List of allowed IP addresses for using this key
+  secretHash String
   createdBy      String // The User ID or System that created this API key
 }
 

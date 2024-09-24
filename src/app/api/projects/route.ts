@@ -1,12 +1,9 @@
 import { NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { prisma } from '@/lib/prisma';
-import { authOptions } from '@/lib/auth';
+import { auth } from '@/utils/auth';import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
 
 export async function GET() {
-    const session = await getServerSession(authOptions);
-
+    const session = await auth()
     if (!session?.user) {
         return NextResponse.json(
             { error: { code: 'UNAUTHORIZED', message: 'Unauthorized access' } },
@@ -36,8 +33,7 @@ export async function GET() {
 
 
 export async function POST(request: Request) {
-    const session = await getServerSession(authOptions);
-
+    const session = await auth()
     if (!session?.user) {
         return NextResponse.json(
             { error: { code: 'UNAUTHORIZED', message: 'Unauthorized access' } },
@@ -69,7 +65,16 @@ export async function POST(request: Request) {
             );
         }
 
-        const isUserInOrg = organization.users.some((user: { id: any; }) => user.id === session.user.id);
+        const userId = session.user.id;
+
+        if (!userId) {
+            return NextResponse.json(
+                { error: { code: 'UNAUTHORIZED', message: 'User ID is missing' } },
+                { status: 401 }
+            );
+        }
+
+        const isUserInOrg = organization.users.some((user: { id: any; }) => user.id === userId);
         if (!isUserInOrg) {
             return NextResponse.json(
                 { error: { code: 'FORBIDDEN', message: 'Access denied to this organization' } },
@@ -77,11 +82,13 @@ export async function POST(request: Request) {
             );
         }
 
+       
+
         const project = await prisma.project.create({
             data: {
                 name,
                 organizationId,
-                userId: session.user.id,
+                userId,
             },
         });
 

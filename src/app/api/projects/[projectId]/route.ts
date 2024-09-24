@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/utils/auth';
+import { auth } from '@/utils/auth';
 import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
+import { PrismaClientUnknownRequestError } from '@prisma/client/runtime/library';
 
 interface Params {
     params: {
@@ -11,7 +11,7 @@ interface Params {
 }
 
 export async function GET(request: Request, { params }: Params) {
-    const session = await getServerSession(authOptions);
+    const session = await auth()
     const { projectId } = params;
 
     if (!session?.user) {
@@ -66,7 +66,8 @@ export async function GET(request: Request, { params }: Params) {
 
 
 export async function PUT(request: Request, { params }: Params) {
-    const session = await getServerSession(authOptions);
+    const session = await auth()
+    
     const { projectId } = params;
 
     if (!session?.user) {
@@ -129,7 +130,8 @@ export async function PUT(request: Request, { params }: Params) {
 
 
 export async function DELETE(request: Request, { params }: Params) {
-    const session = await getServerSession(authOptions);
+    const session = await auth()
+    
     const { projectId } = params;
 
     if (!session?.user) {
@@ -164,7 +166,7 @@ export async function DELETE(request: Request, { params }: Params) {
 
         return NextResponse.json({}, { status: 204 });
     } catch (error) {
-        if (error instanceof z.Prisma.PrismaClientKnownRequestError) {
+        if (error instanceof PrismaClientUnknownRequestError) {
             // Handle foreign key constraint errors
             return NextResponse.json(
                 { error: { code: 'BAD_REQUEST', message: 'Cannot delete project with existing dependencies' } },

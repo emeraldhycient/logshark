@@ -1,14 +1,12 @@
 // src/app/api/alert-rules/route.ts
 
 import { NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import {prisma} from '@/lib/prisma';
-import { authOptions } from '@/lib/auth';
+import { auth } from '@/utils/auth';
+import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
 
 export async function GET() {
-    const session = await getServerSession(authOptions);
-
+    const session = await auth()
     if (!session?.user) {
         return NextResponse.json(
             { error: { code: 'UNAUTHORIZED', message: 'Unauthorized access' } },
@@ -34,7 +32,7 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-    const session = await getServerSession(authOptions);
+    const session = await auth()
 
     if (!session?.user) {
         return NextResponse.json(
@@ -62,7 +60,7 @@ export async function POST(request: Request) {
                 description,
                 condition,
                 severity,
-                createdBy: session.user.id,
+                createdBy: session.user.id ?? '',
             },
         });
 

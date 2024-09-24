@@ -1,10 +1,8 @@
 // src/app/api/alert-rules/[alertRuleId]/route.ts
 
 import { NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { z } from 'zod';
+import { auth } from '@/utils/auth';import { z } from 'zod';
 import {prisma} from '@/lib/prisma';
-import { authOptions } from '@/lib/auth';
 
 interface Params {
     params: {
@@ -13,7 +11,7 @@ interface Params {
 }
 
 export async function GET(request: Request, { params }: Params) {
-    const session = await getServerSession(authOptions);
+    const session = await auth()
     const { alertRuleId } = params;
 
     if (!session?.user) {
@@ -55,7 +53,8 @@ export async function GET(request: Request, { params }: Params) {
 }
 
 export async function PUT(request: Request, { params }: Params) {
-    const session = await getServerSession(authOptions);
+    const session = await auth()
+    
     const { alertRuleId } = params;
 
     if (!session?.user) {
@@ -114,7 +113,8 @@ export async function PUT(request: Request, { params }: Params) {
 }
 
 export async function DELETE(request: Request, { params }: Params) {
-    const session = await getServerSession(authOptions);
+    const session = await auth()
+    
     const { alertRuleId } = params;
 
     if (!session?.user) {
