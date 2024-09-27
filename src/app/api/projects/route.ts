@@ -17,7 +17,6 @@ export async function GET() {
             where: { userId: session.user.id },
             include: {
                 organization: true,
-                dataSources: true,
                 ApiKey: true,
             },
         });
