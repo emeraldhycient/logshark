@@ -45,6 +45,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
 
     ],
-    // debug: true, // Add this line to enable detailed logging
+    debug: true, // Add this line to enable detailed logging
     session: { strategy: "jwt" },
 })

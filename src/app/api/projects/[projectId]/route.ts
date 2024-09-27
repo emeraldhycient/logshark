@@ -29,7 +29,6 @@ export async function GET(request: Request, { params }: Params) {
             where: { id: projectId },
             include: {
                 organization: true,
-                dataSources: true,
                 ApiKey: true,
             },
         });
