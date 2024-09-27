@@ -29,22 +29,52 @@ export async function POST(request: Request) {
         }
 
         // Process payment here...
-
-        const subscription = await prisma.subscription.upsert({
-            where: { userId: session.user.id },
-            update: {
-                pricingPlanId: planId,
-                startDate: new Date(),
-                active: true,
-                eventCount: 0,
-            },
-            create: {
-                userId: session.user.id,
-                pricingPlanId: planId,
-                startDate: new Date(),
-                active: true,
-            },
+        const existingSubscription = await prisma.subscription.findFirst({
+            where: { userId: session.user.id, active: true },
         });
+        let subscription;
+
+        if (existingSubscription) {
+            subscription = await prisma.subscription.update({
+                where: { id: existingSubscription.id },
+                data: {
+                    pricingPlanId: planId,
+                    startDate: new Date(),
+                    active: true,
+                    eventCount: 0,
+                },
+            });
+        } else {
+            subscription = await prisma.subscription.create({
+                data: {
+                    user: { connect: { id: session.user.id } },
+                    pricingPlan: { connect: { id: planId } },
+                    startDate: new Date(),
+                    active: true,
+                    eventCount: 0,
+                },
+            });
+        }
+
+
+        // const subscription = await prisma.subscription.upsert({
+        //     where: { userId: session.user.id },
+        //     update: {
+        //         pricingPlanId: planId,
+        //         startDate: new Date(),
+        //         active: true,
+        //         eventCount: 0,
+        //     },
+        //     create: {
+        //         userId: session.user.id,
+        //         pricingPlanId: planId,
+        //         startDate: new Date(),
+        //         active: true,
+        //     },
+        // });
+
+        //TODO: Update the subscription with the payment method
+        //TODO: Update the BillingHistory with the new subscription
 
         return NextResponse.json(
             {
