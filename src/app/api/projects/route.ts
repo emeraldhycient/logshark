@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
-import { auth } from '@/utils/auth';import { prisma } from '@/lib/prisma';
+import { auth } from '@/utils/auth';
+import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
 
 export async function GET() {
@@ -74,7 +75,7 @@ export async function POST(request: Request) {
             );
         }
 
-        const isUserInOrg = organization.users.some((user: { id: any; }) => user.id === userId);
+        const isUserInOrg = organization.users.some((user: { id: string }) => user.id === userId);
         if (!isUserInOrg) {
             return NextResponse.json(
                 { error: { code: 'FORBIDDEN', message: 'Access denied to this organization' } },

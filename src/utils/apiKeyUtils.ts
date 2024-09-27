@@ -46,7 +46,7 @@ export async function validateApiKey(apiKey: string, projectId: string, required
             },
         });
 
-        return { isValid: true, userId: apiKeyRecord.userId, permissions: apiKeyRecord.permissions, };
+        return { isValid: true, userId: apiKeyRecord.userId, permissions: apiKeyRecord.permissions, apikeyDetails };
     } catch (error) {
         console.error('validateApiKey error:', error);
         return { isValid: false, error: 'Internal Server Error', status: 500 };
