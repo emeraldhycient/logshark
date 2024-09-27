@@ -169,7 +169,7 @@ model Project {
   userId         String
   createdAt      DateTime       @default(now()) // Timestamp for project creation
   updatedAt      DateTime       @updatedAt // Timestamp for last project update
-  dataSources    DataSource[] // List of data sources associated with the project
+  dataSources    DataSourceType[] // List of data sources associated with the project
   events         Event[] // List of events tracked in the project
   featureFlags   FeatureFlag[] // List of feature flags for A/B testing
   customMetrics  CustomMetric[] // List of custom metrics associated with the project
@@ -178,24 +178,23 @@ model Project {
   ApiKey ApiKey[]
 }
 
-model DataSource {
-  id              String              @id @default(uuid()) // Unique identifier for each data source
-  type            DataSourceType // Type of data source (web, mobile, api)
-  project         Project             @relation(fields: [projectId], references: [id]) // Relationship with Project
-  projectId       String // Foreign key to Project
-  createdAt       DateTime            @default(now()) // Timestamp for data source creation
-  updatedAt       DateTime            @updatedAt // Timestamp for last data source update
-  events          Event[] // List of events related to this data source
-  metrics         PerformanceMetric[] // Performance metrics associated with this data source
-  deviceInfo      DeviceInfo[] // Device information associated with the data source
-  MobileAppMetric MobileAppMetric[]
-}
+// model DataSource {
+//   id              String              @id @default(uuid()) // Unique identifier for each data source
+//   type            DataSourceType // Type of data source (web, mobile, api)
+//   project         Project             @relation(fields: [projectId], references: [id]) // Relationship with Project
+//   projectId       String // Foreign key to Project
+//   createdAt       DateTime            @default(now()) // Timestamp for data source creation
+//   updatedAt       DateTime            @updatedAt // Timestamp for last data source update
+//   events          Event[] // List of events related to this data source
+//   metrics         PerformanceMetric[] // Performance metrics associated with this data source
+//   deviceInfo      DeviceInfo[] // Device information associated with the data source
+//   MobileAppMetric MobileAppMetric[]
+// }
 
 model Event {
   id               String             @id @default(uuid()) // Unique identifier for each event
   eventType        EventType // Type of event (e.g., page_view, click, form_submission)
-  dataSource       DataSource         @relation(fields: [dataSourceId], references: [id]) // Relationship with DataSource
-  dataSourceId     String // Foreign key to DataSource
+  dataSourceType   DataSourceType // Type of data source (web, mobile, api)
   userId           String? // Optional user ID if the event is associated with a logged-in user
   sessionId        String? // Unique identifier for the user session
   timestamp        DateTime           @default(now()) // Timestamp when the event occurred
@@ -274,13 +273,12 @@ model Heatmap {
 }
 
 model PerformanceMetric {
-  id           String     @id @default(uuid()) // Unique identifier for each performance metric
-  metricType   MetricType // Type of performance metric
-  value        Float // Value of the metric
-  timestamp    DateTime   @default(now()) // Timestamp when the metric was recorded
-  details      Json // Additional details or context
-  dataSource   DataSource @relation(fields: [dataSourceId], references: [id]) // Relationship with DataSource
-  dataSourceId String // Foreign key to DataSource
+  id             String       @id @default(uuid()) // Unique identifier for each performance metric
+  metricType     MetricType // Type of performance metric
+  value          Float // Value of the metric
+  timestamp      DateTime     @default(now()) // Timestamp when the metric was recorded
+  details        Json // Additional details or context
+  dataSourceType DataSourceType // Type of data source (web, mobile, api)
 }
 
 model ApiCall {
@@ -296,9 +294,8 @@ model ApiCall {
 }
 
 model DeviceInfo {
-  id              String     @id @default(uuid()) // Unique identifier for each device information record
-  dataSource      DataSource @relation(fields: [dataSourceId], references: [id]) // Relationship with DataSource
-  dataSourceId    String // Foreign key to DataSource
+  id              String       @id @default(uuid()) // Unique identifier for each device information record
+  dataSourceType  DataSourceType // Type of data source (web, mobile, api)
   deviceType      DeviceType // Type of device (desktop, mobile, tablet, smart TV)
   model           String? // Model of the device (e.g., iPhone X, Galaxy S10)
   operatingSystem String // Operating system of the device (e.g., iOS, Android, Windows)
@@ -311,13 +308,12 @@ model DeviceInfo {
 }
 
 model MobileAppMetric {
-  id           String           @id @default(uuid()) // Unique identifier for each mobile app metric
-  metricType   MobileMetricType // Type of mobile app metric
-  value        String // Value of the metric (e.g., version number, crash details)
-  timestamp    DateTime         @default(now()) // Timestamp when the metric was recorded
-  dataSource   DataSource       @relation(fields: [dataSourceId], references: [id]) // Relationship with DataSource
-  dataSourceId String // Foreign key to DataSource
-  createdAt    DateTime         @default(now()) // Timestamp for mobile app metric creation
+  id             String           @id @default(uuid()) // Unique identifier for each mobile app metric
+  metricType     MobileMetricType // Type of mobile app metric
+  value          String // Value of the metric (e.g., version number, crash details)
+  timestamp      DateTime         @default(now()) // Timestamp when the metric was recorded
+  dataSourceType DataSourceType // Type of data source (web, mobile, api)
+  createdAt      DateTime         @default(now()) // Timestamp for mobile app metric creation
 }
 
 model ConversionMetric {

@@ -2,9 +2,20 @@ import { NextResponse } from 'next/server';
 import {prisma} from '@/lib/prisma';
 import { z } from 'zod';
 import { validateApiKey } from '@/utils/apiKeyUtils';
+import { DataSourceType } from '@prisma/client';
 
-export async function POST(request: Request) {
+
+interface Params {
+    params: {
+        platform: string;
+    };
+}
+
+export async function POST(request: Request, { params }: Params) {
     const apiKey = request.headers.get('X-API-Key');
+
+    const { platform } = params;
+
 
     if (!apiKey) {
         return NextResponse.json(
@@ -56,6 +67,15 @@ export async function POST(request: Request) {
             );
         }
 
+        // const eventTypes = ['PAGE_VIEW', 'CLICK', 'FORM_SUBMISSION', 'API_CALL', 'SCROLL_DEPTH', 'HEATMAP', 'CUSTOM'];
+
+        // if (!eventTypes.includes(eventType)) {
+        //     return NextResponse.json(
+        //         { error: { code: 'INVALID_EVENT_TYPE', message: 'Invalid event type' } },
+        //         { status: 400 }
+        //     );
+        // }
+
         // Create event
         const event = await prisma.event.create({
             data: {
@@ -63,7 +83,7 @@ export async function POST(request: Request) {
                 eventType,
                 details,
                 timestamp: timestamp ? new Date(timestamp) : new Date(),
-                dataSourceId: apiKeyValidation.dataSourceId,
+                dataSourceType: platform as DataSourceType,
             },
         });
 
