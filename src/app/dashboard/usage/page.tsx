@@ -43,6 +43,14 @@ import {
 import { useToast } from "@/hooks/use-toast"
 import { Copy, Key, Plus } from 'lucide-react'
 import Header from '@/components/common/dashboard/header'
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 const apiKeyFormSchema = z.object({
   name: z.string().min(2, {
@@ -197,9 +205,9 @@ export default function Usage() {
                   <Plus className="mr-2 h-4 w-4" /> Create New API Key
                 </Button>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-[425px]">
+              <DialogContent className="sm:max-w-[425px] bg-white">
                 <DialogHeader>
-                  <DialogTitle>Create New API Key</DialogTitle>
+                  <DialogTitle className="text-black">Create New API Key</DialogTitle>
                   <DialogDescription>
                     Enter a name for your new API key.
                   </DialogDescription>
@@ -211,9 +219,26 @@ export default function Usage() {
                       name="name"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>API Key Name</FormLabel>
+                          <FormLabel className="text-black">API Key Name</FormLabel>
                           <FormControl>
                             <Input placeholder="Enter API key name" {...field} />
+                          </FormControl>
+                          <FormControl>
+                            <Select>
+                              <SelectTrigger className="w-full">
+                                <SelectValue className='text-black' placeholder="Select a project" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectGroup>
+                                  {/* <SelectLabel >Projects</SelectLabel> */}
+                                  <SelectItem value="apple">Apple</SelectItem>
+                                  <SelectItem value="banana">Banana</SelectItem>
+                                  <SelectItem value="blueberry">Blueberry</SelectItem>
+                                  <SelectItem value="grapes">Grapes</SelectItem>
+                                  <SelectItem value="pineapple">Pineapple</SelectItem>
+                                </SelectGroup>
+                              </SelectContent>
+                            </Select>
                           </FormControl>
                           <FormDescription>
                             This name will help you identify this API key later.

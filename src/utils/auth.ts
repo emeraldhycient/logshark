@@ -46,5 +46,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
     ],
     debug: true, // Add this line to enable detailed logging
-    session: { strategy: "jwt" },
+    // session: { strategy: "jwt" },
+    callbacks: {
+        session: async ({ session, user }) => {
+            if (session?.user) {
+                session.user.id = user.id;
+            }
+            return session;
+        },
+    },
 })

@@ -46,7 +46,9 @@ export async function POST(request: Request) {
 
         // Input validation using Zod
         const ProjectSchema = z.object({
-            name: z.string().min(1, 'Name is required'),
+            name: z.string().min(3, 'Name is required'),
+            // data source would be a type of enum DataSourceType
+            dataSources: z.array(z.string()),
             organizationId: z.string().uuid('Invalid organization ID'),
         });
 
@@ -82,7 +84,7 @@ export async function POST(request: Request) {
             );
         }
 
-       
+
 
         const project = await prisma.project.create({
             data: {

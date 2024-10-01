@@ -1,27 +1,30 @@
 'use client'
 
-import { useState} from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { useQuery } from '@tanstack/react-query'
+import React, { useState } from 'react'
 import {
-    BarChart,
-    Users,
-    Clock,
-    PhoneCall,
-    TrendingUp,
-    Zap,
-    Menu,
-    X,
     Bell,
-    User,
-    Home,
+    Users,
     Activity,
-    Layers,
+    AlertTriangle,
     Settings,
-    HelpCircle,
-    LogOut
+    ChevronDown,
+    Menu,
+    Search,
+    ArrowUpRight,
+    Sun,
+    Moon,
+    DollarSign,
 } from 'lucide-react'
-import { Line, Pie, Bar } from 'react-chartjs-2'
+
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { Badge } from '@/components/ui/badge'
+import { Progress } from '@/components/ui/progress'
+import { Line } from 'react-chartjs-2'
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -29,16 +32,11 @@ import {
     PointElement,
     LineElement,
     BarElement,
-    Title,
-    Tooltip,
-    Legend,
-    ArcElement
+    Title as ChartTitle,
+    Tooltip as ChartTooltip,
+    Legend as ChartLegend,
+    ArcElement,
 } from 'chart.js'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import Link from 'next/link'
-// import { useSession } from 'next-auth/react';
 
 ChartJS.register(
     CategoryScale,
@@ -46,300 +44,377 @@ ChartJS.register(
     PointElement,
     LineElement,
     BarElement,
-    Title,
-    Tooltip,
-    Legend,
+    ChartTitle,
+    ChartTooltip,
+    ChartLegend,
     ArcElement
 )
 
-// Type definitions for the dashboard data
-interface Metric {
-    id: string
-    name: string
-    value: number
-    icon: React.ReactNode
-}
-
-interface TrafficData {
-    labels: string[]
-    datasets: {
-        label: string
-        data: number[]
-        borderColor: string
-        tension: number
-    }[]
-}
-
-interface DeviceDistribution {
-    labels: string[]
-    datasets: {
-        data: number[]
-        backgroundColor: string[]
-    }[]
-}
-
-interface UserEngagement {
-    labels: string[]
-    datasets: {
-        label: string
-        data: number[]
-        backgroundColor: string
-    }[]
-}
-
-interface Alert {
-    id: string
-    message: string
-    type: 'warning' | 'error'
-}
-
-interface DashboardData {
-    metrics: Metric[]
-    trafficData: TrafficData
-    deviceDistribution: DeviceDistribution
-    userEngagement: UserEngagement
-    alerts: Alert[]
-}
-
-const fetchDashboardData = async (): Promise<DashboardData> => {
-    // Simulated API call
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    return {
-        metrics: [
-            { id: '1', name: 'Total Page Views', value: 1234567, icon: <BarChart className="h-6 w-6" /> },
-            { id: '2', name: 'Average Session Duration', value: 245, icon: <Clock className="h-6 w-6" /> },
-            { id: '3', name: 'API Call Volume', value: 987654, icon: <PhoneCall className="h-6 w-6" /> },
-            { id: '4', name: 'Conversion Rate', value: 3.45, icon: <TrendingUp className="h-6 w-6" /> },
-            { id: '5', name: 'Custom Events Completed', value: 56789, icon: <Zap className="h-6 w-6" /> },
-            { id: '6', name: 'Active Users', value: 98765, icon: <Users className="h-6 w-6" /> },
-        ],
-        trafficData: {
-            labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00'],
-            datasets: [
-                {
-                    label: 'Traffic',
-                    data: [1000, 1200, 1800, 2400, 2200, 1800],
-                    borderColor: 'rgb(75, 192, 192)',
-                    tension: 0.1
-                }
-            ]
-        },
-        deviceDistribution: {
-            labels: ['Desktop', 'Mobile', 'Tablet'],
-            datasets: [
-                {
-                    data: [60, 30, 10],
-                    backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56']
-                }
-            ]
-        },
-        userEngagement: {
-            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-            datasets: [
-                {
-                    label: 'User Engagement',
-                    data: [65, 59, 80, 81, 56, 55, 40],
-                    backgroundColor: 'rgba(75, 192, 192, 0.6)',
-                }
-            ]
-        },
-        alerts: [
-            { id: '1', message: 'API response time exceeded threshold', type: 'warning' },
-            { id: '2', message: 'High error rate detected in user authentication', type: 'error' },
-        ]
-    }
-}
-
 export default function Dashboard() {
-    const [sidebarOpen, setSidebarOpen] = useState(false)
-    const { data, isLoading, error } = useQuery<DashboardData>({
-        queryKey: ['dashboardData'],
-        queryFn: fetchDashboardData,
-    })
+    const [darkMode, setDarkMode] = useState(false)
 
-    if (isLoading) return <div className="flex items-center justify-center h-screen">Loading...</div>
-    if (error) return <div className="flex items-center justify-center h-screen">An error occurred</div>
+    
 
-    const sidebarItems = [
-        { icon: <Home className="h-5 w-5" />, label: 'Dashboard', href: '#' },
-        { icon: <Activity className="h-5 w-5" />, label: 'Analytics', href: '#' },
-        { icon: <Layers className="h-5 w-5" />, label: 'Projects', href: '#' },
-        { icon: <Settings className="h-5 w-5" />, label: 'Settings', href: '#' },
-    ]
+    // Sample data for charts
+    const lineChartData = {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+        datasets: [
+            {
+                label: 'Active Users',
+                data: [1200, 1900, 3000, 5000, 2300, 3400, 4200],
+                fill: true,
+                backgroundColor: darkMode ? 'rgba(79, 70, 229, 0.2)' : 'rgba(99, 102, 241, 0.2)',
+                borderColor: darkMode ? 'rgba(79, 70, 229, 1)' : 'rgba(99, 102, 241, 1)',
+                tension: 0.4,
+            },
+        ],
+    }
 
-    // const { data: session, status } = useSession();
-
-    // console.log({session,status})
+    const lineChartOptions = {
+        responsive: true,
+        plugins: {
+            legend: {
+                display: false,
+            },
+        },
+        scales: {
+            y: {
+                ticks: {
+                    color: darkMode ? '#D1D5DB' : '#6B7280',
+                },
+                grid: {
+                    color: darkMode ? '#374151' : '#E5E7EB',
+                },
+            },
+            x: {
+                ticks: {
+                    color: darkMode ? '#D1D5DB' : '#6B7280',
+                },
+                grid: {
+                    display: false,
+                },
+            },
+        },
+    }
 
     return (
-        <div className="flex h-screen bg-gray-100">
-            {/* Sidebar */}
-            <AnimatePresence>
-                {sidebarOpen && (
-                    <motion.aside
-                        initial={{ x: -300 }}
-                        animate={{ x: 0 }}
-                        exit={{ x: -300 }}
-                        className="fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg lg:relative lg:translate-x-0"
-                    >
-                        <div className="flex items-center justify-between p-4 border-b">
-                            <h2 className="text-xl font-semibold text-gray-800">LogShark</h2>
+        <div className={`${darkMode ? 'dark' : ''}`}>
+            <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+                {/* Header */}
+                <header className="sticky top-0 z-30 bg-white dark:bg-gray-800 shadow-sm">
+                    <div className="flex items-center justify-between px-6 py-4">
+                        <div className="flex items-center space-x-4">
+                            <Button variant="ghost" size="icon" className="lg:hidden">
+                                <Menu className="w-6 h-6 text-gray-800 dark:text-gray-200" />
+                            </Button>
+                            <h1 className="text-2xl font-semibold text-gray-800 dark:text-gray-200">Dashboard</h1>
+                        </div>
+                        <div className="flex items-center space-x-4">
                             <Button
                                 variant="ghost"
                                 size="icon"
-                                onClick={() => setSidebarOpen(false)}
-                                className="lg:hidden"
+                                onClick={() => setDarkMode(!darkMode)}
+                                className="hidden md:inline-flex"
                             >
-                                <X className="h-6 w-6" />
+                                {darkMode ? (
+                                    <Sun className="w-6 h-6 text-yellow-400" />
+                                ) : (
+                                    <Moon className="w-6 h-6 text-gray-800" />
+                                )}
                             </Button>
-                        </div>
-                        <nav className="mt-5">
-                            {sidebarItems.map((item, index) => (
-                                <Link
-                                    key={index}
-                                    href={item.href}
-                                    className="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-200"
-                                >
-                                    {item.icon}
-                                    <span className="ml-2">{item.label}</span>
-                                </Link>
-                            ))}
-                        </nav>
-                        <div className="absolute bottom-0 w-full p-4 border-t">
-                            <Link
-                                href="#"
-                                className="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-200"
-                            >
-                                <HelpCircle className="h-5 w-5 mr-2" />
-                                Help & Support
-                            </Link>
-                            <Link
-                                href="#"
-                                className="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-200"
-                            >
-                                <LogOut className="h-5 w-5 mr-2" />
-                                Log Out
-                            </Link>
-                        </div>
-                    </motion.aside>
-                )}
-            </AnimatePresence>
-
-            {/* Main Content */}
-            <div className="flex-1 flex flex-col overflow-hidden">
-                {/* Top Navigation */}
-                <header className="bg-white shadow-sm z-10">
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                        <div className="flex justify-between h-16">
-                            <div className="flex">
-                                <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    onClick={() => setSidebarOpen(true)}
-                                    className="mr-4 lg:hidden"
-                                >
-                                    <Menu className="h-6 w-6" />
-                                </Button>
-                                <div className="flex-shrink-0 flex items-center">
-                                    <h1 className="text-xl font-semibold text-gray-800">Dashboard</h1>
-                                </div>
+                            <div className="relative hidden md:block">
+                                <Input
+                                    type="text"
+                                    placeholder="Search..."
+                                    className="pr-10 w-80 dark:bg-gray-700 dark:text-gray-200"
+                                />
+                                <Search className="absolute right-3 top-2.5 w-5 h-5 text-gray-400" />
                             </div>
-                            <div className="flex items-center">
-                                <div className="flex-shrink-0">
-                                    <Button variant="ghost" size="icon">
-                                        <Bell className="h-5 w-5" />
-                                    </Button>
-                                </div>
-                                <div className="hidden md:ml-4 md:flex-shrink-0 md:flex md:items-center">
-                                    <Input
-                                        type="search"
-                                        placeholder="Search..."
-                                        className="mr-4 w-64"
-                                    />
-                                    <Button variant="ghost" size="icon">
-                                        <User className="h-5 w-5" />
-                                    </Button>
-                                </div>
+                            <Button variant="ghost" size="icon">
+                                <Bell className="w-6 h-6 text-gray-800 dark:text-gray-200" />
+                            </Button>
+                            <Button variant="ghost" size="icon">
+                                <Settings className="w-6 h-6 text-gray-800 dark:text-gray-200" />
+                            </Button>
+                            <div className="flex items-center space-x-2">
+                                <Avatar>
+                                    <AvatarImage src="/path-to-avatar.jpg" alt="User Avatar" />
+                                    <AvatarFallback>U</AvatarFallback>
+                                </Avatar>
+                                <ChevronDown className="w-4 h-4 text-gray-800 dark:text-gray-200" />
                             </div>
                         </div>
                     </div>
                 </header>
 
-                {/* Dashboard Content */}
-                <main className="flex-1 overflow-y-auto bg-gray-100 p-4">
-                    <div className="max-w-7xl mx-auto">
-                        <h2 className="text-2xl font-semibold text-gray-900 mb-4">Welcome to LogShark</h2>
-                        <p className="text-gray-600 mb-8">Real-time insights for your websites, APIs, and mobile apps.</p>
+                {/* Main Dashboard */}
+                <main className="flex-1 overflow-y-auto">
+                    <div className="px-6 py-8">
+                        {/* Welcome Message */}
+                        <div className="mb-8">
+                            <h2 className="text-3xl font-semibold text-gray-800 dark:text-gray-200">
+                                Welcome back, <span className="text-indigo-600 dark:text-indigo-400">Alex</span>!
+                            </h2>
+                            <p className="text-gray-600 dark:text-gray-400 mt-2">
+                                Here&apos;s what&apos;s happening with your projects today.
+                            </p>
+                        </div>
 
-                        {/* Key Metrics */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-                            {data!.metrics.map((metric: Metric) => (
-                                <div key={metric.id} className="bg-white overflow-hidden shadow rounded-lg">
-                                    <div className="p-5">
-                                        <div className="flex items-center">
-                                            <div className="flex-shrink-0 bg-blue-500 rounded-md p-3">
-                                                {metric.icon}
-                                            </div>
-                                            <div className="ml-5 w-0 flex-1">
-                                                <dl>
-                                                    <dt className="text-sm font-medium text-gray-500 truncate">{metric.name}</dt>
-                                                    <dd className="text-lg font-semibold text-gray-900">{metric.value.toLocaleString()}</dd>
-                                                </dl>
-                                            </div>
-                                        </div>
+                        {/* Stats Cards */}
+                        <div className="grid gap-6 mb-8 md:grid-cols-2 lg:grid-cols-4">
+                            <Card className="bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow">
+                                <CardHeader className="flex items-center justify-between pb-3">
+                                    <CardTitle className="text-gray-600 dark:text-gray-400">Total Revenue</CardTitle>
+                                    <div className="p-2 bg-indigo-500 rounded-full">
+                                        <DollarSign className="w-5 h-5 text-white" />
                                     </div>
-                                </div>
-                            ))}
+                                </CardHeader>
+                                <CardContent>
+                                    <h3 className="text-3xl font-bold text-gray-800 dark:text-gray-200">$24,500</h3>
+                                    <p className="text-sm text-green-500 flex items-center mt-2">
+                                        <ArrowUpRight className="w-4 h-4 mr-1" />
+                                        15% increase
+                                    </p>
+                                </CardContent>
+                            </Card>
+
+                            <Card className="bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow">
+                                <CardHeader className="flex items-center justify-between pb-3">
+                                    <CardTitle className="text-gray-600 dark:text-gray-400">New Users</CardTitle>
+                                    <div className="p-2 bg-green-500 rounded-full">
+                                        <Users className="w-5 h-5 text-white" />
+                                    </div>
+                                </CardHeader>
+                                <CardContent>
+                                    <h3 className="text-3xl font-bold text-gray-800 dark:text-gray-200">1,254</h3>
+                                    <p className="text-sm text-green-500 flex items-center mt-2">
+                                        <ArrowUpRight className="w-4 h-4 mr-1" />
+                                        8% increase
+                                    </p>
+                                </CardContent>
+                            </Card>
+
+                            <Card className="bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow">
+                                <CardHeader className="flex items-center justify-between pb-3">
+                                    <CardTitle className="text-gray-600 dark:text-gray-400">Server Uptime</CardTitle>
+                                    <div className="p-2 bg-yellow-500 rounded-full">
+                                        <Activity className="w-5 h-5 text-white" />
+                                    </div>
+                                </CardHeader>
+                                <CardContent>
+                                    <h3 className="text-3xl font-bold text-gray-800 dark:text-gray-200">99.99%</h3>
+                                    <p className="text-sm text-green-500 flex items-center mt-2">
+                                        <ArrowUpRight className="w-4 h-4 mr-1" />
+                                        Stable
+                                    </p>
+                                </CardContent>
+                            </Card>
+
+                            <Card className="bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow">
+                                <CardHeader className="flex items-center justify-between pb-3">
+                                    <CardTitle className="text-gray-600 dark:text-gray-400">Error Rate</CardTitle>
+                                    <div className="p-2 bg-red-500 rounded-full">
+                                        <AlertTriangle className="w-5 h-5 text-white" />
+                                    </div>
+                                </CardHeader>
+                                <CardContent>
+                                    <h3 className="text-3xl font-bold text-gray-800 dark:text-gray-200">0.5%</h3>
+                                    <p className="text-sm text-red-500 flex items-center mt-2">
+                                        <ArrowUpRight className="w-4 h-4 mr-1" />
+                                        2% increase
+                                    </p>
+                                </CardContent>
+                            </Card>
                         </div>
 
                         {/* Charts */}
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-                            <div className="bg-white overflow-hidden shadow rounded-lg p-5">
-                                <h3 className="text-lg leading-6 font-medium text-gray-900 mb-2">Real-time Traffic</h3>
-                                <div style={{ height: '300px' }}>
-                                    <Line data={data!.trafficData} options={{ responsive: true, maintainAspectRatio: false }} />
-                                </div>
-                            </div>
-                            <div className="bg-white overflow-hidden shadow rounded-lg p-5">
-                                <h3 className="text-lg leading-6 font-medium text-gray-900 mb-2">Device Distribution</h3>
-                                <div style={{ height: '300px' }}>
-                                    <Pie data={data!.deviceDistribution} options={{ responsive: true, maintainAspectRatio: false }} />
-                                </div>
-                            </div>
+                        <div className="grid gap-6 mb-8 md:grid-cols-2">
+                            {/* Line Chart */}
+                            <Card className="bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow">
+                                <CardHeader>
+                                    <CardTitle className="text-gray-800 dark:text-gray-200">
+                                        Active Users Over Time
+                                    </CardTitle>
+                                </CardHeader>
+                                <CardContent>
+                                    <Line data={lineChartData} options={lineChartOptions} />
+                                </CardContent>
+                            </Card>
+
+                            {/* Pie Chart */}
+                            <Card className="bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow">
+                                <CardHeader>
+                                    <CardTitle className="text-gray-800 dark:text-gray-200">User Demographics</CardTitle>
+                                </CardHeader>
+                                <CardContent>
+                                    {/* Replace with your Pie Chart component */}
+                                    <div className="h-64 flex items-center justify-center">
+                                        <p className="text-gray-500 dark:text-gray-400">Pie Chart Placeholder</p>
+                                    </div>
+                                </CardContent>
+                            </Card>
                         </div>
 
-                        {/* User Engagement */}
-                        <div className="bg-white overflow-hidden shadow rounded-lg mb-8 p-5">
-                            <h3 className="text-lg leading-6 font-medium text-gray-900 mb-2">User Engagement</h3>
-                            <div style={{ height: '300px' }}>
-                                <Bar
-                                    data={data!.userEngagement}
-                                    options={{
-                                        responsive: true,
-                                        maintainAspectRatio: false,
-                                        scales: {
-                                            y: {
-                                                beginAtZero: true
-                                            }
-                                        }
-                                    }}
-                                />
-                            </div>
+                        {/* Recent Activities and Notifications */}
+                        <div className="grid gap-6 mb-8 md:grid-cols-2">
+                            {/* Recent Activities */}
+                            <Card className="bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow">
+                                <CardHeader>
+                                    <CardTitle className="text-gray-800 dark:text-gray-200">Recent Activities</CardTitle>
+                                </CardHeader>
+                                <CardContent>
+                                    <ScrollArea className="h-64">
+                                        {[...Array(8)].map((_, i) => (
+                                            <div key={i} className="flex items-start mb-4 last:mb-0">
+                                                <div className="flex-shrink-0">
+                                                    <Avatar>
+                                                        <AvatarImage
+                                                            src={`/avatars/user${i + 1}.jpg`}
+                                                            alt={`User ${i + 1}`}
+                                                        />
+                                                        <AvatarFallback>{`U${i + 1}`}</AvatarFallback>
+                                                    </Avatar>
+                                                </div>
+                                                <div className="ml-4">
+                                                    <p className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                                                        User {i + 1} performed an action
+                                                    </p>
+                                                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                                                        {['Just now', '5 mins ago', '1 hr ago', 'Yesterday'][i % 4]}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </ScrollArea>
+                                </CardContent>
+                            </Card>
+
+                            {/* Notifications */}
+                            <Card className="bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow">
+                                <CardHeader>
+                                    <CardTitle className="text-gray-800 dark:text-gray-200">Notifications</CardTitle>
+                                </CardHeader>
+                                <CardContent>
+                                    <ScrollArea className="h-64">
+                                        {[...Array(4)].map((_, i) => (
+                                            <div
+                                                key={i}
+                                                className="flex items-start mb-4 last:mb-0 p-3 bg-indigo-50 dark:bg-indigo-900 rounded-md"
+                                            >
+                                                <Bell className="w-5 h-5 text-indigo-500 dark:text-indigo-400 mr-3 mt-1" />
+                                                <div className="flex-1">
+                                                    <p className="text-sm font-medium text-indigo-800 dark:text-indigo-300">
+                                                        Notification {i + 1}
+                                                    </p>
+                                                    <p className="text-xs text-indigo-600 dark:text-indigo-400">
+                                                        This is the detail of notification {i + 1}.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </ScrollArea>
+                                </CardContent>
+                            </Card>
                         </div>
 
-                        {/* Alerts */}
-                        <div className="bg-white overflow-hidden shadow rounded-lg p-5">
-                            <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">Critical Alerts</h3>
-                            {data!.alerts.map((alert: Alert) => (
-                                <Alert key={alert.id} variant={alert.type === 'error' ? 'destructive' : 'default'} className="mb-2">
-                                    <AlertDescription>{alert.message}</AlertDescription>
-                                </Alert>
-                            ))}
-                        </div>
+                        {/* Projects Overview */}
+                        <Card className="bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow mb-8">
+                            <CardHeader>
+                                <CardTitle className="text-gray-800 dark:text-gray-200">Projects Overview</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="overflow-x-auto">
+                                    <table className="min-w-full text-left">
+                                        <thead>
+                                            <tr>
+                                                <th className="py-2 px-4 font-medium text-gray-600 dark:text-gray-400">
+                                                    Project
+                                                </th>
+                                                <th className="py-2 px-4 font-medium text-gray-600 dark:text-gray-400">
+                                                    Status
+                                                </th>
+                                                <th className="py-2 px-4 font-medium text-gray-600 dark:text-gray-400">
+                                                    Progress
+                                                </th>
+                                                <th className="py-2 px-4 font-medium text-gray-600 dark:text-gray-400">
+                                                    Actions
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {[...Array(5)].map((_, i) => (
+                                                <tr
+                                                    key={i}
+                                                    className="border-b last:border-0 border-gray-200 dark:border-gray-700"
+                                                >
+                                                    <td className="py-3 px-4 text-gray-800 dark:text-gray-200">
+                                                        Project {i + 1}
+                                                    </td>
+                                                    <td className="py-3 px-4">
+                                                        <Badge
+                                                            variant="outline"
+                                                            className="text-green-600 border-green-600 dark:text-green-400 dark:border-green-400"
+                                                        >
+                                                            Active
+                                                        </Badge>
+                                                    </td>
+                                                    <td className="py-3 px-4">
+                                                        <Progress
+                                                            value={Math.floor(Math.random() * 100)}
+                                                            className="w-40"
+                                                        />
+                                                    </td>
+                                                    <td className="py-3 px-4">
+                                                        <Button variant="outline" size="sm">
+                                                            View
+                                                        </Button>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </CardContent>
+                        </Card>
+
+                        {/* Performance Metrics */}
+                        <Card className="bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow">
+                            <CardHeader>
+                                <CardTitle className="text-gray-800 dark:text-gray-200">Performance Metrics</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <Tabs defaultValue="responseTime">
+                                    <TabsList className="mb-4">
+                                        <TabsTrigger value="responseTime">Response Time</TabsTrigger>
+                                        <TabsTrigger value="throughput">Throughput</TabsTrigger>
+                                        <TabsTrigger value="errorRate">Error Rate</TabsTrigger>
+                                    </TabsList>
+                                    <TabsContent value="responseTime">
+                                        {/* Replace with your Bar Chart component */}
+                                        <div className="h-64 flex items-center justify-center">
+                                            <p className="text-gray-500 dark:text-gray-400">Bar Chart Placeholder</p>
+                                        </div>
+                                    </TabsContent>
+                                    <TabsContent value="throughput">
+                                        {/* Replace with your Bar Chart component */}
+                                        <div className="h-64 flex items-center justify-center">
+                                            <p className="text-gray-500 dark:text-gray-400">Bar Chart Placeholder</p>
+                                        </div>
+                                    </TabsContent>
+                                    <TabsContent value="errorRate">
+                                        {/* Replace with your Bar Chart component */}
+                                        <div className="h-64 flex items-center justify-center">
+                                            <p className="text-gray-500 dark:text-gray-400">Bar Chart Placeholder</p>
+                                        </div>
+                                    </TabsContent>
+                                </Tabs>
+                            </CardContent>
+                        </Card>
                     </div>
                 </main>
+
+               
             </div>
         </div>
     )
 }
-

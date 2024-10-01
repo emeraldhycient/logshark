@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
-import { auth } from '@/utils/auth';import {prisma} from '@/lib/prisma';
+import { auth } from '@/utils/auth';
+import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
 
 
@@ -47,7 +48,7 @@ export async function POST(request: Request) {
 
         // Input validation
         const OrganizationSchema = z.object({
-            name: z.string().min(1, 'Name is required'),
+            name: z.string().min(3, 'Name is required'),
         });
 
         const { name } = OrganizationSchema.parse(body);
@@ -65,13 +66,13 @@ export async function POST(request: Request) {
     } catch (error) {
         if (error instanceof z.ZodError) {
             return NextResponse.json(
-                { error: { code: 'INVALID_INPUT', message: error.errors } },
+                {  code: 'INVALID_INPUT', message: error.errors  },
                 { status: 400 }
             );
         }
         console.error('POST /api/organizations error:', error);
         return NextResponse.json(
-            { error: { code: 'INTERNAL_SERVER_ERROR', message: 'An unexpected error occurred' } },
+            { code: 'INTERNAL_SERVER_ERROR', message: 'An unexpected error occurred' } ,
             { status: 500 }
         );
     }

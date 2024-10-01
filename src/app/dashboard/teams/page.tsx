@@ -49,6 +49,7 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
+import { addTeamFormSchema } from '@/constants/zodschema'
 
 interface User {
   id: string
@@ -98,20 +99,7 @@ const fetchTeams = async (page: number): Promise<TeamsData> => {
   }
 }
 
-const userFormSchema = z.object({
-  name: z.string().min(2, {
-    message: "Name must be at least 2 characters.",
-  }),
-  email: z.string().email({
-    message: "Please enter a valid email address.",
-  }),
-  role: z.string().min(1, {
-    message: "Please select a role.",
-  }),
-  team: z.string().min(2, {
-    message: "Team name must be at least 2 characters.",
-  }),
-})
+
 
 export default function Teams() {
   const [currentPage, setCurrentPage] = useState(1)
@@ -125,8 +113,8 @@ export default function Teams() {
     queryFn: () => fetchTeams(currentPage),
   })
 
-  const userForm = useForm<z.infer<typeof userFormSchema>>({
-    resolver: zodResolver(userFormSchema),
+  const userForm = useForm<z.infer<typeof addTeamFormSchema>>({
+    resolver: zodResolver(addTeamFormSchema),
     defaultValues: {
       name: "",
       email: "",
@@ -135,7 +123,7 @@ export default function Teams() {
     },
   })
 
-  function onSubmitUserForm(values: z.infer<typeof userFormSchema>) {
+  function onSubmitUserForm(values: z.infer<typeof addTeamFormSchema>) {
     console.log(values)
     // Here you would typically send the data to your backend
     setIsUserModalOpen(false)

@@ -1,70 +1,116 @@
 // components/Sidebar.tsx
 'use client'
 
-import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import {Activity, Layers, Settings, HelpCircle, LogOut, ChartNetwork, ServerCrash, Boxes, MailWarningIcon, KeyIcon, LayoutPanelTop, ChevronLeft, ChevronRight } from 'lucide-react'
+import React, { useState } from 'react'
+import {
+    Activity,
+    Layers,
+    Settings,
+    HelpCircle,
+    LogOut,
+    BarChart3,
+    ServerCrash,
+    Users,
+    AlertTriangle,
+    Key,
+    LayoutDashboard,
+} from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import OrganizationSelect from '../../OrganizationSelect'
 
 const sidebarItems = [
-    {
-        icon: <LayoutPanelTop className="h-5 w-5" />, label: 'Dashboard', href: '/dashboard'
-    },
-    { icon: <ChartNetwork className="h-5 w-5" />, label: 'Logs', href: '/dashboard/logs' },
-    { icon: <ServerCrash className="h-5 w-5" />, label: 'Crashlytics', href: '/dashboard/crashes' },
-    { icon: <Activity className="h-5 w-5" />, label: 'Activities', href: '/dashboard/activities' },
-    { icon: <MailWarningIcon className="h-5 w-5" />, label: 'Alerts', href: '/dashboard/alerts' },
-    { icon: <Layers className="h-5 w-5" />, label: 'Projects', href: '/dashboard/projects' },
-    { icon: <Boxes className="h-5 w-5" />, label: 'Teams', href: '/dashboard/teams' },
-    { icon: <KeyIcon className="h-5 w-5" />, label: 'Usage', href: '/dashboard/usage' },
-    { icon: <Settings className="h-5 w-5" />, label: 'Settings', href: '/dashboard/setting' },
+    { icon: <LayoutDashboard />, label: 'Dashboard', href: '/dashboard' },
+    { icon: <BarChart3 />, label: 'Logs', href: '/dashboard/logs' },
+    { icon: <ServerCrash />, label: 'Crashlytics', href: '/dashboard/crashes' },
+    { icon: <Activity />, label: 'Activities', href: '/dashboard/activities' },
+    { icon: <AlertTriangle />, label: 'Alerts', href: '/dashboard/alerts' },
+    { icon: <Layers />, label: 'Projects', href: '/dashboard/projects' },
+    { icon: <Users />, label: 'Teams', href: '/dashboard/teams' },
+    { icon: <Key />, label: 'Usage', href: '/dashboard/usage' },
+    { icon: <Settings />, label: 'Settings', href: '/dashboard/setting' },
 ]
 
 export default function Sidebar() {
     const pathname = usePathname()
-    console.log({ pathname })
     const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
 
     return (
-        <>
-            <aside className={`bg-white shadow-md px-4 transition-all duration-300 ease-in-out ${sidebarCollapsed ? 'w-16' : 'w-64'}`}>
-                <div className="flex items-center justify-between p-4 border-b">
-                    {!sidebarCollapsed && <h2 className="text-xl font-semibold text-gray-800">LogShark</h2>}
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-                        className="ml-auto"
-                    >
-                        {sidebarCollapsed ? <ChevronRight className="h-6 w-6" /> : <ChevronLeft className="h-6 w-6" />}
-                    </Button>
-                </div>
-                <nav className="mt-5">
-                    {sidebarItems.map((item, index) => (
+        <aside
+            className={`bg-gradient-to-b from-indigo-600 to-indigo-800 text-white shadow-lg flex flex-col h-screen transition-all duration-300 ease-in-out ${sidebarCollapsed ? 'w-20' : 'w-48'
+                }`}
+        >
+            {/* Organization Selection Component */}
+            <OrganizationSelect sidebarCollapsed={sidebarCollapsed} setSidebarCollapsed={setSidebarCollapsed} />
+
+            {/* Navigation Links */}
+            <nav className="flex-1 mt-5 overflow-y-auto">
+                <TooltipProvider>
+                    {sidebarItems.map((item, index) => {
+                        const isActive = pathname === item.href
+                        const linkClasses = `flex items-center px-4 py-3 my-1 rounded-lg transition-colors duration-200 ${isActive ? 'bg-indigo-700' : 'hover:bg-indigo-700'
+                            } ${sidebarCollapsed ? 'justify-center' : ''}`
+                        return (
+                            <Link key={index} href={item.href} className={linkClasses}>
+                                <Tooltip delayDuration={0}>
+                                    <TooltipTrigger asChild>
+                                        {React.cloneElement(item.icon, { className: 'h-6 w-6' })}
+                                    </TooltipTrigger>
+                                    {sidebarCollapsed && (
+                                        <TooltipContent side="right" align="center">
+                                            {item.label}
+                                        </TooltipContent>
+                                    )}
+                                </Tooltip>
+                                {!sidebarCollapsed && <span className="ml-3 text-md">{item.label}</span>}
+                            </Link>
+                        )
+                    })}
+                </TooltipProvider>
+            </nav>
+
+            {/* Footer Links */}
+            <div className="border-t border-indigo-500 p-4">
+                <div className="flex flex-col space-y-2">
+                    <TooltipProvider>
                         <Link
-                            key={index}
-                            href={item.href}
-                            className={`flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100 ${sidebarCollapsed ? 'justify-center' : ''}`}
+                            href="#"
+                            className={`flex items-center px-4 py-2 rounded-lg transition-colors duration-200 hover:bg-indigo-700 ${sidebarCollapsed ? 'justify-center' : ''
+                                }`}
                         >
-                            {item.icon}
-                            {!sidebarCollapsed && <span className="ml-2">{item.label}</span>}
+                            <Tooltip delayDuration={0}>
+                                <TooltipTrigger asChild>
+                                    <HelpCircle className="h-6 w-6" />
+                                </TooltipTrigger>
+                                {sidebarCollapsed && (
+                                    <TooltipContent side="right" align="center">
+                                        Help & Support
+                                    </TooltipContent>
+                                )}
+                            </Tooltip>
+                            {!sidebarCollapsed && <span className="ml-3 text-md">Help & Support</span>}
                         </Link>
-                    ))}
-                </nav>
-                <div className="absolute bottom-0  py-4 border-t">
-                    <Link href="#" className="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-200">
-                        <HelpCircle className="h-5 w-5 mr-2" />
-                        {!sidebarCollapsed && <span className="ml-2"> Help & Support</span>}
-                    </Link>
-                    <Link href="#" className="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-200">
-                        <LogOut className="h-5 w-5 mr-2" />
-                        {!sidebarCollapsed && <span className="ml-2">Log Out</span>}
-
-
-                    </Link>
+                        <Link
+                            href="#"
+                            className={`flex items-center px-4 py-2 rounded-lg transition-colors duration-200 hover:bg-indigo-700 ${sidebarCollapsed ? 'justify-center' : ''
+                                }`}
+                        >
+                            <Tooltip delayDuration={0}>
+                                <TooltipTrigger asChild>
+                                    <LogOut className="h-6 w-6" />
+                                </TooltipTrigger>
+                                {sidebarCollapsed && (
+                                    <TooltipContent side="right" align="center">
+                                        Log Out
+                                    </TooltipContent>
+                                )}
+                            </Tooltip>
+                            {!sidebarCollapsed && <span className="ml-3 text-md">Log Out</span>}
+                        </Link>
+                    </TooltipProvider>
                 </div>
-            </aside>
-        </>
+            </div>
+        </aside>
     )
 }

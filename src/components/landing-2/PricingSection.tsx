@@ -17,7 +17,7 @@ const EVENT_COST_INCREMENT = 19 // Price increment for each additional 1,000,000
 const plans = [
     {
         name: 'Starter',
-        price: { monthly: '$5', annually: '$50' },
+        price: { monthly: '$10', annually: '$100' },
         description: 'For individuals and small projects starting out.',
         features: [
             'Basic User Behavior Analytics',
