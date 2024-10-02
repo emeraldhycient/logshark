@@ -67,22 +67,23 @@ export default function Projects() {
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   const [selectedOrganizationValue, setSelectedOrganizationValue] = useState('')
-  const [globalError, setGlobalError] = useState<string | null>(null)
+  const [globalError, setGlobalError] = useState<string | null>("")
 
   const [isLoading, setisLoading] = useState(false)
 
   const queryClient = useQueryClient();
 
-  const { data, isLoading: isProjectsLoading, error,isError } = useQuery({
+  const { data, isLoading: isProjectsLoading, error, isError } = useQuery({
     queryKey: ['projects', currentPage, searchTerm],
     queryFn: () => projectServices.getAllProjects({ currentPage, search: searchTerm }),
   })
 
   useEffect(() => {
-    console.log({error})
-    setGlobalError('An Error Occurred!')
+    console.log({ error })
+    if (isError)
+      setGlobalError('An Error Occurred!')
   }, [isError])
-  
+
 
   const createProjectMutation = useMutation({
     mutationFn: projectServices.createProject,
@@ -91,7 +92,7 @@ export default function Projects() {
       setIsModalOpen(false);
       form.reset();
     },
-    onError: (error:MutationError) => {
+    onError: (error: MutationError) => {
       // Handle error
       console.error(error);
       setGlobalError(error.response?.data?.message || 'An Error Occurred!')
@@ -143,18 +144,18 @@ export default function Projects() {
   }
 
   useEffect(() => {
-   getLogCount()
+    getLogCount()
   }, [data])
-  
 
-  
+
+
   const handleDeleteProject = (projectId: string) => {
     setProjectToDelete(projectId);
     setIsDeleteDialogOpen(true);
   };
 
   // if (error) return <div className="flex items-center justify-center h-screen">An error occurred</div>
-  
+
 
   return (
     <div className="container mx-auto pb-8">
@@ -336,29 +337,29 @@ export default function Projects() {
               <TableBody>
                 {
                   !isProjectsLoading ?
-                  data?.projects.map((project:IProject) => (
-                  <TableRow key={project.id}>
-                    <TableCell className="font-medium">{project.name}</TableCell>
-                    <TableCell>{project.eventCount}</TableCell>
-                    <TableCell>
-                      {project?.dataSources?.map((item: string) => (
-                        <span key={item} className="mr-1 text-black bg-gray-200 rounded text-sm px-1 py-1">{item}</span>
-                      ))}
-                    </TableCell>
-                    <TableCell>{project?.organization?.name}</TableCell>
-                    <TableCell>{new Date(project.createdAt).toLocaleDateString()}</TableCell>
-                    <TableCell>
-                      <Button
-                        variant="outline"
-                          size="sm"
-                          className='border-red-500 text-red-500 hover:bg-red-100'
-                        onClick={() => handleDeleteProject(project.id)}
-                      >
-                        <Trash className="h-4 w-4" /> Delete
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                  )) :
+                    data?.projects.map((project: IProject) => (
+                      <TableRow key={project.id}>
+                        <TableCell className="font-medium">{project.name}</TableCell>
+                        <TableCell>{project.eventCount}</TableCell>
+                        <TableCell>
+                          {project?.dataSources?.map((item: string) => (
+                            <span key={item} className="mr-1 text-black bg-gray-200 rounded text-sm px-1 py-1">{item}</span>
+                          ))}
+                        </TableCell>
+                        <TableCell>{project?.organization?.name}</TableCell>
+                        <TableCell>{new Date(project.createdAt).toLocaleDateString()}</TableCell>
+                        <TableCell>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className='border-red-500 text-red-500 hover:bg-red-100'
+                            onClick={() => handleDeleteProject(project.id)}
+                          >
+                            <Trash className="h-4 w-4" /> Delete
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    )) :
                     <TableRow>
                       <TableCell colSpan={6} className="text-center">Loading...</TableCell>
                     </TableRow>
