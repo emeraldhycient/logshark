@@ -73,10 +73,16 @@ export default function Projects() {
 
   const queryClient = useQueryClient();
 
-  const { data, isLoading: isProjectsLoading, error } = useQuery({
+  const { data, isLoading: isProjectsLoading, error,isError } = useQuery({
     queryKey: ['projects', currentPage, searchTerm],
     queryFn: () => projectServices.getAllProjects({ currentPage, search: searchTerm }),
   })
+
+  useEffect(() => {
+    console.log({error})
+    setGlobalError('An Error Occurred!')
+  }, [isError])
+  
 
   const createProjectMutation = useMutation({
     mutationFn: projectServices.createProject,
@@ -147,11 +153,11 @@ export default function Projects() {
     setIsDeleteDialogOpen(true);
   };
 
-  if (error) return <div className="flex items-center justify-center h-screen">An error occurred</div>
+  // if (error) return <div className="flex items-center justify-center h-screen">An error occurred</div>
   
 
   return (
-    <div className="container mx-auto py-8">
+    <div className="container mx-auto pb-8">
       <Header title="Projects" />
       <div className="flex justify-between px-4 py-2 items-center mb-6">
         <div></div>
