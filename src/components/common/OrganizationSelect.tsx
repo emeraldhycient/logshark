@@ -36,12 +36,14 @@ import organisationService from '@/services/Organisation/org.service'
 import { MutationError } from '@/types'
 
 interface OrganizationSelectProps {
-    sidebarCollapsed: boolean
-    setSidebarCollapsed: (value: boolean) => void
+    sidebarCollapsed?: boolean
+    setSidebarCollapsed?: (value: boolean) => void
+    selectedOrganizationValue?: string,
+    setSelectedOrganizationValue?: (value: string) => void
 }
 
-export default function OrganizationSelect({ sidebarCollapsed, setSidebarCollapsed }: OrganizationSelectProps) {
-    const [selectedOrganization, setSelectedOrganization] = useState<string>('')
+export default function OrganizationSelect({ sidebarCollapsed, setSidebarCollapsed,selectedOrganizationValue,setSelectedOrganizationValue }: OrganizationSelectProps) {
+    const [selectedOrganization, setSelectedOrganization] = useState<string>(selectedOrganizationValue || '')
     const [isCreateOrgDialogOpen, setIsCreateOrgDialogOpen] = useState(false)
     const { toast } = useToast()
     const queryClient = useQueryClient()
@@ -105,6 +107,7 @@ export default function OrganizationSelect({ sidebarCollapsed, setSidebarCollaps
                                     setIsCreateOrgDialogOpen(true)
                                 } else if (value !== 'no_orgs') {
                                     setSelectedOrganization(value)
+                                    setSelectedOrganizationValue?.(value)
                                 }
                             }}
                             disabled={isOrgLoading}
@@ -158,7 +161,7 @@ export default function OrganizationSelect({ sidebarCollapsed, setSidebarCollaps
                     </TooltipProvider>
                 )}
                 <button
-                    onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+                    onClick={() => setSidebarCollapsed?.(!sidebarCollapsed)}
                     className="text-white hover:bg-indigo-700 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-white"
                 >
                     {sidebarCollapsed ? <ChevronRight className="h-6 w-6" /> : <ChevronLeft className="h-6 w-6" />}

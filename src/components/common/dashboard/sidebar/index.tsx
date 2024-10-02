@@ -34,7 +34,7 @@ const sidebarItems = [
 
 export default function Sidebar() {
     const pathname = usePathname()
-    const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
+    const [sidebarCollapsed, setSidebarCollapsed] = useState(true)
 
     return (
         <aside

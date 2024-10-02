@@ -2,30 +2,55 @@ import { NextResponse } from 'next/server';
 import { auth } from '@/utils/auth';
 import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
+import { DataSourceType } from '@prisma/client';
 
-export async function GET() {
+export async function GET(request: Request) { 
     const session = await auth()
     if (!session?.user) {
         return NextResponse.json(
-            { error: { code: 'UNAUTHORIZED', message: 'Unauthorized access' } },
+            { error: 'UNAUTHORIZED', message: 'Unauthorized access'  },
             { status: 401 }
         );
     }
 
-    try {
-        const projects = await prisma.project.findMany({
-            where: { userId: session.user.id },
-            include: {
-                organization: true,
-                ApiKey: true,
-            },
-        });
+    const { search = '', currentPage = '1', limit = '10' } = Object.fromEntries(new URL(request.url).searchParams); // Extract query params
+    const offset = (parseInt(currentPage) - 1) * parseInt(limit); // Calculate offset for pagination
 
-        return NextResponse.json(projects, { status: 200 });
+    try {
+        const [projects, totalCount] = await Promise.all([
+            prisma.project.findMany({
+                where: {
+                    userId: session.user.id,
+                    name: { contains: search, mode: 'insensitive' }, // Search by project name
+                },
+                include: {
+                    organization: true,
+                    // ApiKey: true,
+                    events:true
+                },
+                skip: offset, // Skip for pagination
+                take: parseInt(limit), // Limit the number of results
+            }),
+            prisma.project.count({ // Count total projects for pagination
+                where: {
+                    userId: session.user.id,
+                    name: { contains: search, mode: 'insensitive' },
+                },
+            }),
+        ]);
+
+        return NextResponse.json({
+            projects,
+            pagination: {
+                currentPage: parseInt(currentPage),
+                totalPages: Math.ceil(totalCount / parseInt(limit)),
+                totalCount,
+            },
+        }, { status: 200 });
     } catch (error) {
         console.error('GET /api/projects error:', error);
         return NextResponse.json(
-            { error: { code: 'INTERNAL_SERVER_ERROR', message: 'An unexpected error occurred' } },
+            { error: 'INTERNAL_SERVER_ERROR', message: 'An unexpected error occurred'  },
             { status: 500 }
         );
     }
@@ -44,15 +69,18 @@ export async function POST(request: Request) {
     try {
         const body = await request.json();
 
+        //TODO: remember add validation for pricingplan
+
         // Input validation using Zod
         const ProjectSchema = z.object({
             name: z.string().min(3, 'Name is required'),
-            // data source would be a type of enum DataSourceType
-            dataSources: z.array(z.string()),
+            dataSources: z.array(z.enum(Object.values(DataSourceType) as [string, ...string[]])).nonempty({ message: "Select at least one data source type." }),
             organizationId: z.string().uuid('Invalid organization ID'),
         });
 
-        const { name, organizationId } = ProjectSchema.parse(body);
+        
+        const { name, organizationId, dataSources } = ProjectSchema.parse(body);
+        console.log({ ProjectSchema })
 
         // Verify organization ownership
         const organization = await prisma.organization.findUnique({
@@ -90,6 +118,7 @@ export async function POST(request: Request) {
             data: {
                 name,
                 organizationId,
+                dataSources: dataSources as DataSourceType[],
                 userId,
             },
         });
