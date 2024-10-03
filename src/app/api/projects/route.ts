@@ -25,7 +25,6 @@ export async function GET(request: Request) {
                 },
                 include: {
                     organization: true,
-                    // ApiKey: true,
                     events:true
                 },
                 skip: offset, // Skip for pagination

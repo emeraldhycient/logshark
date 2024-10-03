@@ -29,7 +29,7 @@ export async function GET(request: Request, { params }: Params) {
             where: { id: projectId },
             include: {
                 organization: true,
-                ApiKey: true,
+                events: true,
             },
         });
 

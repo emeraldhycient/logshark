@@ -120,18 +120,20 @@ model PricingPlan {
 
 // Add this model to manage subscriptions for users
 model Subscription {
-  id             String           @id @default(uuid()) // Unique identifier for each subscription
-  userId         String // Reference to the User who owns this subscription
-  user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  pricingPlanId  String // Reference to the associated pricing plan
-  pricingPlan    PricingPlan      @relation(fields: [pricingPlanId], references: [id])
-  startDate      DateTime         @default(now()) // Subscription start date
-  endDate        DateTime? // Subscription end date (if applicable)
-  eventCount     Int              @default(0) // Count of events used in the current billing cycle
-  active         Boolean          @default(true) // Flag to check if the subscription is active
-  billingHistory BillingHistory[] // Relationship to billing history
-  createdAt      DateTime         @default(now()) // Subscription creation timestamp
-  updatedAt      DateTime         @updatedAt // Last updated timestamp
+  id                 String           @id @default(uuid()) // Unique identifier for each subscription
+  userId             String // Reference to the User who owns this subscription
+  user               User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  pricingPlanId      String // Reference to the associated pricing plan
+  pricingPlan        PricingPlan      @relation(fields: [pricingPlanId], references: [id])
+  startDate          DateTime         @default(now()) // Subscription start date
+  endDate            DateTime? // Subscription end date (if applicable)
+  selectedEventLimit Int // User-selected event limit
+  price              Float // Calculated total price
+  eventCount         Int              @default(0) // Count of events used in the current billing cycle
+  active             Boolean          @default(true) // Flag to check if the subscription is active
+  billingHistory     BillingHistory[] // Relationship to billing history
+  createdAt          DateTime         @default(now()) // Subscription creation timestamp
+  updatedAt          DateTime         @updatedAt // Last updated timestamp
 }
 
 // Add this model to track billing history for users
@@ -161,19 +163,19 @@ model Organization {
 }
 
 model Project {
-  id             String         @id @default(uuid()) // Unique identifier for each project
+  id             String           @id @default(uuid()) // Unique identifier for each project
   name           String // Project's name
-  organization   Organization   @relation(fields: [organizationId], references: [id]) // Relationship with Organization
+  organization   Organization     @relation(fields: [organizationId], references: [id]) // Relationship with Organization
   organizationId String // Foreign key to Organization
-  user           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId         String
-  createdAt      DateTime       @default(now()) // Timestamp for project creation
-  updatedAt      DateTime       @updatedAt // Timestamp for last project update
+  createdAt      DateTime         @default(now()) // Timestamp for project creation
+  updatedAt      DateTime         @updatedAt // Timestamp for last project update
   dataSources    DataSourceType[] // List of data sources associated with the project
   events         Event[] // List of events tracked in the project
   featureFlags   FeatureFlag[] // List of feature flags for A/B testing
   customMetrics  CustomMetric[] // List of custom metrics associated with the project
-  eventCount     Int            @default(0)
+  eventCount     Int              @default(0)
 
   ApiKey ApiKey[]
 }
@@ -273,10 +275,10 @@ model Heatmap {
 }
 
 model PerformanceMetric {
-  id             String       @id @default(uuid()) // Unique identifier for each performance metric
+  id             String         @id @default(uuid()) // Unique identifier for each performance metric
   metricType     MetricType // Type of performance metric
   value          Float // Value of the metric
-  timestamp      DateTime     @default(now()) // Timestamp when the metric was recorded
+  timestamp      DateTime       @default(now()) // Timestamp when the metric was recorded
   details        Json // Additional details or context
   dataSourceType DataSourceType // Type of data source (web, mobile, api)
 }
@@ -294,7 +296,7 @@ model ApiCall {
 }
 
 model DeviceInfo {
-  id              String       @id @default(uuid()) // Unique identifier for each device information record
+  id              String         @id @default(uuid()) // Unique identifier for each device information record
   dataSourceType  DataSourceType // Type of data source (web, mobile, api)
   deviceType      DeviceType // Type of device (desktop, mobile, tablet, smart TV)
   model           String? // Model of the device (e.g., iPhone X, Galaxy S10)
@@ -304,7 +306,7 @@ model DeviceInfo {
   browserVersion  String? // Browser version
   screenWidth     Int? // Screen width in pixels
   screenHeight    Int? // Screen height in pixels
-  createdAt       DateTime   @default(now()) // Timestamp for device info creation
+  createdAt       DateTime       @default(now()) // Timestamp for device info creation
 }
 
 model MobileAppMetric {
@@ -377,7 +379,7 @@ model ApiKey {
   usageCount     Int       @default(0) // Number of times the API key has been used
   revokedAt      DateTime? // Timestamp for when the API key was revoked, if applicable
   ipRestrictions String[] // List of allowed IP addresses for using this key
-  secretHash String
+  secretHash     String
   createdBy      String // The User ID or System that created this API key
 }
 
