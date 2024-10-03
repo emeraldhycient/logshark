@@ -127,8 +127,8 @@ model Subscription {
   pricingPlan        PricingPlan      @relation(fields: [pricingPlanId], references: [id])
   startDate          DateTime         @default(now()) // Subscription start date
   endDate            DateTime? // Subscription end date (if applicable)
-  selectedEventLimit Int // User-selected event limit
-  price              Float // Calculated total price
+  selectedEventLimit Int @default(0)// User-selected event limit
+  price              Float  @default(0)// Calculated total price
   eventCount         Int              @default(0) // Count of events used in the current billing cycle
   active             Boolean          @default(true) // Flag to check if the subscription is active
   billingHistory     BillingHistory[] // Relationship to billing history
