@@ -64,3 +64,20 @@ export interface IProject {
     organization: IOrganization;
     events: IEvent[]; 
 }
+
+
+export interface IPricingPlan {
+    id: string
+    name: string
+    monthlyPrice: number
+    annualPrice: number
+    eventLimit: number
+    teamMembersLimit: number
+    dataRetentionDays: number
+    integrationsLimit: number
+    isPopular: boolean
+    features: string[]
+    description?: string
+    cta?: string
+    eventCostPerMillion?: number
+}

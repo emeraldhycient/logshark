@@ -115,6 +115,7 @@ model PricingPlan {
   features          String[] // List of features included in this plan
   createdAt         DateTime       @default(now()) // Plan creation timestamp
   updatedAt         DateTime       @updatedAt // Last updated timestamp
+  eventCostPerMillion Float?
   subscriptions     Subscription[] // Relationship with subscriptions
 }
 
