@@ -103,22 +103,25 @@ export default function PricingSection({ isDisplay = true }) {
 
         if (isAnnual) {
             const annualPrice = totalPrice * 12 * 0.8 || enterprisePlan.annualPrice
-            return `$${annualPrice.toFixed(0)}`
+            return `${annualPrice.toFixed(0)}`
         }
 
-        return `$${totalPrice.toFixed(0)}`
+        return `${totalPrice.toFixed(0)}`
     }
 
 
-    const PaystackHookButton = ({ isPopular, cta }: { isPopular: boolean, cta: string }) => {
+    const PaystackHookButton = ({ isPopular, cta, amount }: { isPopular: boolean, cta: string, amount: number }) => {
+        console.log({ key: process.env.PAYSTACK_PUBLIC_KEY })
+        const amountInCents = amount * 100
         return (
-                <Button onClick={() => {
+            <Button onClick={() => {
                 paystack.newTransaction({
                     key: process.env.PAYSTACK_PUBLIC_KEY ?? '',
                     email: 'example@email.com',
-                    amount: 10000,
+                    amount: amountInCents,
+                    "currency": "USD",
                     onSuccess: (transaction: string) => {
-                        console.log({transaction})
+                        console.log({ transaction })
                         // Payment complete! Reference: transaction.reference 
                     },
                     onCancel: () => {
@@ -127,11 +130,11 @@ export default function PricingSection({ isDisplay = true }) {
                     }
                 });
 
-                }}
-                    className={`w-full ${isPopular ? 'bg-blue-600 hover:bg-blue-700' : ''}`}
-                    variant={isPopular ? 'default' : 'outline'}
-                    size="lg"
-                >{cta}</Button>
+            }}
+                className={`w-full ${isPopular ? 'bg-blue-600 hover:bg-blue-700' : ''}`}
+                variant={isPopular ? 'default' : 'outline'}
+                size="lg"
+            >{cta}</Button>
         );
     };
 
@@ -207,7 +210,7 @@ export default function PricingSection({ isDisplay = true }) {
                                         <CardFooter>
                                             {
                                                 !isDisplay ?
-                                                    <PaystackHookButton isPopular={plan.isPopular} cta={plan.cta || 'Get Started'} />
+                                                    <PaystackHookButton isPopular={plan.isPopular} cta={plan.cta || 'Get Started'} amount={isAnnual ? Number(plan.annualPrice) : Number(plan.monthlyPrice)} />
                                                     :
                                                     <Button
                                                         className={`w-full ${plan.isPopular ? 'bg-blue-600 hover:bg-blue-700' : ''}`}
@@ -233,7 +236,7 @@ export default function PricingSection({ isDisplay = true }) {
                             </CardHeader>
                             <CardContent className="flex-grow">
                                 <div className="text-center">
-                                    <span className="text-5xl font-extrabold">{calculateEnterprisePrice()}</span>
+                                    <span className="text-5xl font-extrabold">${calculateEnterprisePrice()}</span>
                                     <span className="text-xl font-medium text-gray-500">
                                         /{isAnnual ? 'year' : 'month'}
                                     </span>
@@ -273,7 +276,7 @@ export default function PricingSection({ isDisplay = true }) {
                             <CardFooter>
                                 {
                                     !isDisplay ?
-                                        <PaystackHookButton isPopular={true} cta={'Get Started'} />
+                                        <PaystackHookButton isPopular={true} cta={'Get Started'} amount={Number(calculateEnterprisePrice()) || (isAnnual ? enterprisePlan?.annualPrice : enterprisePlan?.monthlyPrice)} />
                                         :
                                         <Button className="w-full bg-blue-600 hover:bg-blue-700" variant="default" size="lg">
                                             <Link href="/register">Get Started</Link>
