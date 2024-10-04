@@ -40,7 +40,7 @@ export default function SignUpPage() {
         mutationFn: (data: registerParams) => authservice.register(data),
         onSuccess: () => {
             setLoading(false)
-            router.push('/login')
+            router.push('/subscription')
         },
         onError: (error: MutationError) => {
             setLoading(false)
