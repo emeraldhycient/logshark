@@ -44,6 +44,10 @@ export async function POST(request: Request) {
         const verifyTransaction = await paystack.transaction.verify(reference)
 
         console.log({ verifyTransaction })
+        //check if the transaction was successfull
+        if (!verifyTransaction.status) {
+            return NextResponse.json({ error: 'Transaction failed',message:verifyTransaction.message }, { status: 400 });
+        }
 
         const nextPayDate = utils.getNextPayDate(isAnnual)
 
