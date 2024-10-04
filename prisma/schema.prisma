@@ -143,7 +143,7 @@ model BillingHistory {
   subscriptionId String // Reference to the associated subscription
   subscription   Subscription  @relation(fields: [subscriptionId], references: [id])
   amount         Float // Billing amount for the cycle
-  paymentData    Json
+  paymentData    Json?
   billingDate    DateTime      @default(now()) // Date when the billing was made
   paymentStatus  PaymentStatus // Status of the payment (e.g., 'Paid', 'Failed')
 }

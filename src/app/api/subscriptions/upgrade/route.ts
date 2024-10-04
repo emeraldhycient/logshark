@@ -5,6 +5,7 @@ import { auth } from '@/utils/auth';
 import { prisma } from '@/lib/prisma';
 import { Paystack } from 'paystack-sdk';
 import { utils } from '@/utils';
+import { InputJsonValue } from '@prisma/client/runtime/library';
 
 export async function POST(request: Request) {
     const session = await auth()
@@ -40,7 +41,7 @@ export async function POST(request: Request) {
 
         const paystack = new Paystack(process.env.PAYSTACK_SECRET_KEY || '');
 
-        const verifyTransaction = paystack.transaction.verify(reference)
+        const verifyTransaction = await paystack.transaction.verify(reference)
 
         console.log({ verifyTransaction })
 
@@ -80,14 +81,17 @@ export async function POST(request: Request) {
         }
 
         // Create billing history entry
+        const transactionData = verifyTransaction?.data ? JSON.stringify(verifyTransaction.data) : null;
+
         await prisma.billingHistory.create({
             data: {
                 subscriptionId: subscription.id,
                 amount: price,
-                paymentData: verifyTransaction, 
-                paymentStatus: 'PAID', 
+                paymentData: transactionData as InputJsonValue, 
+                paymentStatus: 'PAID',
             },
         });
+
 
         return NextResponse.json(
             {
