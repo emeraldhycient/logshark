@@ -111,12 +111,12 @@ export default function PricingSection({ isDisplay = true }) {
 
 
     const PaystackHookButton = ({ isPopular, cta, amount }: { isPopular: boolean, cta: string, amount: number }) => {
-        console.log({ key: process.env.PAYSTACK_PUBLIC_KEY })
+        console.log({ key: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY })
         const amountInCents = amount * 100
         return (
             <Button onClick={() => {
                 paystack.newTransaction({
-                    key: process.env.PAYSTACK_PUBLIC_KEY ?? '',
+                    key: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY ?? '',
                     email: 'example@email.com',
                     amount: amountInCents,
                     "currency": "USD",
