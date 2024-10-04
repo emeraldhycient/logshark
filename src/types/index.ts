@@ -40,8 +40,8 @@ export type IPagination = {
 export interface IOrganization {
     id: string;
     name: string;
-    createdAt: string; 
-    updatedAt: string; 
+    createdAt: string;
+    updatedAt: string;
 }
 
 // Interface for Event (will update later)
@@ -57,12 +57,12 @@ export interface IProject {
     name: string;
     organizationId: string;
     userId: string;
-    createdAt: string; 
-    updatedAt: string; 
+    createdAt: string;
+    updatedAt: string;
     dataSources: DataSourceType[];
     eventCount: number;
     organization: IOrganization;
-    events: IEvent[]; 
+    events: IEvent[];
 }
 
 
@@ -81,3 +81,15 @@ export interface IPricingPlan {
     cta?: string
     eventCostPerMillion?: number
 }
+
+export interface IcalculateEnterprisePrice {
+    eventCount: number;
+    monthlyPrice: number;
+    annualPrice: number;
+    baseEventsLimit: number;
+    eventCostPerMillion?: number;
+    isAnnual?: boolean
+}
+
+export interface ISubscribeOrUpgrade { planId: string, reference: string, eventCount: number | string, price: number | string, isAnnual: boolean }
+

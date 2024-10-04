@@ -19,6 +19,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import OrganizationSelect from '../../OrganizationSelect'
+import { signOut } from "next-auth/react"
 
 const sidebarItems = [
     { icon: <LayoutDashboard />, label: 'Dashboard', href: '/dashboard' },
@@ -93,6 +94,10 @@ export default function Sidebar() {
                         </Link>
                         <Link
                             href="#"
+                            onClick={(e) => {
+                                e.preventDefault()
+                                signOut({ callbackUrl: '/login'})
+                            }}
                             className={`flex items-center px-4 py-2 rounded-lg transition-colors duration-200 hover:bg-indigo-700 ${sidebarCollapsed ? 'justify-center' : ''
                                 }`}
                         >

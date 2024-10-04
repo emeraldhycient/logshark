@@ -3,7 +3,8 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@/utils/auth';
 import { prisma } from '@/lib/prisma';
-// Import payment processing library (e.g., Stripe)
+import { Paystack } from 'paystack-sdk';
+import { utils } from '@/utils';
 
 export async function POST(request: Request) {
     const session = await auth()
@@ -12,11 +13,11 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { planId, paymentMethodId } = await request.json();
+    const { planId, reference, eventCount, price, isAnnual } = await request.json();
 
-    if (!planId || !paymentMethodId) {
+    if (!planId || !reference || !eventCount || !price) {
         return NextResponse.json(
-            { error: 'planId and paymentMethodId are required' },
+            { error: 'planId and reference,eventCount,price are required' },
             { status: 400 }
         );
     }
@@ -28,7 +29,23 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'Invalid planId' }, { status: 400 });
         }
 
-        // Process payment here...
+        if (plan.name == 'Enterprise') {
+            const expectedAmount = utils.calculateEnterprisePrice({ eventCount, monthlyPrice: plan.monthlyPrice, annualPrice: plan.annualPrice, baseEventsLimit: plan.eventLimit, eventCostPerMillion: plan.eventCostPerMillion, isAnnual })
+            if (price != expectedAmount) return NextResponse.json({ error: 'Invalid amount', message: "Event count and amount's do not match" }, { status: 400 });
+        }
+
+        if (plan.name != 'Enterprise' && plan.eventLimit != eventCount ) {
+            return NextResponse.json({ error: 'Invalid amount', message: "Event count and amount's do not match" }, { status: 400 });
+        }
+
+        const paystack = new Paystack(process.env.PAYSTACK_SECRET_KEY || '');
+
+        const verifyTransaction = paystack.transaction.verify(reference)
+
+        console.log({ verifyTransaction })
+
+        const nextPayDate = utils.getNextPayDate(isAnnual)
+
         const existingSubscription = await prisma.subscription.findFirst({
             where: { userId: session.user.id, active: true },
         });
@@ -41,7 +58,10 @@ export async function POST(request: Request) {
                     pricingPlanId: planId,
                     startDate: new Date(),
                     active: true,
+                    selectedEventLimit: eventCount,
+                    price,
                     eventCount: 0,
+                    endDate: nextPayDate
                 },
             });
         } else {
@@ -51,30 +71,23 @@ export async function POST(request: Request) {
                     pricingPlan: { connect: { id: planId } },
                     startDate: new Date(),
                     active: true,
+                    selectedEventLimit: eventCount,
+                    price,
                     eventCount: 0,
+                    endDate: nextPayDate
                 },
             });
         }
 
-
-        // const subscription = await prisma.subscription.upsert({
-        //     where: { userId: session.user.id },
-        //     update: {
-        //         pricingPlanId: planId,
-        //         startDate: new Date(),
-        //         active: true,
-        //         eventCount: 0,
-        //     },
-        //     create: {
-        //         userId: session.user.id,
-        //         pricingPlanId: planId,
-        //         startDate: new Date(),
-        //         active: true,
-        //     },
-        // });
-
-        //TODO: Update the subscription with the payment method
-        //TODO: Update the BillingHistory with the new subscription
+        // Create billing history entry
+        await prisma.billingHistory.create({
+            data: {
+                subscriptionId: subscription.id,
+                amount: price,
+                paymentData: verifyTransaction, 
+                paymentStatus: 'PAID', 
+            },
+        });
 
         return NextResponse.json(
             {

@@ -103,20 +103,20 @@ model Authenticator {
 }
 
 model PricingPlan {
-  id                String         @id @default(uuid()) // Unique identifier for the pricing plan
-  name              String // Name of the plan (e.g., 'Starter', 'Growth', 'Enterprise')
-  monthlyPrice      Float // Monthly subscription price
-  annualPrice       Float // Annual subscription price (discounted)
-  eventLimit        Int // Monthly event limit for this plan
-  teamMembersLimit  Int // Maximum number of team members allowed
-  dataRetentionDays Int // Number of days to retain data
-  integrationsLimit Int // Number of website/app/API integrations allowed
-  isPopular         Boolean        @default(false) // Flag to highlight the most popular plan
-  features          String[] // List of features included in this plan
-  createdAt         DateTime       @default(now()) // Plan creation timestamp
-  updatedAt         DateTime       @updatedAt // Last updated timestamp
-  eventCostPerMillion Float @default(0)
-  subscriptions     Subscription[] // Relationship with subscriptions
+  id                  String         @id @default(uuid()) // Unique identifier for the pricing plan
+  name                String // Name of the plan (e.g., 'Starter', 'Growth', 'Enterprise')
+  monthlyPrice        Float // Monthly subscription price
+  annualPrice         Float // Annual subscription price (discounted)
+  eventLimit          Int // Monthly event limit for this plan
+  teamMembersLimit    Int // Maximum number of team members allowed
+  dataRetentionDays   Int // Number of days to retain data
+  integrationsLimit   Int // Number of website/app/API integrations allowed
+  isPopular           Boolean        @default(false) // Flag to highlight the most popular plan
+  features            String[] // List of features included in this plan
+  createdAt           DateTime       @default(now()) // Plan creation timestamp
+  updatedAt           DateTime       @updatedAt // Last updated timestamp
+  eventCostPerMillion Float          @default(0)
+  subscriptions       Subscription[] // Relationship with subscriptions
 }
 
 // Add this model to manage subscriptions for users
@@ -128,8 +128,8 @@ model Subscription {
   pricingPlan        PricingPlan      @relation(fields: [pricingPlanId], references: [id])
   startDate          DateTime         @default(now()) // Subscription start date
   endDate            DateTime? // Subscription end date (if applicable)
-  selectedEventLimit Int @default(0)// User-selected event limit
-  price              Float  @default(0)// Calculated total price
+  selectedEventLimit Int              @default(0) // User-selected event limit
+  price              Float            @default(0) // Calculated total price
   eventCount         Int              @default(0) // Count of events used in the current billing cycle
   active             Boolean          @default(true) // Flag to check if the subscription is active
   billingHistory     BillingHistory[] // Relationship to billing history
@@ -143,6 +143,7 @@ model BillingHistory {
   subscriptionId String // Reference to the associated subscription
   subscription   Subscription  @relation(fields: [subscriptionId], references: [id])
   amount         Float // Billing amount for the cycle
+  paymentData    Json
   billingDate    DateTime      @default(now()) // Date when the billing was made
   paymentStatus  PaymentStatus // Status of the payment (e.g., 'Paid', 'Failed')
 }

@@ -40,16 +40,17 @@ export default function LoginPage() {
             setError('')
 
             const res = await signIn('credentials', {
-                redirect: false,
+                redirect: true,
                 email: values.email,
                 password: values.password,
+                callbackUrl: '/dashboard', 
             })
 
             if (res?.error) {
                 setError(res.error)
                 setLoading(false)
             } else if (res?.ok) {
-                router.push('/dashboard')
+                return router.push('/dashboard')
             }
         },
     })

@@ -21,13 +21,14 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { pricingPlanService } from '@/services/pricingPlan'
 import { IPricingPlan } from '@/types'
 // import { usePaystackPayment } from 'react-paystack';
 import PricingCardSkeletonLoader from '../common/skeleton/pricingCardSkeleton'
 
 import PaystackPop from '@paystack/inline-js';
+import { subscriptionService } from '@/services/subscription/index.service'
 
 
 
@@ -58,6 +59,7 @@ const ENTERPRISE_EVENT_OPTIONS = generateEventOptions(eventValuesInMillions)
 export default function PricingSection({ isDisplay = true }) {
     const [isAnnual, setIsAnnual] = useState(true)
     const [enterpriseEvents, setEnterpriseEvents] = useState(10_000_000) // Default to 10 million events
+    const [enterprisePrice, setenterprisePrice] = useState(0)
 
     const paystack = new PaystackPop();
 
@@ -88,40 +90,49 @@ export default function PricingSection({ isDisplay = true }) {
     // Extract the Enterprise plan from the fetched plans
     const enterprisePlan = plans && plans.find((plan: IPricingPlan) => plan.name === 'Enterprise')
 
-    // Function to calculate the enterprise price using values from the database
-    const calculateEnterprisePrice = () => {
-        if (!enterprisePlan) return '$0'
+    // useEffect to calculate enterprise price when dependencies change
+    React.useEffect(() => {
+        if (enterprisePlan) {
+            const events = enterpriseEvents
+            const basePrice = enterprisePlan.monthlyPrice
+            const baseEvents = enterprisePlan.eventLimit
+            const eventCostPerMillion = enterprisePlan.eventCostPerMillion || 19
 
-        const events = enterpriseEvents
-        const basePrice = enterprisePlan.monthlyPrice
-        const baseEvents = enterprisePlan.eventLimit
-        const eventCostPerMillion = enterprisePlan.eventCostPerMillion || 19
+            const eventsOverBase = Math.max(0, events - baseEvents)
+            const extraMillions = eventsOverBase / 1_000_000
+            const totalPrice = basePrice + extraMillions * eventCostPerMillion
 
-        const eventsOverBase = Math.max(0, events - baseEvents)
-        const extraMillions = eventsOverBase / 1_000_000
-        const totalPrice = basePrice + extraMillions * eventCostPerMillion
-
-        if (isAnnual) {
-            const annualPrice = totalPrice * 12 * 0.8 || enterprisePlan.annualPrice
-            return `${annualPrice.toFixed(0)}`
+            const price = isAnnual ? totalPrice * 12 * 0.8 : totalPrice
+            setenterprisePrice(price.toFixed(0));
         }
+    }, [enterpriseEvents, isAnnual, enterprisePlan]); // Dependencies
 
-        return `${totalPrice.toFixed(0)}`
-    }
+    const subscribeOrUpgrade = useMutation({
+        mutationFn: subscriptionService.subscribeOrUpgrade,
+        onSuccess: (data) => {
+            console.log('Subscription successful:', data)
+            // Handle successful subscription
+        },
+        onError: (error) => {
+            console.error('Subscription failed:', error)
+            // Handle subscription failure
+        },
+    })
 
 
-    const PaystackHookButton = ({ isPopular, cta, amount }: { isPopular: boolean, cta: string, amount: number }) => {
-        const amountInCents = amount * 100
+    const PaystackHookButton = ({ isPopular, cta, amount, plan }: { isPopular: boolean, cta: string, amount: number, plan: IPricingPlan }) => {
+        const amountInCents = amount * 100 * 1550
         return (
             <Button onClick={() => {
                 paystack.newTransaction({
                     key: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY ?? '',
                     email: 'example@email.com',
                     amount: amountInCents,
-                    "currency": "USD",
-                    onSuccess: (transaction: string) => {
+                    // "currency": "USD",
+                    "currency": "NGN",
+                    onSuccess: (transaction: { reference :string}) => {
                         console.log({ transaction })
-                        // Payment complete! Reference: transaction.reference 
+                        subscribeOrUpgrade.mutate({ reference: transaction?.reference, planId: plan.id, eventCount: plan.name == 'Enterprise' ? enterpriseEvents : plan.eventLimit, isAnnual, price: plan.name == 'Enterprise' ? enterprisePrice : isAnnual ? plan.annualPrice:plan.monthlyPrice })
                     },
                     onCancel: () => {
                         console.log("modal closed")
@@ -172,8 +183,8 @@ export default function PricingSection({ isDisplay = true }) {
                             <PricingCardSkeletonLoader />
                             :
                             plans
-                                .filter((plan: IPricingPlan) => plan.name !== 'Enterprise')
-                                .map((plan: IPricingPlan) => (
+                                ?.filter((plan: IPricingPlan) => plan.name !== 'Enterprise')
+                                ?.map((plan: IPricingPlan) => (
                                     <Card
                                         key={plan.id}
                                         className={`flex flex-col justify-between ${plan.isPopular ? 'border-blue-500 shadow-xl scale-105 z-10' : 'border-gray-200'
@@ -209,7 +220,7 @@ export default function PricingSection({ isDisplay = true }) {
                                         <CardFooter>
                                             {
                                                 !isDisplay ?
-                                                    <PaystackHookButton isPopular={plan.isPopular} cta={plan.cta || 'Get Started'} amount={isAnnual ? Number(plan.annualPrice) : Number(plan.monthlyPrice)} />
+                                                    <PaystackHookButton isPopular={plan.isPopular} cta={plan.cta || 'Get Started'} amount={isAnnual ? Number(plan.annualPrice) : Number(plan.monthlyPrice)} plan={plan} />
                                                     :
                                                     <Button
                                                         className={`w-full ${plan.isPopular ? 'bg-blue-600 hover:bg-blue-700' : ''}`}
@@ -235,7 +246,7 @@ export default function PricingSection({ isDisplay = true }) {
                             </CardHeader>
                             <CardContent className="flex-grow">
                                 <div className="text-center">
-                                    <span className="text-5xl font-extrabold">${calculateEnterprisePrice()}</span>
+                                    <span className="text-5xl font-extrabold">${enterprisePrice}</span>
                                     <span className="text-xl font-medium text-gray-500">
                                         /{isAnnual ? 'year' : 'month'}
                                     </span>
@@ -275,7 +286,7 @@ export default function PricingSection({ isDisplay = true }) {
                             <CardFooter>
                                 {
                                     !isDisplay ?
-                                        <PaystackHookButton isPopular={true} cta={'Get Started'} amount={Number(calculateEnterprisePrice()) || (isAnnual ? enterprisePlan?.annualPrice : enterprisePlan?.monthlyPrice)} />
+                                        <PaystackHookButton isPopular={true} cta={'Get Started'} amount={Number(enterprisePrice) || (isAnnual ? enterprisePlan?.annualPrice : enterprisePlan?.monthlyPrice)} plan={enterprisePlan} />
                                         :
                                         <Button className="w-full bg-blue-600 hover:bg-blue-700" variant="default" size="lg">
                                             <Link href="/register">Get Started</Link>

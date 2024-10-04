@@ -6,6 +6,7 @@ import { z } from 'zod';
 
 export async function GET() {
     const session = await auth()
+
     if (!session?.user) {
         return NextResponse.json(
             { error: { code: 'UNAUTHORIZED', message: 'Unauthorized access' } },
