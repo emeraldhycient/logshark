@@ -529,7 +529,7 @@
   resolved "https://registry.yarnpkg.com/@panva/hkdf/-/hkdf-1.2.1.tgz#cb0d111ef700136f4580349ff0226bf25c853f23"
   integrity sha512-6oclG6Y3PiDFcoyk8srjLfVKyMfVCKJ27JwNPViuXziFpmdz+MZnZN/aKY0JGXgYuO/VghU0jcOAZgWXZ1Dmrw==
 
-"@paystack/inline-js@^2.19.2":
+"@paystack/inline-js@^2.19.2", "@paystack/inline-js@^2.20.3":
   version "2.20.3"
   resolved "https://registry.yarnpkg.com/@paystack/inline-js/-/inline-js-2.20.3.tgz#fab9bae9c4d5d14c2f11d02938bad3cbbe2ec4c5"
   integrity sha512-kQn+x7WLkLUiExMvt+Favw94wCkdXh7z3BemG3vwiDZ8fBXHsr7r/eXnb15j2sS8Fqf2Vh9waSAwXZcB4iPuKA==

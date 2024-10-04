@@ -24,8 +24,11 @@ import {
 import { useQuery } from '@tanstack/react-query'
 import { pricingPlanService } from '@/services/pricingPlan'
 import { IPricingPlan } from '@/types'
-import { usePaystackPayment } from 'react-paystack';
+// import { usePaystackPayment } from 'react-paystack';
 import PricingCardSkeletonLoader from '../common/skeleton/pricingCardSkeleton'
+
+import PaystackPop from '@paystack/inline-js';
+
 
 
 // Function to generate event options
@@ -56,6 +59,9 @@ export default function PricingSection({ isDisplay = true }) {
     const [isAnnual, setIsAnnual] = useState(true)
     const [enterpriseEvents, setEnterpriseEvents] = useState(10_000_000) // Default to 10 million events
 
+    const paystack = new PaystackPop();
+
+
     // Fetch pricing plans using React Query
     const {
         data: plans,
@@ -66,7 +72,6 @@ export default function PricingSection({ isDisplay = true }) {
         queryKey: ['pricingPlans'],
         queryFn: pricingPlanService.getAll
     })
-
 
     if (isError) {
         return (
@@ -104,30 +109,24 @@ export default function PricingSection({ isDisplay = true }) {
         return `$${totalPrice.toFixed(0)}`
     }
 
-    const config = {
-        reference: (new Date()).getTime().toString(),
-        email: "user@example.com",
-        amount: 20000, //Amount is in the country's lowest currency. E.g Kobo, so 20000 kobo = N200
-        publicKey: process.env.PAYSTACK_PUBLIC_KEY ?? '',
-    };
-
-    // you can call this function anything
-    const onSuccess = (reference: string) => {
-        // Implementation for whatever you want to do with reference and after success call.
-        console.log(reference);
-    };
-
-    // you can call this function anything
-    const onClose = () => {
-        // implementation for  whatever you want to do when the Paystack dialog closed.
-        console.log('closed')
-    }
 
     const PaystackHookButton = ({ isPopular, cta }: { isPopular: boolean, cta: string }) => {
-        const initializePayment = usePaystackPayment(config);
         return (
                 <Button onClick={() => {
-                    initializePayment({ onSuccess, onClose })
+                paystack.newTransaction({
+                    key: process.env.PAYSTACK_PUBLIC_KEY ?? '',
+                    email: 'example@email.com',
+                    amount: 10000,
+                    onSuccess: (transaction: string) => {
+                        console.log({transaction})
+                        // Payment complete! Reference: transaction.reference 
+                    },
+                    onCancel: () => {
+                        console.log("modal closed")
+                        // user closed popup
+                    }
+                });
+
                 }}
                     className={`w-full ${isPopular ? 'bg-blue-600 hover:bg-blue-700' : ''}`}
                     variant={isPopular ? 'default' : 'outline'}
