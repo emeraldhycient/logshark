@@ -6,7 +6,9 @@ import DataTypesSection from "@/components/landing-2/DataTypesSection";
 import FeaturesSection from "@/components/landing-2/FeaturesSection";
 import HeroSection from "@/components/landing-2/HeroSection";
 import Navbar from "@/components/landing-2/navbar";
-import PricingSection from "@/components/landing-2/PricingSection";
+import dynamic from "next/dynamic";
+// import PricingSection from "@/components/landing-2/PricingSection";
+const PricingSection = dynamic(() => import('@/components/landing-2/PricingSection'), { ssr: false })
 
 const HomePage = () => {
     return (
