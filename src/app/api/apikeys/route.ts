@@ -6,6 +6,7 @@ import { prisma } from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
 import { v4 as uuidv4 } from 'uuid';
 import crypto from 'crypto';
+import { logAuditEntry } from '@/utils/auditLog';
 
 export async function POST(request: Request) {
     const session = await auth()
@@ -79,19 +80,24 @@ export async function POST(request: Request) {
 }
 
 
-export async function GET() {
+export async function GET(request:Request) {
     const session = await auth()
 
     if (!session?.user) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const audit = await logAuditEntry({ req: request, entityType: "API_KEY", action: "Get", changes: {}, userId: session.user.id as string })
+
+    console.log({audit})
+
     try {
         const apiKeys = await prisma.apiKey.findMany({
-            where: { userId: session.user.id },
+            where: { userId: session.user.id, isActive: true },
             select: {
                 id: true,
                 name: true,
+                key: true,
                 projectId: true,
                 permissions: true,
                 isActive: true,

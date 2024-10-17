@@ -52,8 +52,8 @@ const eventValuesInMillions = [
 // Generate the ENTERPRISE_EVENT_OPTIONS array
 const ENTERPRISE_EVENT_OPTIONS = generateEventOptions(eventValuesInMillions)
 
-export default function PricingSection({ isDisplay = true }) {
-    const [isAnnual, setIsAnnual] = useState(true)
+export default function PricingSection({ isDisplay = true, showHeader = true, showFooter = false }) {
+    const [isAnnual, setIsAnnual] = useState(false)
     const [enterpriseEvents, setEnterpriseEvents] = useState(10_000_000) // Default to 10 million events
     const [enterprisePrice, setenterprisePrice] = useState(0)
 
@@ -144,14 +144,17 @@ export default function PricingSection({ isDisplay = true }) {
         <section className="py-20 bg-gradient-to-b from-gray-50 to-white">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Header */}
-                <div className="text-center">
-                    <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl lg:text-5xl">
-                        Pricing Plans
-                    </h2>
-                    <p className="mt-4 text-xl text-gray-600 max-w-2xl mx-auto">
-                        Choose the perfect plan for your needs. Unlock powerful analytics and insights.
-                    </p>
-                </div>
+                {
+                    showHeader &&
+                    <div className="text-center">
+                        <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl lg:text-5xl">
+                            Pricing Plans
+                        </h2>
+                        <p className="mt-4 text-xl text-gray-600 max-w-2xl mx-auto">
+                            Choose the perfect plan for your needs. Unlock powerful analytics and insights.
+                        </p>
+                    </div>
+                }
 
                 {/* Toggle between Monthly and Annual billing */}
                 <div className="mt-12 flex justify-center items-center space-x-3">
@@ -296,40 +299,43 @@ export default function PricingSection({ isDisplay = true }) {
                 )}
 
                 {/* Consultation Call to Action */}
-                <div className="mt-20 text-center">
-                    <h3 className="text-2xl font-bold text-gray-900">
-                        Not sure which plan is right for you?
-                    </h3>
-                    <p className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto mb-8">
-                        Our team of experts is here to help. Schedule a free consultation to find the perfect fit for your needs.
-                    </p>
-                    <Link href={'/register'} className="mt-8">
-                        <button className="bg-slate-800 no-underline group cursor-pointer relative shadow-2xl shadow-zinc-900 rounded-full p-px text-xs font-semibold leading-6 text-white inline-block">
-                            <span className="absolute inset-0 overflow-hidden rounded-full">
-                                <span className="absolute inset-0 rounded-full bg-[image:radial-gradient(75%_100%_at_50%_0%,rgba(56,189,248,0.6)_0%,rgba(56,189,248,0)_75%)] opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
-                            </span>
-                            <div className="relative flex space-x-2 items-center z-10 rounded-full bg-zinc-950 py-0.5 px-4 ring-1 ring-white/10 ">
-                                <span>Schedule Consultation</span>
-                                <svg
-                                    fill="none"
-                                    height="16"
-                                    viewBox="0 0 24 24"
-                                    width="16"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                >
-                                    <path
-                                        d="M10.75 8.75L14.25 12L10.75 15.25"
-                                        stroke="currentColor"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="1.5"
-                                    />
-                                </svg>
-                            </div>
-                            <span className="absolute -bottom-0 left-[1.125rem] h-px w-[calc(100%-2.25rem)] bg-gradient-to-r from-emerald-400/0 via-emerald-400/90 to-emerald-400/0 transition-opacity duration-500 group-hover:opacity-40" />
-                        </button>
-                    </Link>
-                </div>
+                {
+                    showFooter &&
+                    <div className="mt-20 text-center">
+                        <h3 className="text-2xl font-bold text-gray-900">
+                            Not sure which plan is right for you?
+                        </h3>
+                        <p className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto mb-8">
+                            Our team of experts is here to help. Schedule a free consultation to find the perfect fit for your needs.
+                        </p>
+                        <Link href={'/register'} className="mt-8">
+                            <button className="bg-slate-800 no-underline group cursor-pointer relative shadow-2xl shadow-zinc-900 rounded-full p-px text-xs font-semibold leading-6 text-white inline-block">
+                                <span className="absolute inset-0 overflow-hidden rounded-full">
+                                    <span className="absolute inset-0 rounded-full bg-[image:radial-gradient(75%_100%_at_50%_0%,rgba(56,189,248,0.6)_0%,rgba(56,189,248,0)_75%)] opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+                                </span>
+                                <div className="relative flex space-x-2 items-center z-10 rounded-full bg-zinc-950 py-0.5 px-4 ring-1 ring-white/10 ">
+                                    <span>Schedule Consultation</span>
+                                    <svg
+                                        fill="none"
+                                        height="16"
+                                        viewBox="0 0 24 24"
+                                        width="16"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                        <path
+                                            d="M10.75 8.75L14.25 12L10.75 15.25"
+                                            stroke="currentColor"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth="1.5"
+                                        />
+                                    </svg>
+                                </div>
+                                <span className="absolute -bottom-0 left-[1.125rem] h-px w-[calc(100%-2.25rem)] bg-gradient-to-r from-emerald-400/0 via-emerald-400/90 to-emerald-400/0 transition-opacity duration-500 group-hover:opacity-40" />
+                            </button>
+                        </Link>
+                    </div>
+                }
             </div>
         </section>
     )

@@ -1,6 +1,5 @@
 'use client'
 
-import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import {
   Table,
@@ -14,7 +13,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
@@ -22,75 +20,44 @@ import { useToast } from "@/hooks/use-toast"
 import { Copy, Key } from 'lucide-react'
 import Header from '@/components/common/dashboard/header'
 import CreateApiKey from '@/components/usage/createApiKey'
+import { apiKeyService } from '@/services/apikey/apiKey.service'
+import { useMutation, useQuery } from '@tanstack/react-query'
+import { IApiKey } from '@/types'
+// import { m } from 'framer-motion'
+import PricingSection from '@/components/landing-2/PricingSection'
 
 
-type Subscription = {
-  name: string
-  price: string
-  features: string[]
-  current: boolean
-}
+// type Subscription = {
+//   name: string
+//   price: string
+//   features: string[]
+//   current: boolean
+// }
 
-type ApiKey = {
-  id: string
-  name: string
-  key: string
-  createdAt: string
-  lastUsed: string
-  permissions: string
-  expiresAt: string
-  ipRestrictions: string
-  project: string
-}
 
-const subscriptions: Subscription[] = [
-  {
-    name: "Basic",
-    price: "$9.99/month",
-    features: ["100,000 API calls/month", "Basic analytics", "Email support"],
-    current: false,
-  },
-  {
-    name: "Pro",
-    price: "$29.99/month",
-    features: ["500,000 API calls/month", "Advanced analytics", "Priority support"],
-    current: true,
-  },
-  {
-    name: "Enterprise",
-    price: "Custom pricing",
-    features: ["Unlimited API calls", "Custom analytics", "24/7 dedicated support"],
-    current: false,
-  },
-]
 
-const initialApiKeys: ApiKey[] = [
-  {
-    id: "1",
-    name: "Production API Key",
-    key: "sk_prod_1234567890abcdef",
-    createdAt: "2023-05-01",
-    lastUsed: "2023-05-28",
-    permissions: 'Read',
-    expiresAt: 'Never',
-    ipRestrictions: '',
-    project: '',
-  },
-  {
-    id: "2",
-    name: "Development API Key",
-    key: "sk_dev_0987654321fedcba",
-    createdAt: "2023-05-15",
-    lastUsed: "2023-05-27",
-    permissions: 'Read',
-    expiresAt: 'Never',
-    ipRestrictions: '',
-    project: '',
-  },
-]
+// const subscriptions: Subscription[] = [
+//   {
+//     name: "Basic",
+//     price: "$9.99/month",
+//     features: ["100,000 API calls/month", "Basic analytics", "Email support"],
+//     current: false,
+//   },
+//   {
+//     name: "Pro",
+//     price: "$29.99/month",
+//     features: ["500,000 API calls/month", "Advanced analytics", "Priority support"],
+//     current: true,
+//   },
+//   {
+//     name: "Enterprise",
+//     price: "Custom pricing",
+//     features: ["Unlimited API calls", "Custom analytics", "24/7 dedicated support"],
+//     current: false,
+//   },
+// ]
 
 export default function Usage() {
-  const [apiKeys, setApiKeys] = useState<ApiKey[]>(initialApiKeys)
   const { toast } = useToast()
 
 
@@ -103,13 +70,36 @@ export default function Usage() {
     })
   }
 
+  const mutate = useMutation({
+    mutationFn: (id: string) => apiKeyService.deleteApiKey(id),
+    onSuccess: () => {
+      toast({
+        variant: "destructive",
+        title: "API Key Deleted",
+        description: "The API key has been deleted successfully.",
+      })
+    },
+    onError: (error) => {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error.message,
+      })
+    },
+  })
+
   function deleteApiKey(id: string) {
-    setApiKeys(apiKeys.filter(key => key.id !== id))
+    mutate.mutate(id)
     toast({
       title: "API Key Deleted",
       description: "The API key has been deleted successfully.",
     })
   }
+
+  const { data: apiKeys, isLoading, error, isError } = useQuery({
+    queryKey: ['apiKeys'],
+    queryFn: () => apiKeyService.getApiKeys(),
+  })
 
 
   return (
@@ -117,10 +107,10 @@ export default function Usage() {
       <Header title="Usage & Billing" />
       <Card className="mb-8 mx-4 mt-6">
         <CardHeader>
-          <CardTitle>Current Subscription</CardTitle>
+          <CardTitle>Upgrade Subscription</CardTitle>
           <CardDescription>Manage your subscription plan</CardDescription>
         </CardHeader>
-        <CardContent>
+        {/* <CardContent>
           <div className="grid gap-6 md:grid-cols-3">
             {subscriptions.map((sub) => (
               <Card key={sub.name} className={sub.current ? "border-primary" : ""}>
@@ -145,7 +135,8 @@ export default function Usage() {
               </Card>
             ))}
           </div>
-        </CardContent>
+        </CardContent> */}
+        <PricingSection showFooter={false} showHeader={false} />
       </Card>
 
       <Card className='mx-4'>
@@ -154,7 +145,7 @@ export default function Usage() {
           <CardDescription>Manage your API keys</CardDescription>
         </CardHeader>
         <CardContent>
-          <CreateApiKey/>
+          <CreateApiKey />
           <Table>
             <TableHeader>
               <TableRow>
@@ -166,26 +157,40 @@ export default function Usage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {apiKeys.map((apiKey) => (
-                <TableRow key={apiKey.id}>
-                  <TableCell>{apiKey.name}</TableCell>
-                  <TableCell>
-                    <code className="relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold">
-                      {apiKey.key.slice(0, 8)}...{apiKey.key.slice(-4)}
-                    </code>
-                  </TableCell>
-                  <TableCell>{apiKey.createdAt}</TableCell>
-                  <TableCell>{apiKey.lastUsed}</TableCell>
-                  <TableCell>
-                    <Button variant="ghost" size="sm" onClick={() => copyApiKey(apiKey.key)}>
-                      <Copy className="h-4 w-4" />
-                    </Button>
-                    <Button variant="ghost" size="sm" onClick={() => deleteApiKey(apiKey.id)}>
-                      <Key className="h-4 w-4" />
-                    </Button>
-                  </TableCell>
+              {isLoading ? (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center">Loading...</TableCell>
                 </TableRow>
-              ))}
+              ) : isError ? (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center text-red-500">{error.message}</TableCell>
+                </TableRow>
+              ) : apiKeys.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center">No API Keys available.</TableCell>
+                </TableRow>
+              ) : (
+                apiKeys.map((apiKey: IApiKey) => (
+                  <TableRow key={apiKey.id}>
+                    <TableCell>{apiKey.name}</TableCell>
+                    <TableCell>
+                      <code className="relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold">
+                        {apiKey.key.slice(0, 8)}...{apiKey.key.slice(-4)}
+                      </code>
+                    </TableCell>
+                    <TableCell>{apiKey.createdAt}</TableCell>
+                    <TableCell>{apiKey.lastUsedAt ? apiKey.lastUsedAt : "Never used"}</TableCell>
+                    <TableCell>
+                      <Button variant="ghost" size="sm" onClick={() => copyApiKey(apiKey.key)}>
+                        <Copy className="h-4 w-4" />
+                      </Button>
+                      <Button variant="ghost" size="sm" onClick={() => deleteApiKey(apiKey.id)}>
+                        <Key className="h-4 w-4" />
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
             </TableBody>
           </Table>
         </CardContent>

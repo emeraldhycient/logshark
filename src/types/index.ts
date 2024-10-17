@@ -122,3 +122,18 @@ export interface IGeoPluginResponse {
 
 
 export interface ICreateApiKey { name: string; expiresAt: string; permissions: string[]; projectId: string; ipRestrictions?: string }
+
+// Interface for API Key
+export interface IApiKey {
+    id: string;
+    name: string;
+    key: string;
+    projectId: string;
+    permissions: string[];
+    isActive: boolean;
+    createdAt: string;
+    expiresAt: string;
+    lastUsedAt?: string; 
+    usageCount: number;
+    ipRestrictions?: string; 
+}

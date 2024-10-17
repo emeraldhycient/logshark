@@ -23,7 +23,7 @@ export async function DELETE(request: Request, { params }: Params) {
         const apiKey = await prisma.apiKey.findUnique({ where: { id: apiKeyId } });
 
         if (!apiKey || apiKey.userId !== session.user.id) {
-            return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+            return NextResponse.json({ error: 'Forbidden',message:"You are not authorized to delete this api key" }, { status: 403 });
         }
 
         await prisma.apiKey.update({
@@ -31,9 +31,9 @@ export async function DELETE(request: Request, { params }: Params) {
             data: { isActive: false, revokedAt: new Date() },
         });
 
-        return NextResponse.json({}, { status: 204 });
+        return NextResponse.json({message:"Api key deleted successfully"}, { status: 200 });
     } catch (error) {
         console.error(`DELETE /api/apikeys/${apiKeyId} error:`, error);
-        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+        return NextResponse.json({ error: 'Internal Server Error', message: (error as { message?: string }).message }, { status: 500 });
     }
 }

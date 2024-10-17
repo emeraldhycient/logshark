@@ -33,7 +33,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { QueryClient, useMutation, useQuery } from '@tanstack/react-query'
 import projectServices from '@/services/projects/index.service'
 import { ICreateApiKey, IProject, MutationError } from '@/types'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
@@ -60,6 +60,8 @@ export default function CreateApiKey() {
     const { toast } = useToast()
     const [loading, setLoading] = useState(false)
 
+    const queryClient = new QueryClient()
+
 
     const apiKeyForm = useForm<z.infer<typeof apiKeyFormSchema>>({
         resolver: zodResolver(apiKeyFormSchema),
@@ -82,6 +84,8 @@ export default function CreateApiKey() {
                 title: "API Key Created",
                 description: "Your new API key has been created successfully.",
             })
+
+            queryClient.invalidateQueries({ queryKey: ['apiKeys'] })
         },
         onError: (error: MutationError) => {
             setLoading(false)
