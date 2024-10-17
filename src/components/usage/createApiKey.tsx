@@ -252,15 +252,19 @@ export default function CreateApiKey() {
                                             </SelectTrigger>
                                             <SelectContent>
                                                 <SelectGroup>
-                                                    {isProjectsLoading ? (
+                                                    {isProjectsLoading ?
+                                                        (
                                                         <p>Loading...</p>
-                                                    ) : (
+                                                        ) : 
+                                                            isError ? 
+                                                            <p className="text-red-500">{error?.message || 'An Error Occurred!'}</p>
+                                                        :
                                                         projects?.projects?.map((item: IProject, index: number) => (
                                                             <SelectItem key={index} value={item.id}>
                                                                 {item.name}
                                                             </SelectItem>
                                                         ))
-                                                    )}
+                                                    }
                                                 </SelectGroup>
                                             </SelectContent>
                                         </Select>
@@ -269,7 +273,11 @@ export default function CreateApiKey() {
                                 )}
                             />
                             <DialogFooter>
-                                <Button type="submit">Create API Key</Button>
+                                <Button type="submit" disabled={loading}>
+                                    {
+                                        loading ? "Loading..." : "Create API Key"
+                                    }
+                                </Button>
                             </DialogFooter>
                         </form>
                     </Form>

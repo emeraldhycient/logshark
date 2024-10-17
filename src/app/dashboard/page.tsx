@@ -21,7 +21,7 @@ const Dashboard = () => {
     const [darkMode, setDarkMode] = useState(false);
 
     // State for metrics
-    const [metrics, setMetrics] = useState({
+    const [metrics] = useState({
         totalLogs: 12000,
         activeProjects: 35,
         totalAlerts: 58,
@@ -29,7 +29,7 @@ const Dashboard = () => {
     });
 
     // Mock data for charts
-    const [logsOverview, setLogsOverview] = useState([
+    const [logsOverview] = useState([
         { date: 'Jan', logs: 400 },
         { date: 'Feb', logs: 300 },
         { date: 'Mar', logs: 500 },
@@ -44,13 +44,13 @@ const Dashboard = () => {
         { date: 'Dec', logs: 850 },
     ]);
 
-    const [crashFrequency, setCrashFrequency] = useState([
+    const [crashFrequency] = useState([
         { platform: 'Mobile', crashes: 7 },
         { platform: 'Web', crashes: 3 },
         { platform: 'API', crashes: 2 },
     ]);
 
-    const [activeUsers, setActiveUsers] = useState([
+    const [activeUsers] = useState([
         { name: 'Project A', value: 400 },
         { name: 'Project B', value: 300 },
         { name: 'Project C', value: 300 },
@@ -88,7 +88,7 @@ const Dashboard = () => {
     }, []);
 
     // Handle date range change
-    const handleDateChange = (e:any) => {
+    const handleDateChange = (e: { target: { name: string; value: string; }; }) => {
         const { name, value } = e.target;
         setDateRange((prev) => ({
             ...prev,
@@ -216,7 +216,7 @@ const Dashboard = () => {
 };
 
 // MetricCard Component within the same file for simplicity
-const MetricCard = ({ title, value, icon }:any) => {
+const MetricCard: React.FC<{ title: string, value: number, icon: React.ReactNode }> = ({ title, value, icon }) => {
     return (
         <div className="flex items-center p-4 bg-white dark:bg-gray-800 rounded shadow hover:shadow-lg transition-shadow duration-300">
             <div className="text-4xl mr-4">{icon}</div>
