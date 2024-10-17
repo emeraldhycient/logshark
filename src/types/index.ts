@@ -119,3 +119,6 @@ export interface IGeoPluginResponse {
     geoplugin_currencySymbol_UTF8: string;
     geoplugin_currencyConverter: number;
 }
+
+
+export interface ICreateApiKey { name: string; expiresAt: string; permissions: string[]; projectId: string; ipRestrictions?: string }

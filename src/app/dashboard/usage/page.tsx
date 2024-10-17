@@ -1,11 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import * as z from 'zod'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import {
   Table,
   TableBody,
@@ -22,41 +18,11 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog'
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form'
 import { useToast } from "@/hooks/use-toast"
-import { Copy, Key, Plus } from 'lucide-react'
+import { Copy, Key } from 'lucide-react'
 import Header from '@/components/common/dashboard/header'
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
+import CreateApiKey from '@/components/usage/createApiKey'
 
-const apiKeyFormSchema = z.object({
-  name: z.string().min(2, {
-    message: "API key name must be at least 2 characters.",
-  }),
-})
 
 type Subscription = {
   name: string
@@ -71,6 +37,10 @@ type ApiKey = {
   key: string
   createdAt: string
   lastUsed: string
+  permissions: string
+  expiresAt: string
+  ipRestrictions: string
+  project: string
 }
 
 const subscriptions: Subscription[] = [
@@ -101,6 +71,10 @@ const initialApiKeys: ApiKey[] = [
     key: "sk_prod_1234567890abcdef",
     createdAt: "2023-05-01",
     lastUsed: "2023-05-28",
+    permissions: 'Read',
+    expiresAt: 'Never',
+    ipRestrictions: '',
+    project: '',
   },
   {
     id: "2",
@@ -108,37 +82,18 @@ const initialApiKeys: ApiKey[] = [
     key: "sk_dev_0987654321fedcba",
     createdAt: "2023-05-15",
     lastUsed: "2023-05-27",
+    permissions: 'Read',
+    expiresAt: 'Never',
+    ipRestrictions: '',
+    project: '',
   },
 ]
 
 export default function Usage() {
   const [apiKeys, setApiKeys] = useState<ApiKey[]>(initialApiKeys)
-  const [isCreateKeyModalOpen, setIsCreateKeyModalOpen] = useState(false)
   const { toast } = useToast()
 
-  const apiKeyForm = useForm<z.infer<typeof apiKeyFormSchema>>({
-    resolver: zodResolver(apiKeyFormSchema),
-    defaultValues: {
-      name: "",
-    },
-  })
 
-  function onApiKeySubmit(values: z.infer<typeof apiKeyFormSchema>) {
-    const newApiKey: ApiKey = {
-      id: (apiKeys.length + 1).toString(),
-      name: values.name,
-      key: `sk_${Math.random().toString(36).substr(2, 9)}`,
-      createdAt: new Date().toISOString().split('T')[0],
-      lastUsed: "Never",
-    }
-    setApiKeys([...apiKeys, newApiKey])
-    setIsCreateKeyModalOpen(false)
-    apiKeyForm.reset()
-    toast({
-      title: "API Key Created",
-      description: "Your new API key has been created successfully.",
-    })
-  }
 
   function copyApiKey(key: string) {
     navigator.clipboard.writeText(key)
@@ -155,6 +110,7 @@ export default function Usage() {
       description: "The API key has been deleted successfully.",
     })
   }
+
 
   return (
     <div className="container mx-auto pb-10">
@@ -198,63 +154,7 @@ export default function Usage() {
           <CardDescription>Manage your API keys</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="mb-4">
-            <Dialog open={isCreateKeyModalOpen} onOpenChange={setIsCreateKeyModalOpen}>
-              <DialogTrigger asChild>
-                <Button>
-                  <Plus className="mr-2 h-4 w-4" /> Create New API Key
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-[425px] bg-white">
-                <DialogHeader>
-                  <DialogTitle className="text-black">Create New API Key</DialogTitle>
-                  <DialogDescription>
-                    Enter a name for your new API key.
-                  </DialogDescription>
-                </DialogHeader>
-                <Form {...apiKeyForm}>
-                  <form onSubmit={apiKeyForm.handleSubmit(onApiKeySubmit)} className="space-y-8">
-                    <FormField
-                      control={apiKeyForm.control}
-                      name="name"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-black">API Key Name</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Enter API key name" {...field} />
-                          </FormControl>
-                          <FormControl>
-                            <Select>
-                              <SelectTrigger className="w-full">
-                                <SelectValue className='text-black' placeholder="Select a project" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectGroup>
-                                  {/* <SelectLabel >Projects</SelectLabel> */}
-                                  <SelectItem value="apple">Apple</SelectItem>
-                                  <SelectItem value="banana">Banana</SelectItem>
-                                  <SelectItem value="blueberry">Blueberry</SelectItem>
-                                  <SelectItem value="grapes">Grapes</SelectItem>
-                                  <SelectItem value="pineapple">Pineapple</SelectItem>
-                                </SelectGroup>
-                              </SelectContent>
-                            </Select>
-                          </FormControl>
-                          <FormDescription>
-                            This name will help you identify this API key later.
-                          </FormDescription>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <DialogFooter>
-                      <Button type="submit">Create API Key</Button>
-                    </DialogFooter>
-                  </form>
-                </Form>
-              </DialogContent>
-            </Dialog>
-          </div>
+          <CreateApiKey/>
           <Table>
             <TableHeader>
               <TableRow>

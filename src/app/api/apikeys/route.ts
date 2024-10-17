@@ -14,7 +14,7 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { projectId, name, permissions, expiresAt, ipRestrictions } = await request.json();
+    let { projectId, name, permissions, expiresAt, ipRestrictions } = await request.json();
 
     if (!projectId || !name || !permissions) {
         return NextResponse.json(
@@ -22,6 +22,9 @@ export async function POST(request: Request) {
             { status: 400 }
         );
     }
+
+    ipRestrictions = ipRestrictions.split(",")
+    ipRestrictions = [...ipRestrictions]
 
     const validPermissions = ['read', 'write', 'admin'];
     if (!permissions.every((perm: string) => validPermissions.includes(perm))) {
