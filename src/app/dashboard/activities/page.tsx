@@ -6,11 +6,7 @@ import {
   Search,
   ChevronLeft,
   ChevronRight,
-  Download,
   Eye,
-  Activity,
-  Users,
-  Clock,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -31,28 +27,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import Link from 'next/link'
-import { Line } from 'react-chartjs-2'
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-} from 'chart.js'
 import Header from '@/components/common/dashboard/header'
-
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend
-)
 
 interface ActivityData {
   id: string
@@ -128,55 +103,8 @@ export default function Activities() {
       <Header title='Activities'/>
   
       <div className="px-4">
-        <div className="flex justify-end items-center pr-4 mb-6 mt-2">
-          <Button variant="outline">
-            <Download className="mr-2 h-4 w-4 text-gray-500" />
-            <span className='text-gray-500'>Export Logs</span>
-          </Button>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Activities</CardTitle>
-              <Activity className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{data?.totalActivities}</div>
-              <p className="text-xs text-muted-foreground">+20% from last month</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Active Users</CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">1,234</div>
-              <p className="text-xs text-muted-foreground">+5% from last week</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Avg. Response Time</CardTitle>
-              <Clock className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">250ms</div>
-              <p className="text-xs text-muted-foreground">-10ms from yesterday</p>
-            </CardContent>
-          </Card>
-        </div>
-
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle>Activity Trend</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Line data={data!.activityTrend} options={{ responsive: true, maintainAspectRatio: false }} />
-          </CardContent>
-        </Card>
-
-        <Card className="mb-6">
+        
+        <Card className="my-6">
           <CardContent className="pt-6">
             <div className="flex flex-col md:flex-row gap-4">
               <div className="relative flex-grow">
