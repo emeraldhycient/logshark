@@ -24,7 +24,7 @@ import { apiKeyService } from '@/services/apikey/apiKey.service'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { IApiKey } from '@/types'
 // import { m } from 'framer-motion'
-import PricingSection from '@/components/landing-2/PricingSection'
+const PricingSection = dynamic(() => import('@/components/landing-2/PricingSection'), { ssr: false })
 
 
 // type Subscription = {
