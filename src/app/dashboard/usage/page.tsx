@@ -23,6 +23,7 @@ import CreateApiKey from '@/components/usage/createApiKey'
 import { apiKeyService } from '@/services/apikey/apiKey.service'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { IApiKey } from '@/types'
+import dynamic from 'next/dynamic'
 // import { m } from 'framer-motion'
 const PricingSection = dynamic(() => import('@/components/landing-2/PricingSection'), { ssr: false })
 
