@@ -35,7 +35,7 @@ export async function POST(request: Request) {
         const project = await prisma.project.findUnique({ where: { id: projectId } });
 
         if (!project || project.userId !== session.user.id) {
-            return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+            return NextResponse.json({ error: 'Forbidden',message:"Please select a existing project" }, { status: 403 });
         }
 
         const id = uuidv4();
@@ -74,7 +74,7 @@ export async function POST(request: Request) {
         );
     } catch (error) {
         console.error('POST /api/apikeys error:', error);
-        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+        return NextResponse.json({ error: 'Internal Server Error',message:error?.message }, { status: 500 });
     }
 }
 
