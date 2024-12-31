@@ -19,9 +19,9 @@ const HomePage = () => {
       <FeaturesSection />
       <DataTypesSection />
       {/* <GapsSection /> */}
-      <PricingSection />
-      <GoogleGeminiEffectDemo />
-      <Footer />
+      {/* <PricingSection /> */}
+      {/* <GoogleGeminiEffectDemo />
+      <Footer /> */}
 
     </>
   );

@@ -6,7 +6,6 @@ export interface registerParams {
     password: string
 }
 
-
 export interface SignUpFormValues {
     fullName: string;
     email: string;
