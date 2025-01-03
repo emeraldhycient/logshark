@@ -9,7 +9,7 @@ const Navbar = () => {
 	const [isOpen, setIsOpen] = useState(false);
 
 	return (
-		<nav className="fixed top-0 left-0 right-0 bg-gradient-to-r from-black to-gray-900 text-white shadow-md z-50">
+		<nav className="flex">
 			<div className="container mx-auto py-4 flex justify-between items-center">
 				{/* Logo */}
 				<div className="flex items-center space-x-2 ">
@@ -23,7 +23,7 @@ const Navbar = () => {
 						<div key={index}>
 							<a
 								href={`${url}`}
-								className="text-base font-light hover:text-blue-400 transition-colors duration-300 active:scale-90 transition-all"
+								className="text-base font-light hover:text-blue-400 duration-300 active:scale-90 transition-all"
 							>
 								{text}
 							</a>
@@ -56,6 +56,7 @@ const Navbar = () => {
 				{/* Mobile Menu Button */}
 				<div className="md:hidden flex items-center">
 					<button
+						title="Open Menu"
 						onClick={() => setIsOpen(!isOpen)}
 						className="focus:outline-none text-gray-400 hover:text-white transition-colors"
 					>

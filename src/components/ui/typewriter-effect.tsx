@@ -156,12 +156,11 @@ export const TypewriterEffectSmooth = ({
                 }}
             >
                 <div
-                    className="text-2xl md:text-5xl font-bold"
+                    className="text-2xl md:text-6xl font-medium !leading-tight"
                     style={{
                         whiteSpace: "nowrap",
                         textWrap: "pretty",
                         WebkitTextFillColor: 'white',  // Ensure text is visible on iOS
-
                     }}
                 >
                     {renderWords()}{" "}

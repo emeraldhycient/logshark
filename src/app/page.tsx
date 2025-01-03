@@ -14,7 +14,7 @@ const PricingSection = dynamic(() => import('@/components/landing-2/PricingSecti
 const HomePage = () => {
   return (
     <>
-      <Navbar />
+      {/* <Navbar /> */}
       <HeroSection />
       <FeaturesSection />
       <DataTypesSection />
