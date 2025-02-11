@@ -4,7 +4,7 @@ type Props = {
 	max?: number;
 	step?: number;
 	defaultValue?: number;
-	onChangeHandler?: () => void;
+	onChangeHandler?: (n: any) => void;
 };
 
 const PricingSliderSection = ({
@@ -17,7 +17,7 @@ const PricingSliderSection = ({
 	const [value, setValue] = useState(defaultValue);
 	const emailOptions = [1, 2, 3, 4, 5, 6, 7];
 
-	const handleChange = (event) => {
+	const handleChange = (event: any) => {
 		const newValue = Number(event.target.value);
 		setValue(newValue);
 		if (onChangeHandler) {

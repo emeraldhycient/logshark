@@ -1,30 +1,35 @@
-'use client'
+"use client";
 
 import Footer from "@/components/common/footer";
 import { GoogleGeminiEffectDemo } from "@/components/common/joinus";
 import DataTypesSection from "@/components/landing-2/DataTypesSection";
-import FeaturesSection from "@/components/landing-2/FeaturesSection";
-import HeroSection from "@/components/landing-2/HeroSection";
-import Navbar from "@/components/landing-2/navbar";
-import dynamic from "next/dynamic";
+import FeaturesSection from "@/components/landing-2/feature-section";
+// import GapsSection from "@/components/landing-2/GapsSection";
+// import Navbar from "@/components/landing-2/navbar";
+import PricingSection from "@/components/landing-2/PricingSection";
+import FaqSection from "@/components/section/faq-section";
+import HeroSection from "@/components/section/hero-section";
+import { BackgroundBeams } from "@/components/ui/background-beams";
+// import dynamic from "next/dynamic";
 // import PricingSection from "@/components/landing-2/PricingSection";
-const PricingSection = dynamic(() => import('@/components/landing-2/PricingSection'), { ssr: false })
-
+// const PricingSection = dynamic(() => import('@/components/landing-2/PricingSection'), { ssr: false })
 
 const HomePage = () => {
-  return (
-    <>
-      {/* <Navbar /> */}
-      <HeroSection />
-      <FeaturesSection />
-      <DataTypesSection />
-      {/* <GapsSection /> */}
-      {/* <PricingSection /> */}
-      {/* <GoogleGeminiEffectDemo />
-      <Footer /> */}
+	return (
+		<>
+			<BackgroundBeams />
+			<HeroSection />
+			<FeaturesSection />
+			<DataTypesSection />
 
-    </>
-  );
+			{/* <GapsSection /> */}
+			<PricingSection />
+			<FaqSection />
+
+			<GoogleGeminiEffectDemo />
+			<Footer />
+		</>
+	);
 };
 
 export default HomePage;

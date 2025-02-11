@@ -7,3 +7,9 @@ export interface IHeaderLink {
     icon?: React.ReactNode;
     component?: IHeaderLink
 }
+
+export interface IFaq {
+    id: string;
+    question: string;
+    answer: string;
+}

@@ -61,7 +61,7 @@ export default function PricingSection({
 	const [isAnnual, setIsAnnual] = useState(false);
 	const [enterpriseEvents, setEnterpriseEvents] = useState(10_000_000); // Default to 10 million events
 	const [enterprisePrice, setenterprisePrice] = useState(0);
-	const [sliderValue, setSliderValue] = useState(5);
+	// const [sliderValue, setSliderValue] = useState(5);
 
 	const paystack = new PaystackPop();
 
@@ -73,8 +73,7 @@ export default function PricingSection({
 		error,
 	} = useQuery({
 		queryKey: ["pricingPlans"],
-		// queryFn: pricingPlanService.getAll
-		queryFn: () => {},
+		queryFn: pricingPlanService.getAll
 	});
 
 	// Extract the Enterprise plan from the fetched plans

@@ -10,7 +10,7 @@ const Navbar = () => {
 
 	return (
 		<nav className="flex">
-			<div className="container mx-auto py-4 flex justify-between items-center">
+			<div className="container mx-auto py-5 flex justify-between items-center">
 				{/* Logo */}
 				<div className="flex items-center space-x-2 ">
 					<BarChart className="h-8 w-8 text-blue-400" />
@@ -38,8 +38,8 @@ const Navbar = () => {
 						className="relative inline-flex h-10 overflow-hidden rounded-full p-px outline-none active:scale-90 transition-all"
 					>
 						<span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#E2CBFF_0%,#393BB2_50%,#E2CBFF_100%)]" />
-						<p className="inline-flex h-full w-full cursor-pointer items-center justify-center rounded-full bg-white px-7 py-1 text-sm font-medium text-black backdrop-blur-3xl">
-							Sign In
+						<p className="inline-flex h-full w-full cursor-pointer items-center justify-center rounded-full bg-white px-5 py-1 text-sm font-medium text-black backdrop-blur-3xl">
+							Log In
 						</p>
 					</Link>
 					<Link
@@ -47,7 +47,7 @@ const Navbar = () => {
 						className="relative inline-flex h-10 overflow-hidden rounded-full p-px outline-none active:scale-90 transition-all"
 					>
 						<span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#E2CBFF_0%,#393BB2_50%,#E2CBFF_100%)]" />
-						<p className="inline-flex h-full w-full cursor-pointer items-center justify-center rounded-full bg-slate-950 px-7 py-1 text-sm font-medium text-white backdrop-blur-3xl">
+						<p className="inline-flex h-full w-full cursor-pointer items-center justify-center rounded-full bg-slate-950 px-6 py-1 text-sm font-medium text-white backdrop-blur-3xl">
 							Sign Up
 						</p>
 					</Link>

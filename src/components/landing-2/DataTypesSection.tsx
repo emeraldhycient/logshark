@@ -1,6 +1,5 @@
 'use client';
 import React from 'react';
-import { Badge } from '@/components/ui/badge';
 import { Meteors } from '@/components/ui/meteors'; 
 import { CheckCircle } from 'lucide-react';
 import { StickyScroll } from '../ui/sticky-scroll-reveal';
@@ -63,12 +62,12 @@ export default function DataTypesSection() {
     }));
 
     return (
-        <section className="py-24 bg-gradient-to-b from-gray-50 to-white">
+        <section className="py-36 bg-gradient-to-b from-gray-50 to-white">
             <div className="mx-auto px-4 sm:px-6 ">
                 <div className="text-center mb-16">
-                    <Badge variant="secondary" className="mb-4 text-blue-500 uppercase tracking-widest">
+                    {/* <Badge variant="secondary" className="mb-4 text-blue-500 uppercase tracking-widest">
                         Data Types
-                    </Badge>
+                    </Badge> */}
                     <h2 className="text-4xl font-extrabold text-gray-900 sm:text-5xl lg:text-6xl tracking-tight">
                         Types of Data We Capture
                     </h2>
