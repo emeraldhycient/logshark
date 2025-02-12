@@ -1,103 +1,103 @@
 "use client";
-import { gsap } from "gsap";
 import { cn } from "@/lib/utils";
 import { motion, stagger, useAnimate, useInView } from "framer-motion";
-import { useEffect, useRef } from "react";
+import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useEffect, useRef } from "react";
 gsap.registerPlugin(ScrollTrigger);
 
 export const TypewriterEffect = ({
-    words,
-    className,
-    cursorClassName,
+	words,
+	className,
+	cursorClassName,
 }: {
-    words: {
-        text: string;
-        className?: string;
-    }[];
-    className?: string;
-    cursorClassName?: string;
+	words: {
+		text: string;
+		className?: string;
+	}[];
+	className?: string;
+	cursorClassName?: string;
 }) => {
-    // split text inside of words into array of characters
-    const wordsArray = words.map((word) => {
-        return {
-            ...word,
-            text: word.text.split(""),
-        };
-    });
+	// split text inside of words into array of characters
+	const wordsArray = words.map((word) => {
+		return {
+			...word,
+			text: word.text.split(""),
+		};
+	});
 
-    const [scope, animate] = useAnimate();
-    const isInView = useInView(scope);
-    useEffect(() => {
-        if (isInView) {
-            animate(
-                "span",
-                {
-                    display: "inline-block",
-                    opacity: 1,
-                    width: "auto",  // Ensure width is correctly set
-                },
-                {
-                    duration: 0.3,
-                    delay: stagger(0.1),
-                    ease: "easeInOut",
-                }
-            );
-        }
-    }, [isInView]);
+	const [scope, animate] = useAnimate();
+	const isInView = useInView(scope);
+	useEffect(() => {
+		if (isInView) {
+			animate(
+				"span",
+				{
+					display: "inline-block",
+					opacity: 1,
+					width: "auto", // Ensure width is correctly set
+				},
+				{
+					duration: 0.3,
+					delay: stagger(0.1),
+					ease: "easeInOut",
+				}
+			);
+		}
+	}, [isInView]);
 
-    const renderWords = () => {
-        return (
-            <motion.div ref={scope} className="inline">
-                {wordsArray.map((word, idx) => {
-                    return (
-                        <div key={`word-${idx}`} className="inline-block">
-                            {word.text.map((char, index) => (
-                                <motion.span
-                                    initial={{}}
-                                    key={`char-${index}`}
-                                    className={cn(
-                                        `text-white text-black opacity-0 hidden`,
-                                        word.className
-                                    )}
-                                >
-                                    {char}
-                                </motion.span>
-                            ))}
-                            &nbsp;
-                        </div>
-                    );
-                })}
-            </motion.div>
-        );
-    };
-    return (
-        <div
-            className={cn(
-                "text-base sm:text-xl md:text-3xl lg:text-5xl font-bold text-center",
-                className
-            )}
-        >
-            {renderWords()}
-            <motion.span
-                initial={{
-                    opacity: 0,
-                }}
-                animate={{
-                    opacity: 1,
-                }}
-                transition={{
-                    duration: 0.8,
-                    repeat: Infinity,
-                    repeatType: "reverse",
-                }}
-                className={cn(
-                    "inline-block rounded-sm w-[4px] h-4 md:h-6 lg:h-10 bg-blue-500",
-                    cursorClassName
-                )}
-            ></motion.span>
-        </div>
-    );
+	const renderWords = () => {
+		return (
+			<motion.div ref={scope} className="inline">
+				{wordsArray.map((word, idx) => {
+					return (
+						<div key={`word-${idx}`} className="inline-block">
+							{word.text.map((char, index) => (
+								<motion.span
+									initial={{}}
+									key={`char-${index}`}
+									className={cn(
+										`text-white text-black opacity-0 hidden`,
+										word.className
+									)}
+								>
+									{char}
+								</motion.span>
+							))}
+							&nbsp;
+						</div>
+					);
+				})}
+			</motion.div>
+		);
+	};
+	return (
+		<div
+			className={cn(
+				"text-base sm:text-xl md:text-3xl lg:text-5xl font-bold text-center",
+				className
+			)}
+		>
+			{renderWords()}
+			<motion.span
+				initial={{
+					opacity: 0,
+				}}
+				animate={{
+					opacity: 1,
+				}}
+				transition={{
+					duration: 0.8,
+					repeat: Infinity,
+					repeatType: "reverse",
+				}}
+				className={cn(
+					"inline-block rounded-sm w-[4px] h-4 md:h-6 lg:h-10 bg-blue-500",
+					cursorClassName
+				)}
+			></motion.span>
+		</div>
+	);
 };
 
 // export const TypewriterEffectSmooth = ({
@@ -112,9 +112,7 @@ export const TypewriterEffect = ({
 //     className?: string;
 //     cursorClassName?: string;
 //     }) => {
-    
-    
-    
+
 //     // split text inside of words into array of characters
 //     const wordsArray = words.map((word) => {
 //         return {
@@ -199,7 +197,6 @@ export const TypewriterEffect = ({
 //     );
 // };
 
-
 gsap.registerPlugin(ScrollTrigger);
 
 export const TypewriterEffectSmooth = ({
@@ -222,10 +219,10 @@ export const TypewriterEffectSmooth = ({
 				{ y: 100, opacity: 0 },
 				{
 					y: 0,
-                    opacity: 1,
-                    ease: "power2.inOut",
-                    duration: 0.8,
-                    delay: index * 0.2,
+					opacity: 1,
+					ease: "power2.inOut",
+					duration: 1,
+					delay: index * 0.2,
 				}
 			);
 		});
@@ -273,14 +270,13 @@ export const TypewriterEffectSmooth = ({
 	return (
 		<div className={cn("flex space-x-1 my-6", className)}>
 			<div className="overflow-hidden pb-2">
-				<div className="text-2xl md:text-6xl font-medium !leading-tight">
+				<div className="text-3xl md:text-6xl font-medium !leading-tight">
 					{renderWords()}
 				</div>
 			</div>
 		</div>
 	);
 };
-
 
 // import React, { useEffect, useRef } from "react";
 // import { gsap } from "gsap";

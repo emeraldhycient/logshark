@@ -1,15 +1,14 @@
-'use client'
+"use client";
 
-import React from 'react'
-import { Button } from '@/components/ui/button'
-import { TypewriterEffectSmooth } from '@/components/ui/typewriter-effect'
+import { Button } from "@/components/ui/button";
+import { TypewriterEffectSmooth } from "@/components/ui/typewriter-effect";
+import React from "react";
 // import { BackgroundBeams } from '@/components/ui/background-beams'
-import Link from 'next/link'
+import Link from "next/link";
 // Importing Icons (you can replace these with your custom SVGs)
-import Navbar from '../landing-2/navbar'
-import HeroNotification from '../hero-notification'
-import HeroEmail from '../hero-email'
-
+import HeroEmail from "../hero-email";
+import HeroNotification from "../hero-notification";
+import Navbar from "../landing-2/navbar";
 
 // const words = [
 // 	{ text: "Deliver" },
@@ -37,13 +36,11 @@ const words = [
 	{ text: "applications" },
 ];
 
-
 export default function HeroSection() {
-
-    return (
+	return (
 		<section className=" text-white relative flex flex-col gap-20">
 			<Navbar />
-			<div className="container mx-auto gap-y-7 pb-24 md:pb-32 flex flex-col items-center text-center">
+			<div className="w-[90%] md:container mx-auto gap-y-7 pb-24 md:pb-32 flex flex-col items-center text-center">
 				<div className="flex flex-col items-center justify-center">
 					<HeroNotification />
 
@@ -54,6 +51,7 @@ export default function HeroSection() {
 						>
 							<TypewriterEffectSmooth words={words} />
 						</div>
+
 						<p className="text-lg md:text-xl lg:text-2xl font-light  max-w-3xl mx-auto">
 							Unlock deep insights into user behavior,
 							performance, and system metrics.

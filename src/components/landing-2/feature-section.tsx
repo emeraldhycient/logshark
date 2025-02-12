@@ -1,48 +1,67 @@
-'use client'
+"use client";
 
-import React from 'react'
-import { motion } from 'framer-motion'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { MousePointerClickIcon, UsersRoundIcon, CloudLightningIcon, CogIcon, AppWindowIcon, TargetIcon } from 'lucide-react'
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from "@/components/ui/card";
+import { motion } from "framer-motion";
+import {
+	AppWindowIcon,
+	CloudLightningIcon,
+	CogIcon,
+	MousePointerClickIcon,
+	TargetIcon,
+	UsersRoundIcon,
+} from "lucide-react";
+import React from "react";
 
 const features = [
-    {
-        title: 'User Behavior Analytics',
-        description: 'Gain insights into how users interact with your application through page views, clicks, and navigation patterns.',
-        icon: <MousePointerClickIcon className="w-8 h-8" />,
-        color: 'bg-blue-500',
-    },
-    {
-        title: 'Powerful API',
-        description: 'Monitor active users, session durations, and retention rates in real-time to understand user engagement.',
-        icon: <UsersRoundIcon className="w-8 h-8" />,
-        color: 'bg-green-500',
-    },
-    {
-        title: 'Performance Analytics',
-        description: 'Track page load times, API response times, and resource usage to optimize performance.',
-        icon: <CloudLightningIcon className="w-8 h-8" />,
-        color: 'bg-yellow-500',
-    },
-    {
-        title: 'API Usage Analytics',
-        description: 'Monitor API call volumes, latency, and error rates to ensure API reliability.',
-        icon: <CogIcon className="w-8 h-8" />,
-        color: 'bg-red-500',
-    },
-    {
-        title: 'Mobile App Metrics',
-        description: 'Track app installations, in-app purchases, and device-specific performance metrics.',
-        icon: <AppWindowIcon className="w-8 h-8" />,
-        color: 'bg-indigo-500',
-    },
-    {
-        title: 'Custom Events & Goals',
-        description: 'Set up custom event tracking and goal completions tailored to your business needs.',
-        icon: <TargetIcon className="w-8 h-8" />,
-        color: 'bg-teal-500',
-    },
-]
+	{
+		title: "User Behavior Analytics",
+		description:
+			"Gain insights into how users interact with your application through page views, clicks, and navigation patterns.",
+		icon: <MousePointerClickIcon className="w-8 h-8" />,
+		color: "bg-blue-500",
+	},
+	{
+		title: "Powerful API",
+		description:
+			"Monitor active users, session durations, and retention rates in real-time to understand user engagement.",
+		icon: <UsersRoundIcon className="w-8 h-8" />,
+		color: "bg-green-500",
+	},
+	{
+		title: "Performance Analytics",
+		description:
+			"Track page load times, API response times, and resource usage to optimize performance.",
+		icon: <CloudLightningIcon className="w-8 h-8" />,
+		color: "bg-yellow-500",
+	},
+	{
+		title: "API Usage Analytics",
+		description:
+			"Monitor API call volumes, latency, and error rates to ensure API reliability.",
+		icon: <CogIcon className="w-8 h-8" />,
+		color: "bg-red-500",
+	},
+	{
+		title: "Mobile App Metrics",
+		description:
+			"Track app installations, in-app purchases, and device-specific performance metrics.",
+		icon: <AppWindowIcon className="w-8 h-8" />,
+		color: "bg-indigo-500",
+	},
+	{
+		title: "Custom Events & Goals",
+		description:
+			"Set up custom event tracking and goal completions tailored to your business needs.",
+		icon: <TargetIcon className="w-8 h-8" />,
+		color: "bg-teal-500",
+	},
+];
 
 const FeatureCard = ({
 	feature,
@@ -80,9 +99,9 @@ const FeatureCard = ({
 );
 
 export default function FeaturesSection() {
-    return (
+	return (
 		<section className="py-20 ">
-			<div className="w-[90%] md:w-[85%] mx-auto px-4 flex flex-col gap-y-20">
+			<div className="w-[90%] md:w-[85%] mx-auto flex flex-col gap-y-20">
 				<div className="text-center ">
 					{/* <Badge variant="secondary" className="mb-4 text-sm font-semibold">Features</Badge> */}
 					<h2 className="text-3xl font-extrabold bg-gradient-to-tl from-white via-slate-300 to-zinc-400 bg-clip-text text-transparent sm:text-4xl lg:text-5xl">
@@ -106,5 +125,3 @@ export default function FeaturesSection() {
 		</section>
 	);
 }
-
-
