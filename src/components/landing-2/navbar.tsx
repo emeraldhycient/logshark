@@ -1,34 +1,100 @@
-// components/Navbar.tsx
-import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { headerLinkContents } from "@/contents";
 import { BarChart } from "lucide-react";
 import Link from "next/link";
-import { headerLinkContents } from "@/contents";
+import { useEffect, useRef, useState } from "react";
+import MobileNavigation from "../navigation/mobile-navigation";
 
 const Navbar = () => {
 	const [isOpen, setIsOpen] = useState(false);
+	const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+	const [activeIndex, setActiveIndex] = useState(0);
+	const [hoverStyle, setHoverStyle] = useState({});
+	const [activeStyle, setActiveStyle] = useState({
+		left: "0px",
+		width: "0px",
+	});
+	const tabRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+	useEffect(() => {
+		if (hoveredIndex !== null) {
+			const hoveredElement = tabRefs.current[hoveredIndex];
+			if (hoveredElement) {
+				const { offsetLeft, offsetWidth } = hoveredElement;
+				setHoverStyle({
+					left: `${offsetLeft}px`,
+					width: `${offsetWidth}px`,
+				});
+			}
+		}
+	}, [hoveredIndex]);
+
+	useEffect(() => {
+		const activeElement = tabRefs.current[activeIndex];
+		if (activeElement) {
+			const { offsetLeft, offsetWidth } = activeElement;
+			setActiveStyle({
+				left: `${offsetLeft}px`,
+				width: `${offsetWidth}px`,
+			});
+		}
+	}, [activeIndex]);
+
+	useEffect(() => {
+		requestAnimationFrame(() => {
+			const overviewElement = tabRefs.current[0];
+			if (overviewElement) {
+				const { offsetLeft, offsetWidth } = overviewElement;
+				setActiveStyle({
+					left: `${offsetLeft}px`,
+					width: `${offsetWidth}px`,
+				});
+			}
+		});
+	}, []);
 
 	return (
-		<nav className="flex">
+		<div className="flex">
 			<div className="container mx-auto py-5 flex justify-between items-center">
 				{/* Logo */}
 				<div className="flex items-center space-x-2 ">
 					<BarChart className="h-8 w-8 text-blue-400" />
 					<span className="text-2xl font-bold">LogShark</span>
 				</div>
+				<div className="relative">
+					<div
+						className="absolute h-[30px] transition-all duration-300 ease-out bg-white rounded-[6px] flex items-center"
+						style={{
+							...hoverStyle,
+							opacity: hoveredIndex !== null ? 1 : 0,
+						}}
+					/>
 
-				{/* Desktop Links */}
-				<div className="hidden md:flex space-x-8">
-					{headerLinkContents?.map(({ text, url }, index) => (
-						<div key={index}>
+					<div
+						className="absolute bottom-[-6px] h-[2px] bg-white transition-all duration-300 ease-out"
+						style={activeStyle}
+					/>
+
+					<div className="relative flex space-x-[6px] items-center">
+						{headerLinkContents.map(({ text, url }, index) => (
 							<a
 								href={`${url}`}
-								className="text-base font-light hover:text-blue-400 duration-300 active:scale-90 transition-all"
+								key={index}
+								ref={(el) => (tabRefs.current[index] = el)}
+								className={`px-3 py-2 cursor-pointer transition-colors duration-300 h-[30px] ${
+									index === activeIndex
+										? "text-[#0e0e10] dark:text-white"
+										: "text-[#0e0f1199] dark:text-[#ffffff99]"
+								}`}
+								onMouseEnter={() => setHoveredIndex(index)}
+								onMouseLeave={() => setHoveredIndex(null)}
+								onClick={() => setActiveIndex(index)}
 							>
-								{text}
+								<div className="text-white leading-5 whitespace-nowrap flex items-center justify-center h-full text-base font-light hover:text-black duration-300 active:scale-90 transition-all">
+									{text}
+								</div>
 							</a>
-						</div>
-					))}
+						))}
+					</div>
 				</div>
 
 				{/* Search and CTA */}
@@ -61,7 +127,7 @@ const Navbar = () => {
 						className="focus:outline-none text-gray-400 hover:text-white transition-colors"
 					>
 						<svg
-							className="w-8 h-8"
+							className="w-8 h-8 absolute top-3.5 right-3 z-[99999999]"
 							fill="none"
 							stroke="currentColor"
 							viewBox="0 0 24 24"
@@ -84,60 +150,9 @@ const Navbar = () => {
 
 			{/* Mobile Menu */}
 			{isOpen && (
-				<motion.div
-					initial={{ height: 0 }}
-					animate={{ height: "auto" }}
-					exit={{ height: 0 }}
-					className="md:hidden bg-black bg-opacity-90 shadow-lg overflow-hidden"
-				>
-					<div className="flex flex-col space-y-4 px-6 py-6">
-						<a
-							href="#getting-started"
-							className="text-white hover:text-blue-400 transition-colors duration-300"
-							onClick={() => setIsOpen(false)}
-						>
-							Getting Started
-						</a>
-						<a
-							href="#guides"
-							className="text-white hover:text-blue-400 transition-colors duration-300"
-							onClick={() => setIsOpen(false)}
-						>
-							Guides
-						</a>
-						<a
-							href="#api"
-							className="text-white hover:text-blue-400 transition-colors duration-300"
-							onClick={() => setIsOpen(false)}
-						>
-							API Reference
-						</a>
-						<a
-							href="#concepts"
-							className="text-white hover:text-blue-400 transition-colors duration-300"
-							onClick={() => setIsOpen(false)}
-						>
-							Concepts
-						</a>
-						<a
-							href="#security"
-							className="text-white hover:text-blue-400 transition-colors duration-300"
-							onClick={() => setIsOpen(false)}
-						>
-							Security
-						</a>
-						<div className="mt-4">
-							<button className="relative inline-flex h-12 overflow-hidden rounded-full p-[1px] focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50">
-								<span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#E2CBFF_0%,#393BB2_50%,#E2CBFF_100%)]" />
-								<span className="inline-flex h-full w-full cursor-pointer items-center justify-center rounded-full bg-slate-950 px-9 py-1 text-sm font-medium text-white backdrop-blur-3xl">
-									<Link href="/register">Sign Up</Link>
-								</span>
-							</button>
-						</div>
-					</div>
-				</motion.div>
+				<MobileNavigation isOpen={isOpen} setIsOpen={setIsOpen} />
 			)}
-		</nav>
+		</div>
 	);
 };
 

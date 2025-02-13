@@ -1,9 +1,26 @@
-import React from 'react'
+import { motion } from "framer-motion";
+import React from "react";
 
 const HeroEmail = () => {
-  return (
-		<form className="w-full md:w-[30rem]">
-			<div className="relative h-fit w-full md:w-[30rem]">
+	return (
+		<motion.form
+			initial={{ opacity: 0 }}
+			animate={{
+				opacity: 1,
+				transition: { ease: "linear", duration: 1, delay: 0.5 },
+			}}
+			className="flex flex-row items-enter justify-center w-full md:w-[30rem]"
+		>
+			<motion.div
+				initial={{
+					width: "8.1rem",
+				}}
+				animate={{
+					width: "100%",
+					transition: { duration: 1, ease: ["easeIn", "easeOut"] },
+				}}
+				className="relative h-fit "
+			>
 				<input
 					type="search"
 					id="default-search"
@@ -17,9 +34,9 @@ const HeroEmail = () => {
 				>
 					Get a Demo
 				</button>
-			</div>
-		</form>
-  );
-}
+			</motion.div>
+		</motion.form>
+	);
+};
 
-export default HeroEmail
+export default HeroEmail;

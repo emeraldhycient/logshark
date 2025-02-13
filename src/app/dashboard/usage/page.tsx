@@ -1,32 +1,34 @@
-'use client'
+"use client";
 
-import { Button } from '@/components/ui/button'
+import Header from "@/components/common/dashboard/header";
+import { Button } from "@/components/ui/button";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from "@/components/ui/card";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
-import { useToast } from "@/hooks/use-toast"
-import { Copy, Key } from 'lucide-react'
-import Header from '@/components/common/dashboard/header'
-import CreateApiKey from '@/components/usage/createApiKey'
-import { apiKeyService } from '@/services/apikey/apiKey.service'
-import { useMutation, useQuery } from '@tanstack/react-query'
-import { IApiKey } from '@/types'
-import dynamic from 'next/dynamic'
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableHeader,
+	TableRow,
+} from "@/components/ui/table";
+import CreateApiKey from "@/components/usage/createApiKey";
+import { useToast } from "@/hooks/use-toast";
+import { apiKeyService } from "@/services/apikey/apiKey.service";
+import { IApiKey } from "@/types";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { Copy, Key } from "lucide-react";
+import dynamic from "next/dynamic";
 // import { m } from 'framer-motion'
-const PricingSection = dynamic(() => import('@/components/landing-2/PricingSection'), { ssr: false })
-
+const PricingSection = dynamic(
+	() => import("@/components/landing-2/pricing-section"),
+	{ ssr: false }
+);
 
 // type Subscription = {
 //   name: string
@@ -34,8 +36,6 @@ const PricingSection = dynamic(() => import('@/components/landing-2/PricingSecti
 //   features: string[]
 //   current: boolean
 // }
-
-
 
 // const subscriptions: Subscription[] = [
 //   {
@@ -59,59 +59,63 @@ const PricingSection = dynamic(() => import('@/components/landing-2/PricingSecti
 // ]
 
 export default function Usage() {
-  const { toast } = useToast()
+	const { toast } = useToast();
 
+	function copyApiKey(key: string) {
+		navigator.clipboard.writeText(key);
+		toast({
+			title: "API Key Copied",
+			description: "The API key has been copied to your clipboard.",
+		});
+	}
 
+	const mutate = useMutation({
+		mutationFn: (id: string) => apiKeyService.deleteApiKey(id),
+		onSuccess: () => {
+			toast({
+				variant: "destructive",
+				title: "API Key Deleted",
+				description: "The API key has been deleted successfully.",
+			});
+		},
+		onError: (error) => {
+			toast({
+				variant: "destructive",
+				title: "Error",
+				description: error.message,
+			});
+		},
+	});
 
-  function copyApiKey(key: string) {
-    navigator.clipboard.writeText(key)
-    toast({
-      title: "API Key Copied",
-      description: "The API key has been copied to your clipboard.",
-    })
-  }
+	function deleteApiKey(id: string) {
+		mutate.mutate(id);
+		toast({
+			title: "API Key Deleted",
+			description: "The API key has been deleted successfully.",
+		});
+	}
 
-  const mutate = useMutation({
-    mutationFn: (id: string) => apiKeyService.deleteApiKey(id),
-    onSuccess: () => {
-      toast({
-        variant: "destructive",
-        title: "API Key Deleted",
-        description: "The API key has been deleted successfully.",
-      })
-    },
-    onError: (error) => {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: error.message,
-      })
-    },
-  })
+	const {
+		data: apiKeys,
+		isLoading,
+		error,
+		isError,
+	} = useQuery({
+		queryKey: ["apiKeys"],
+		queryFn: () => apiKeyService.getApiKeys(),
+	});
 
-  function deleteApiKey(id: string) {
-    mutate.mutate(id)
-    toast({
-      title: "API Key Deleted",
-      description: "The API key has been deleted successfully.",
-    })
-  }
-
-  const { data: apiKeys, isLoading, error, isError } = useQuery({
-    queryKey: ['apiKeys'],
-    queryFn: () => apiKeyService.getApiKeys(),
-  })
-
-
-  return (
-    <div className="container mx-auto pb-10">
-      <Header title="Usage & Billing" />
-      <Card className="mb-8 mx-4 mt-6">
-        <CardHeader>
-          <CardTitle>Upgrade Subscription</CardTitle>
-          <CardDescription>Manage your subscription plan</CardDescription>
-        </CardHeader>
-        {/* <CardContent>
+	return (
+		<div className="container mx-auto pb-10">
+			<Header title="Usage & Billing" />
+			<Card className="mb-8 mx-4 mt-6">
+				<CardHeader>
+					<CardTitle>Upgrade Subscription</CardTitle>
+					<CardDescription>
+						Manage your subscription plan
+					</CardDescription>
+				</CardHeader>
+				{/* <CardContent>
           <div className="grid gap-6 md:grid-cols-3">
             {subscriptions.map((sub) => (
               <Card key={sub.name} className={sub.current ? "border-primary" : ""}>
@@ -137,65 +141,99 @@ export default function Usage() {
             ))}
           </div>
         </CardContent> */}
-        <PricingSection showFooter={false} showHeader={false} />
-      </Card>
+				<PricingSection showFooter={false} showHeader={false} />
+			</Card>
 
-      <Card className='mx-4'>
-        <CardHeader>
-          <CardTitle>API Keys</CardTitle>
-          <CardDescription>Manage your API keys</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <CreateApiKey />
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>API Key</TableHead>
-                <TableHead>Created</TableHead>
-                <TableHead>Last Used</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {isLoading ? (
-                <TableRow>
-                  <TableCell colSpan={5} className="text-center">Loading...</TableCell>
-                </TableRow>
-              ) : isError ? (
-                <TableRow>
-                  <TableCell colSpan={5} className="text-center text-red-500">{error.message}</TableCell>
-                </TableRow>
-              ) : apiKeys.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={5} className="text-center">No API Keys available.</TableCell>
-                </TableRow>
-              ) : (
-                apiKeys.map((apiKey: IApiKey) => (
-                  <TableRow key={apiKey.id}>
-                    <TableCell>{apiKey.name}</TableCell>
-                    <TableCell>
-                      <code className="relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold">
-                        {apiKey.key.slice(0, 8)}...{apiKey.key.slice(-4)}
-                      </code>
-                    </TableCell>
-                    <TableCell>{apiKey.createdAt}</TableCell>
-                    <TableCell>{apiKey.lastUsedAt ? apiKey.lastUsedAt : "Never used"}</TableCell>
-                    <TableCell>
-                      <Button variant="ghost" size="sm" onClick={() => copyApiKey(apiKey.key)}>
-                        <Copy className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="sm" onClick={() => deleteApiKey(apiKey.id)}>
-                        <Key className="h-4 w-4" />
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
-    </div>
-  )
+			<Card className="mx-4">
+				<CardHeader>
+					<CardTitle>API Keys</CardTitle>
+					<CardDescription>Manage your API keys</CardDescription>
+				</CardHeader>
+				<CardContent>
+					<CreateApiKey />
+					<Table>
+						<TableHeader>
+							<TableRow>
+								<TableHead>Name</TableHead>
+								<TableHead>API Key</TableHead>
+								<TableHead>Created</TableHead>
+								<TableHead>Last Used</TableHead>
+								<TableHead>Actions</TableHead>
+							</TableRow>
+						</TableHeader>
+						<TableBody>
+							{isLoading ? (
+								<TableRow>
+									<TableCell
+										colSpan={5}
+										className="text-center"
+									>
+										Loading...
+									</TableCell>
+								</TableRow>
+							) : isError ? (
+								<TableRow>
+									<TableCell
+										colSpan={5}
+										className="text-center text-red-500"
+									>
+										{error.message}
+									</TableCell>
+								</TableRow>
+							) : apiKeys.length === 0 ? (
+								<TableRow>
+									<TableCell
+										colSpan={5}
+										className="text-center"
+									>
+										No API Keys available.
+									</TableCell>
+								</TableRow>
+							) : (
+								apiKeys.map((apiKey: IApiKey) => (
+									<TableRow key={apiKey.id}>
+										<TableCell>{apiKey.name}</TableCell>
+										<TableCell>
+											<code className="relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold">
+												{apiKey.key.slice(0, 8)}...
+												{apiKey.key.slice(-4)}
+											</code>
+										</TableCell>
+										<TableCell>
+											{apiKey.createdAt}
+										</TableCell>
+										<TableCell>
+											{apiKey.lastUsedAt
+												? apiKey.lastUsedAt
+												: "Never used"}
+										</TableCell>
+										<TableCell>
+											<Button
+												variant="ghost"
+												size="sm"
+												onClick={() =>
+													copyApiKey(apiKey.key)
+												}
+											>
+												<Copy className="h-4 w-4" />
+											</Button>
+											<Button
+												variant="ghost"
+												size="sm"
+												onClick={() =>
+													deleteApiKey(apiKey.id)
+												}
+											>
+												<Key className="h-4 w-4" />
+											</Button>
+										</TableCell>
+									</TableRow>
+								))
+							)}
+						</TableBody>
+					</Table>
+				</CardContent>
+			</Card>
+		</div>
+	);
 }

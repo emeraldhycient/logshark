@@ -6,13 +6,10 @@ import DataTypesSection from "@/components/landing-2/DataTypesSection";
 import FeaturesSection from "@/components/landing-2/feature-section";
 // import GapsSection from "@/components/landing-2/GapsSection";
 // import Navbar from "@/components/landing-2/navbar";
-import PricingSection from "@/components/landing-2/PricingSection";
+import PricingSection from "@/components/landing-2/pricing-section";
 import FaqSection from "@/components/section/faq-section";
 import HeroSection from "@/components/section/hero-section";
 import { BackgroundBeams } from "@/components/ui/background-beams";
-// import dynamic from "next/dynamic";
-// import PricingSection from "@/components/landing-2/PricingSection";
-// const PricingSection = dynamic(() => import('@/components/landing-2/PricingSection'), { ssr: false })
 
 const HomePage = () => {
 	return (
@@ -23,7 +20,7 @@ const HomePage = () => {
 			<DataTypesSection />
 
 			{/* <GapsSection /> */}
-			<PricingSection />
+			{/* <PricingSection /> */}
 			<FaqSection />
 
 			<GoogleGeminiEffectDemo />

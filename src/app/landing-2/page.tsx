@@ -9,7 +9,7 @@ import HeroSection from "@/components/section/hero-section";
 import dynamic from "next/dynamic";
 // import PricingSection from "@/components/landing-2/PricingSection";
 const PricingSection = dynamic(
-	() => import("@/components/landing-2/PricingSection"),
+	() => import("@/components/landing-2/pricing-section"),
 	{ ssr: false }
 );
 

@@ -1,11 +1,11 @@
-import { BarChart } from 'lucide-react'
-import React from 'react'
+import { BarChart } from "lucide-react";
+import React from "react";
 
 function Footer() {
-  return (
+	return (
 		<footer className="bg-gradient-to-r from-black to-gray-900 text-white py-12">
 			<div className="container mx-auto px-4">
-				<div className="flex flex-row justify-between">
+				<div className="flex flex-col md:flex-row justify-between">
 					<div>
 						<div className="flex items-center space-x-2 mb-4">
 							<BarChart className="h-8 w-8 text-blue-400" />
@@ -17,7 +17,7 @@ function Footer() {
 						</p>
 					</div>
 
-					<div className="flex flex-row gap-x-28">
+					<div className="flex flex-wrap flex-row gap-x-28">
 						<div>
 							<h3 className="text-lg font-semibold mb-4">
 								Product
@@ -121,7 +121,7 @@ function Footer() {
 				</div>
 			</div>
 		</footer>
-  );
+	);
 }
 
-export default Footer
+export default Footer;

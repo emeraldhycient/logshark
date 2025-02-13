@@ -1,7 +1,7 @@
 import { faqContent } from "@/contents";
-import React, { useRef, useState } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
+import React, { useRef, useState } from "react";
 
 const FaqSection = () => {
 	const [openIndex, setOpenIndex] = useState<number | null>(null);
@@ -57,7 +57,7 @@ const FaqSection = () => {
 
 	return (
 		<div ref={accordionRefContainer} className="py-36">
-			<div className="flex flex-col items-center gap-y-10 w-[65%] mx-auto">
+			<div className="flex flex-col items-center gap-y-10 w-[90%] md:w-[65%] mx-auto">
 				<div className="flex flex-row text-4xl text-white">
 					<p>Frequently Asked Questions</p>
 				</div>

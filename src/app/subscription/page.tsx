@@ -1,16 +1,19 @@
-'use client'
+"use client";
 
-import dynamic from 'next/dynamic'
+import dynamic from "next/dynamic";
+import React from "react";
 // import PricingSection from '@/components/landing-2/PricingSection'
-const PricingSection = dynamic(() => import('@/components/landing-2/PricingSection'), { ssr: false })
-import React from 'react'
+const PricingSection = dynamic(
+	() => import("@/components/landing-2/pricing-section"),
+	{ ssr: false }
+);
 
 function Page() {
-  return (
-    <div>
-      <PricingSection isDisplay={false}/>
-    </div>
-  )
+	return (
+		<div>
+			<PricingSection isDisplay={false} />
+		</div>
+	);
 }
 
-export default Page
+export default Page;
