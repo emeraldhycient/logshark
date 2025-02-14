@@ -83,14 +83,23 @@ export default function DataTypesSection() {
 
 	return (
 		<motion.section className="py-36 rounded-t-3xl bg-gradient-to-b from-gray-50 to-white">
-			<div className="mx-auto px-4 sm:px-6 ">
+			<div className="mx-auto ">
 				<div className="text-center mb-16">
-					{/* <Badge variant="secondary" className="mb-4 text-blue-500 uppercase tracking-widest">
-                        Data Types
-                    </Badge> */}
-					<h2 className="text-4xl font-extrabold text-gray-900 sm:text-5xl lg:text-6xl tracking-tight">
+					<motion.h2
+						initial={{ opacity: 0 }}
+						whileInView={{ opacity: 1 }}
+						viewport={{ once: true }}
+						className="text-4xl font-extrabold sm:text-4xl lg:text-5xl text-black bg-clip-text inline-block animate-shine"
+						style={{
+							backgroundImage:
+								"linear-gradient(120deg, rgba(255, 255, 255, 0) 40%, rgba(255, 255, 255, 0.8) 50%, rgba(255, 255, 255, 0) 60%)",
+							backgroundSize: "200% 100%",
+							WebkitBackgroundClip: "text",
+							animationDuration: `${5}s`,
+						}}
+					>
 						Types of Data We Capture
-					</h2>
+					</motion.h2>
 					<p className="mt-6 text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
 						Unlock comprehensive analytics for user behavior,
 						performance, and API usage to get a complete picture of

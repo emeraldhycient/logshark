@@ -21,10 +21,30 @@ export const GoogleGeminiEffect = ({
     className?: string;
 }) => {
     return (
-		<div className={cn("sticky top-80", className)}>
-			<p className="text-lg md:text-4xl font-normal pb-4 text-center bg-clip-text text-transparent bg-gradient-to-b from-neutral-100 to-neutral-300">
+		<div
+			className={cn(
+				"flex flex-col items-center sticky top-80",
+				className
+			)}
+		>
+			{/* <p className="text-lg md:text-4xl font-normal pb-4 text-center bg-clip-text text-transparent bg-gradient-to-b from-neutral-100 to-neutral-300">
 				{title || `Build with LogShark`}
-			</p>
+			</p> */}
+			<motion.h2
+				initial={{ opacity: 0 }}
+				whileInView={{ opacity: 1 }}
+				viewport={{ once: true }}
+				className="text-4xl font-extrabold sm:text-4xl lg:text-5xl text-[#b5b5b5a4] bg-clip-text inline-block animate-shine text-center mb-5"
+				style={{
+					backgroundImage:
+						"linear-gradient(120deg, rgba(255, 255, 255, 0) 40%, rgba(255, 255, 255, 0.8) 50%, rgba(255, 255, 255, 0) 60%)",
+					backgroundSize: "200% 100%",
+					WebkitBackgroundClip: "text",
+					animationDuration: `${5}s`,
+				}}
+			>
+				{title || `Build with LogShark`}
+			</motion.h2>
 			<p className="text-xs md:text-xl font-normal text-center text-neutral-400 mt-4 max-w-lg mx-auto">
 				{description ||
 					`Scroll this component and see the bottom SVG come to life wow this
@@ -35,12 +55,23 @@ export const GoogleGeminiEffect = ({
                     Get Started Now
                 </button> */}
 				<Link href={"register"}>
-					<button className="bg-slate-800 no-underline group cursor-pointer relative shadow-2xl shadow-zinc-900 rounded-full p-px text-xs font-semibold leading-6  text-white inline-block">
+					<button className="bg-slate-800 no-underline group cursor-pointer relative shadow-2xl shadow-zinc-900 rounded-full p-px text-sm font-semibold leading-6  text-white inline-block">
 						<span className="absolute inset-0 overflow-hidden rounded-full">
 							<span className="absolute inset-0 rounded-full bg-[image:radial-gradient(75%_100%_at_50%_0%,rgba(56,189,248,0.6)_0%,rgba(56,189,248,0)_75%)] opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
 						</span>
-						<div className="relative flex space-x-2 items-center z-10 rounded-full bg-zinc-950 py-2 px-4 ring-1 ring-white/10 ">
-							<span>Get Started Now</span>
+						<div className="relative flex space-x-2 items-center z-10 rounded-full bg-zinc-950 py-2.5 px-5 ring-1 ring-white/10 ">
+							<span
+								className=" text-[#b5b5b5a4] bg-clip-text inline-block animate-shine "
+								style={{
+									backgroundImage:
+										"linear-gradient(120deg, rgba(255, 255, 255, 0) 40%, rgba(255, 255, 255, 0.8) 50%, rgba(255, 255, 255, 0) 60%)",
+									backgroundSize: "200% 100%",
+									WebkitBackgroundClip: "text",
+									animationDuration: `${5}s`,
+								}}
+							>
+								Get Started Now
+							</span>
 							<svg
 								fill="none"
 								height="16"

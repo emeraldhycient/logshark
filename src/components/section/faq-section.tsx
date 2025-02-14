@@ -2,6 +2,7 @@ import { faqContent } from "@/contents";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import React, { useRef, useState } from "react";
+import { motion } from "framer-motion";
 
 const FaqSection = () => {
 	const [openIndex, setOpenIndex] = useState<number | null>(null);
@@ -57,10 +58,22 @@ const FaqSection = () => {
 
 	return (
 		<div ref={accordionRefContainer} className="py-36">
-			<div className="flex flex-col items-center gap-y-10 w-[90%] md:w-[65%] mx-auto">
-				<div className="flex flex-row text-4xl text-white">
-					<p>Frequently Asked Questions</p>
-				</div>
+			<div className="flex flex-col items-center gap-y-16 w-[90%] md:w-[65%] mx-auto">
+				<motion.h2
+					initial={{ opacity: 0 }}
+					whileInView={{ opacity: 1 }}
+					viewport={{ once: true }}
+					className="text-4xl font-extrabold sm:text-4xl lg:text-5xl text-[#b5b5b5a4] bg-clip-text inline-block animate-shine"
+					style={{
+						backgroundImage:
+							"linear-gradient(120deg, rgba(255, 255, 255, 0) 40%, rgba(255, 255, 255, 0.8) 50%, rgba(255, 255, 255, 0) 60%)",
+						backgroundSize: "200% 100%",
+						WebkitBackgroundClip: "text",
+						animationDuration: `${5}s`,
+					}}
+				>
+					Frequently asked questions
+				</motion.h2>
 
 				<div className="flex flex-col gap-y-5">
 					{faqContent.map((faq, index) => (

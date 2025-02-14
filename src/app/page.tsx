@@ -2,8 +2,8 @@
 
 import Footer from "@/components/common/footer";
 import { GoogleGeminiEffectDemo } from "@/components/common/joinus";
-import DataTypesSection from "@/components/landing-2/DataTypesSection";
 import FeaturesSection from "@/components/landing-2/feature-section";
+import DataTypesSection from "@/components/section/data-type-section";
 import FaqSection from "@/components/section/faq-section";
 import HeroSection from "@/components/section/hero-section";
 import { BackgroundBeams } from "@/components/ui/background-beams";

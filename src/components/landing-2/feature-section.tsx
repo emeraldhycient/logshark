@@ -1,12 +1,5 @@
 "use client";
 
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/card";
 import { motion } from "framer-motion";
 import {
 	AppWindowIcon,
@@ -16,7 +9,7 @@ import {
 	TargetIcon,
 	UsersRoundIcon,
 } from "lucide-react";
-import React from "react";
+import React, { useRef, useState } from "react";
 
 const features = [
 	{
@@ -63,52 +56,123 @@ const features = [
 	},
 ];
 
-const FeatureCard = ({
-	feature,
-	index,
-}: {
+interface Position {
+	x: number;
+	y: number;
+}
+
+interface FeatureCardProps extends React.PropsWithChildren {
+	className?: string;
+	spotlightColor?: `rgba(${number}, ${number}, ${number}, ${number})`;
 	feature: (typeof features)[0];
 	index: number;
-}) => (
-	<motion.div
-		initial={{ opacity: 0, y: 50 }}
-		whileInView={{ opacity: 1, y: 0 }}
-		viewport={{ once: true }}
-		transition={{ duration: 0.5, delay: index * 0.1 }}
-	>
-		<Card className="h-full rounded-xl overflow-hidden group hover:shadow-lg transition-shadow duration-300 bg-black cursor-pointer">
-			<CardHeader className="relative p-6 flex flex-col gap-y-3">
-				<div
-					className={`absolute top-0 right-0 w-32 h-32 ${feature.color} rounded-full opacity-10 transform translate-x-1/2 -translate-y-1/2 group-hover:scale-110 transition-transform duration-300`}
-				/>
-				<div
-					className={`${feature.color} text-white p-3 rounded-full inline-block w-fit`}
-				>
-					{feature.icon}
+}
+
+const FeatureCard: React.FC<FeatureCardProps> = ({
+	children,
+	className = "",
+	spotlightColor = "rgba(255, 255, 255, 0.25)",
+	feature,
+	index,
+}) => {
+	const divRef = useRef<HTMLDivElement>(null);
+	const [isFocused, setIsFocused] = useState<boolean>(false);
+	const [position, setPosition] = useState<Position>({ x: 0, y: 0 });
+	const [opacity, setOpacity] = useState<number>(0);
+
+	const handleMouseMove: React.MouseEventHandler<HTMLDivElement> = (e) => {
+		if (!divRef.current || isFocused) return;
+
+		const rect = divRef.current.getBoundingClientRect();
+		setPosition({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+	};
+
+	const handleFocus = () => {
+		setIsFocused(true);
+		setOpacity(0.6);
+	};
+
+	const handleBlur = () => {
+		setIsFocused(false);
+		setOpacity(0);
+	};
+
+	const handleMouseEnter = () => {
+		setOpacity(0.6);
+	};
+
+	const handleMouseLeave = () => {
+		setOpacity(0);
+	};
+
+	return (
+		<motion.div
+			initial={{ opacity: 0, y: 50 }}
+			whileInView={{ opacity: 1, y: 0 }}
+			viewport={{ once: true }}
+			transition={{ duration: 0.5, delay: index * 0.1 }}
+			ref={divRef}
+			onMouseMove={handleMouseMove}
+			onFocus={handleFocus}
+			onBlur={handleBlur}
+			onMouseEnter={handleMouseEnter}
+			onMouseLeave={handleMouseLeave}
+			className={`relative rounded-3xl border border-neutral-800 bg-neutral-900 overflow-hidden p-8 ${className}`}
+		>
+			<div
+				className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 ease-in-out"
+				style={{
+					opacity,
+					background: `radial-gradient(circle at ${position.x}px ${position.y}px, ${spotlightColor}, transparent 80%)`,
+				}}
+			/>
+			<div className="flex flex-col gap-y-5">
+				<div className="relative  flex flex-col gap-y-3">
+					<div
+						className={`${feature.color} text-white p-3 rounded-full inline-block w-fit`}
+					>
+						{feature.icon}
+					</div>
+
+					<div className="mt-4 text-2xl bg-gradient-to-tl from-white via-slate-300 to-zinc-400 bg-clip-text text-transparent">
+						{feature.title}
+					</div>
 				</div>
-				<CardTitle className="mt-4 text-2xl font-medium bg-gradient-to-tl from-white via-slate-300 to-zinc-400 bg-clip-text text-transparent">
-					{feature.title}
-				</CardTitle>
-			</CardHeader>
-			<CardContent>
-				<CardDescription className="text-base text-white">
+
+				<div
+					className={`text-[#b5b5b5a4] bg-clip-text inline-block animate-shine`}
+					style={{
+						backgroundImage:
+							"linear-gradient(120deg, rgba(255, 255, 255, 0) 40%, rgba(255, 255, 255, 0.8) 50%, rgba(255, 255, 255, 0) 60%)",
+						backgroundSize: "200% 100%",
+						WebkitBackgroundClip: "text",
+						animationDuration: `${5}s`,
+					}}
+				>
 					{feature.description}
-				</CardDescription>
-			</CardContent>
-		</Card>
-	</motion.div>
-);
+				</div>
+			</div>
+		</motion.div>
+	);
+};
 
 export default function FeaturesSection() {
 	return (
-		<section className="pt-20 pb-36 snap-x snap-proximity">
+		<section className="pt-20 pb-44 snap-x snap-proximity">
 			<div className="w-[90%] md:w-[85%] mx-auto flex flex-col gap-y-20">
 				<div className="text-center ">
 					<motion.h2
 						initial={{ opacity: 0 }}
 						whileInView={{ opacity: 1 }}
 						viewport={{ once: true }}
-						className="text-3xl font-extrabold bg-gradient-to-tl from-white via-slate-300 to-zinc-400 bg-clip-text text-transparent sm:text-4xl lg:text-5xl"
+						className="text-4xl font-extrabold sm:text-4xl lg:text-5xl text-[#b5b5b5a4] bg-clip-text inline-block animate-shine"
+						style={{
+							backgroundImage:
+								"linear-gradient(120deg, rgba(255, 255, 255, 0) 40%, rgba(255, 255, 255, 0.8) 50%, rgba(255, 255, 255, 0) 60%)",
+							backgroundSize: "200% 100%",
+							WebkitBackgroundClip: "text",
+							animationDuration: `${5}s`,
+						}}
 					>
 						Why LogShark?
 					</motion.h2>
@@ -117,10 +181,11 @@ export default function FeaturesSection() {
 						whileInView={{ opacity: 1, translateY: 0 }}
 						viewport={{ once: true }}
 						transition={{ duration: 0.5, delay: 0.2 }}
-						className="mt-4 text-xl text-gray-600 max-w-2xl mx-auto"
+						className="mt-4 text-xl text-white max-w-2xl mx-auto"
 					>
-						Unlock deep insights and optimize your application with
-						our comprehensive suite of analytics tools.
+						Transform your error logging into actionable insights
+						and enhance your application&apos;s performance with
+						LogShark&apos;s powerful analytics suite.
 					</motion.p>
 				</div>
 				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

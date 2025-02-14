@@ -61,15 +61,19 @@ const ParallaxText = ({
 							ref={(el) => {
 								if (el) textRefs.current[idx] = el;
 							}}
-							className="inline-block character-container opacity-0"
+							className="character-container opacity-0 text-3xl md:text-6xl font-medium !leading-tight text-[#b5b5b5a4] bg-clip-text inline-block animate-shine"
+							style={{
+								backgroundImage:
+									"linear-gradient(120deg, rgba(255, 255, 255, 0) 40%, rgba(255, 255, 255, 0.8) 50%, rgba(255, 255, 255, 0) 60%)",
+								backgroundSize: "200% 100%",
+								WebkitBackgroundClip: "text",
+								animationDuration: `${1.6}s`,
+							}}
 						>
 							{word.text.map((char, index) => (
 								<span
 									key={`char-${index}`}
-									className={cn(
-										`text-white character`,
-										word.className
-									)}
+									className={cn(`character`, word.className)}
 								>
 									{char}
 								</span>

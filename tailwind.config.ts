@@ -61,7 +61,7 @@ const config: Config = {
 			"animation": {
 				shimmer: "shimmer 2s linear infinite",
 				"meteor-effect": "meteor 5s linear infinite",
-
+				shine: 'shine 5s linear infinite',
 			},
 			"keyframes": {
 				shimmer: {
@@ -72,6 +72,11 @@ const config: Config = {
 						"backgroundPosition": "-200% 0"
 					}
 				},
+				shine: {
+					'0%': { 'background-position': '100%' },
+					'100%': { 'background-position': '-100%' },
+				},
+
 				meteor: {
 					"0%": { transform: "rotate(215deg) translateX(0)", opacity: "1" },
 					"70%": { opacity: "1" },
@@ -94,8 +99,8 @@ const config: Config = {
 export default config;
 
 function addVariablesForColors({ addBase, theme }: any) {
-	let allColors = flattenColorPalette(theme("colors"));
-	let newVars = Object.fromEntries(
+	const allColors = flattenColorPalette(theme("colors"));
+	const newVars = Object.fromEntries(
 		Object.entries(allColors).map(([key, val]) => [`--${key}`, val])
 	);
 

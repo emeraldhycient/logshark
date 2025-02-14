@@ -2,7 +2,7 @@
 
 import Footer from "@/components/common/footer";
 import { GoogleGeminiEffectDemo } from "@/components/common/joinus";
-import DataTypesSection from "@/components/landing-2/DataTypesSection";
+import DataTypesSection from "@/components/landing-2/data-type-section";
 import FeaturesSection from "@/components/landing-2/feature-section";
 import Navbar from "@/components/landing-2/navbar";
 import HeroSection from "@/components/section/hero-section";
