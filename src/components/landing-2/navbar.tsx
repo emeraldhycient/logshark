@@ -3,6 +3,7 @@ import { BarChart } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import MobileNavigation from "../navigation/mobile-navigation";
+import { motion } from "framer-motion";
 
 const Navbar = () => {
 	const [isOpen, setIsOpen] = useState(false);
@@ -13,7 +14,7 @@ const Navbar = () => {
 		left: "0px",
 		width: "0px",
 	});
-	const tabRefs = useRef<(HTMLDivElement | null)[]>([]);
+	const tabRefs = useRef<(HTMLAnchorElement | null)[]>([]);
 
 	useEffect(() => {
 		if (hoveredIndex !== null) {
@@ -60,7 +61,7 @@ const Navbar = () => {
 					<BarChart className="h-8 w-8 text-blue-400" />
 					<span className="text-2xl font-bold">LogShark</span>
 				</div>
-				<div className="relative">
+				<div className="hidden md:flex relative">
 					<div
 						className="absolute h-[30px] transition-all duration-300 ease-out bg-white rounded-[6px] flex items-center"
 						style={{
@@ -69,17 +70,35 @@ const Navbar = () => {
 						}}
 					/>
 
-					<div
+					<motion.div
+						initial={{ width: 0 }}
+						animate={{ width: `${activeStyle?.width}` }}
 						className="absolute bottom-[-6px] h-[2px] bg-white transition-all duration-300 ease-out"
 						style={activeStyle}
 					/>
 
 					<div className="relative flex space-x-[6px] items-center">
 						{headerLinkContents.map(({ text, url }, index) => (
-							<a
+							<motion.a
+								initial={{
+									translateY: -30,
+									opacity: 0,
+								}}
+								animate={{
+									opacity: 1,
+									translateY: 0,
+									transition: {
+										ease: "linear",
+										duration: 1,
+										delay: index * 0.1,
+									},
+								}}
 								href={`${url}`}
-								key={index}
-								ref={(el) => (tabRefs.current[index] = el)}
+								key={`${text}-${index}`}
+								ref={(el: HTMLAnchorElement) => {
+									tabRefs.current[index] =
+										el
+								}}
 								className={`px-3 py-2 cursor-pointer transition-colors duration-300 h-[30px] ${
 									index === activeIndex
 										? "text-[#0e0e10] dark:text-white"
@@ -92,7 +111,7 @@ const Navbar = () => {
 								<div className="text-white leading-5 whitespace-nowrap flex items-center justify-center h-full text-base font-light hover:text-black duration-300 active:scale-90 transition-all">
 									{text}
 								</div>
-							</a>
+							</motion.a>
 						))}
 					</div>
 				</div>
@@ -148,10 +167,7 @@ const Navbar = () => {
 				</div>
 			</div>
 
-			{/* Mobile Menu */}
-			{isOpen && (
-				<MobileNavigation isOpen={isOpen} setIsOpen={setIsOpen} />
-			)}
+			<MobileNavigation isOpen={isOpen} setIsOpen={setIsOpen} />
 		</div>
 	);
 };

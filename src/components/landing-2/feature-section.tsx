@@ -72,7 +72,8 @@ const FeatureCard = ({
 }) => (
 	<motion.div
 		initial={{ opacity: 0, y: 50 }}
-		animate={{ opacity: 1, y: 0 }}
+		whileInView={{ opacity: 1, y: 0 }}
+		viewport={{ once: true }}
 		transition={{ duration: 0.5, delay: index * 0.1 }}
 	>
 		<Card className="h-full rounded-xl overflow-hidden group hover:shadow-lg transition-shadow duration-300 bg-black cursor-pointer">
@@ -100,17 +101,27 @@ const FeatureCard = ({
 
 export default function FeaturesSection() {
 	return (
-		<section className="py-20 ">
+		<section className="pt-20 pb-36 snap-x snap-proximity">
 			<div className="w-[90%] md:w-[85%] mx-auto flex flex-col gap-y-20">
 				<div className="text-center ">
-					{/* <Badge variant="secondary" className="mb-4 text-sm font-semibold">Features</Badge> */}
-					<h2 className="text-3xl font-extrabold bg-gradient-to-tl from-white via-slate-300 to-zinc-400 bg-clip-text text-transparent sm:text-4xl lg:text-5xl">
+					<motion.h2
+						initial={{ opacity: 0 }}
+						whileInView={{ opacity: 1 }}
+						viewport={{ once: true }}
+						className="text-3xl font-extrabold bg-gradient-to-tl from-white via-slate-300 to-zinc-400 bg-clip-text text-transparent sm:text-4xl lg:text-5xl"
+					>
 						Why LogShark?
-					</h2>
-					<p className="mt-4 text-xl text-gray-600 max-w-2xl mx-auto">
+					</motion.h2>
+					<motion.p
+						initial={{ opacity: 0, translateY: 50 }}
+						whileInView={{ opacity: 1, translateY: 0 }}
+						viewport={{ once: true }}
+						transition={{ duration: 0.5, delay: 0.2 }}
+						className="mt-4 text-xl text-gray-600 max-w-2xl mx-auto"
+					>
 						Unlock deep insights and optimize your application with
 						our comprehensive suite of analytics tools.
-					</p>
+					</motion.p>
 				</div>
 				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
 					{features.map((feature, index) => (

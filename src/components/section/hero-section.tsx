@@ -22,7 +22,7 @@ const words = [
 
 export default function HeroSection() {
 	return (
-		<section className=" text-white relative flex flex-col gap-20">
+		<section className=" text-white relative flex flex-col gap-20 snap-x snap-mandatory">
 			<Navbar />
 			<div className="w-[90%] md:container mx-auto gap-y-7 pb-24 md:pb-32 flex flex-col items-center justify-center text-center">
 				<div className="flex flex-col items-center justify-center">

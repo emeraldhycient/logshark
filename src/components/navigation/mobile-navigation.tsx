@@ -1,4 +1,6 @@
+import { useGSAP } from "@gsap/react";
 import { motion } from "framer-motion";
+import gsap from "gsap";
 import Link from "next/link";
 import React from "react";
 
@@ -8,19 +10,61 @@ type Props = {
 };
 
 const MobileNavigation = ({ isOpen, setIsOpen }: Props) => {
+	// initial={{
+	// 				opacity: 0,
+	// 				translateY: -100,
+	// 				backgroundColor: "black",
+	// 				position: "fixed",
+	// 				width: "100vw",
+	// 				height: "100vh",
+	// 			}}
+	// 			animate={{
+	// 				opacity: isOpen ? 1 : 0,
+	// 				translateY: isOpen ? 0 : -100,
+	// 				height: "100vh",
+	// 				position: "fixed",
+	// 				top: "0",
+	// 				z: "99999",
+	// 				width: "100vw",
+	// 			}}
+	// 			transition={{
+	// 				duration: 0.5,
+	// 				ease: "easeInOut",
+	// 			}}
+	// 			exit={{
+	// 				opacity: 0,
+	// 				translateY: -100,
+	// 			}}
+
+	useGSAP(
+		() => {
+			if (isOpen) {
+				gsap.fromTo(
+					".mobile--navigation",
+					{
+						yPercent: -100,
+					},
+					{
+						yPercent: -0,
+					}
+				);
+			} else {
+				gsap.fromTo(
+					".mobile--navigation",
+					{
+						yPercent: -0,
+					},
+					{
+						yPercent: -100,
+					}
+				);
+			}
+		},
+		{ dependencies: [isOpen] }
+	);
+
 	return (
-		<motion.div
-			initial={{ height: 0 }}
-			animate={{
-				height: "100vh",
-				position: "fixed",
-				top: "0",
-				z: "99999",
-				width: "100vw",
-			}}
-			exit={{ height: 0 }}
-			className="md:hidden bg-black w-screen shadow-lg z-[999999]"
-		>
+		<div className="mobile--navigation md:hidden bg-black w-screen h-screen -translate-y-full top-0 shadow-lg z-[999999] fixed ">
 			<div className="flex flex-col h-screen w-[90%] mx-auto py-10">
 				<div className="flex flex-col gap-y-5">
 					<a
@@ -84,7 +128,7 @@ const MobileNavigation = ({ isOpen, setIsOpen }: Props) => {
 					</div>
 				</div>
 			</div>
-		</motion.div>
+		</div>
 	);
 };
 
