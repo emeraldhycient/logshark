@@ -4,6 +4,7 @@ import { CheckCircle } from "lucide-react";
 import React from "react";
 import { StickyScroll } from "../ui/sticky-scroll-reveal";
 import { motion } from 'framer-motion';
+import Activities from "../../app/dashboard/activities/page";
 
 const dataCategories = [
 	{
@@ -39,11 +40,7 @@ const dataCategories = [
 			"Latency Metrics",
 		],
 	},
-	{
-		title: "",
-		description: "",
-		items: [],
-	},
+	
 ];
 
 const MeteorCard = ({ items }: { items: string[] }) => (
@@ -79,11 +76,11 @@ export default function DataTypesSection() {
 				items={category.items} // Pass the items for the list
 			/>
 		),
-    }));
+	}));
 
 	return (
-		<motion.section className="py-36 rounded-t-3xl bg-gradient-to-b from-gray-50 to-white">
-			<div className="mx-auto ">
+		<motion.section className="">
+			<div className="flex flex-col items-center justify-center rounded-3xl py-20 w-[95%] bg-gradient-to-b from-gray-50 to-white mx-auto ">
 				<div className="text-center mb-16">
 					<motion.h2
 						initial={{ opacity: 0 }}
@@ -101,14 +98,86 @@ export default function DataTypesSection() {
 						Types of Data We Capture
 					</motion.h2>
 					<p className="mt-6 text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
-						Unlock comprehensive analytics for user behavior,
-						performance, and API usage to get a complete picture of
-						your application.
+						Key benefits of our system for your business efficiency
+						& growth
 					</p>
 				</div>
 
+				<div className="flex flex-row items-center justify-center w-full gap-x-10 ">
+					<div className="hidden md:flex w-[25rem] h-full relative">
+						<motion.img
+							initial={{ scale: 0, opacity: 0, y: 5 }}
+							whileInView={{ scale: 1, opacity: 1, y: 0 }}
+							viewport={{ once: true }}
+							transition={{ duration: 0.6 }}
+							className="w-[25rem] h-full object-cover"
+							src={`/images/doodle.jpg`}
+							alt=""
+						/>
+					</div>
+
+					<div className="flex flex-col gap-y-5 w-[90%] md:w-[35%]">
+						<div className="text-black text-2xl">
+							<motion.p
+								initial={{ opacity: 0, translateY: 40 }}
+								whileInView={{
+									opacity: 1,
+									translateY: 0,
+									transition: { ease: "linear", duration: 1 },
+								}}
+								viewport={{ once: true }}
+							>
+								Out system boosts productivity cut cost and
+								drive business growth
+							</motion.p>
+						</div>
+
+						<div className="flex flex-col gap-y-5 ">
+							{formattedContent.map(
+								({ content, description, title }, index) => (
+									<motion.div
+										key={`${title}-${index}`}
+										initial={{ opacity: 0, translateY: 80 }}
+										whileInView={{
+											opacity: 1,
+											translateY: 0,
+											transition: {
+												ease: "linear",
+												duration: 1,
+												delay: index * 0.2
+											},
+										}}
+										viewport={{ once: true }}
+										className="flex flex-row items-center"
+									>
+										<div className="flex flex-col items-start gap-y-2 ">
+											<p className="font-medium text-black text-xl">
+												{title}
+											</p>
+
+											<div
+												className="text-sm text-[#b5b5b5a4] bg-clip-text inline-block animate-shine"
+												style={{
+													backgroundImage:
+														"linear-gradient(120deg, rgba(255, 255, 255, 0) 40%, rgba(255, 255, 255, 0.8) 50%, rgba(255, 255, 255, 0) 60%)",
+													backgroundSize: "200% 100%",
+													WebkitBackgroundClip:
+														"text",
+													animationDuration: `${5}s`,
+												}}
+											>
+												<p>{description}</p>
+											</div>
+										</div>
+									</motion.div>
+								)
+							)}
+						</div>
+					</div>
+				</div>
+
 				{/* StickyScroll with Meteor Cards */}
-				<StickyScroll content={formattedContent} />
+				{/* <StickyScroll content={formattedContent} /> */}
 			</div>
 		</motion.section>
 	);
