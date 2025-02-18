@@ -27,7 +27,7 @@ import { IPricingPlan } from "@/types";
 import PaystackPop from "@paystack/inline-js";
 import { subscriptionService } from "@/services/subscription/index.service";
 import PricingCardSkeletonLoader from "../common/skeleton/pricingCardSkeleton";
-import PricingSliderSection from "./PricingSliderSection";
+import PriceSlider from "./price-slider";
 
 // Function to generate event options
 const generateEventOptions = (valuesInMillions: number[]) => {
@@ -48,6 +48,10 @@ const generateEventOptions = (valuesInMillions: number[]) => {
 // Event values in millions
 const eventValuesInMillions = [
 	10, 11, 12, 13, 14, 15, 20, 25, 30, 50, 100, 200, 500, 1000,
+];
+
+const LOGS_AMOUNT = [
+	3000, 50000, 100000, 200000, 500000, 1000000, 1500000, 2500000, 3000000,
 ];
 
 // Generate the ENTERPRISE_EVENT_OPTIONS array
@@ -73,7 +77,8 @@ export default function PricingSection({
 		error,
 	} = useQuery({
 		queryKey: ["pricingPlans"],
-		queryFn: pricingPlanService.getAll
+		// queryFn: pricingPlanService.getAll
+		queryFn: () => { }
 	});
 
 	// Extract the Enterprise plan from the fetched plans
@@ -212,7 +217,7 @@ export default function PricingSection({
 						</div>
 					</div>
 
-					<PricingSliderSection />
+					<PriceSlider />
 				</div>
 
 				{/* Handle loading and errors */}

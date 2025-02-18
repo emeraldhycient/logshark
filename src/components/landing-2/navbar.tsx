@@ -1,9 +1,9 @@
 import { headerLinkContents } from "@/contents";
-import { motion } from "framer-motion";
 import { BarChart } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import MobileNavigation from "../navigation/mobile-navigation";
+import { motion } from "framer-motion";
 
 const Navbar = () => {
 	const [isOpen, setIsOpen] = useState(false);
@@ -14,7 +14,7 @@ const Navbar = () => {
 		left: "0px",
 		width: "0px",
 	});
-	const tabRefs = useRef<(HTMLAnchorElement | null)[]>([]);
+	const tabRefs = useRef<(HTMLDivElement | null)[]>([]);
 
 	useEffect(() => {
 		if (hoveredIndex !== null) {
@@ -95,9 +95,7 @@ const Navbar = () => {
 								}}
 								href={`${url}`}
 								key={`${text}-${index}`}
-								ref={(el: HTMLAnchorElement) => {
-									tabRefs.current[index] = el;
-								}}
+								ref={(el) => (tabRefs.current[index] = el)}
 								className={`px-3 py-2 cursor-pointer transition-colors duration-300 h-[30px] ${
 									index === activeIndex
 										? "text-[#0e0e10] dark:text-white"
@@ -116,7 +114,7 @@ const Navbar = () => {
 				</div>
 
 				{/* Search and CTA */}
-				<div className="hidden md:flex items-center gap-x-5">
+				<div className="hidden md:flex items-center space-x-6">
 					<Link
 						href="/register"
 						className="relative inline-flex h-10 overflow-hidden rounded-full p-px outline-none active:scale-90 transition-all"
